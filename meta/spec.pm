@@ -16,7 +16,7 @@
 #
 # @file    spec.pm
 #
-# @brief   This module generates LAI-spec document.
+# @brief   This module generates OTAI-spec document.
 #
 
 package spec;
@@ -38,9 +38,9 @@ require Exporter;
 
 sub GenLaiSpecFile
 {
-    my $spec_file = 'LAI-' . $main::LAI_VER . '-spec.xlsx';
+    my $spec_file = 'OTAI-' . $main::OTAI_VER . '-spec.xlsx';
     my $workbook = Excel::Writer::XLSX->new($spec_file);
-    my $worksheet = $workbook->add_worksheet('LAI');
+    my $worksheet = $workbook->add_worksheet('OTAI');
     $worksheet->write( "A1", "Object" );
     $worksheet->write( "B1", "Atrribute" );
     $worksheet->write( "C1", "Type" );
@@ -50,17 +50,17 @@ sub GenLaiSpecFile
     $worksheet->write( "G1", "PM-Type" );
 
     my $worksheet2 = $workbook->add_worksheet('Alarm');
-    $worksheet2->write(0, 0, "LAI Alarm Enum");
+    $worksheet2->write(0, 0, "OTAI Alarm Enum");
 
     my $x_pos = 1;
-    for my $key (sort keys %main::LAI_ENUMS)
+    for my $key (sort keys %main::OTAI_ENUMS)
     {
-        if ($key =~ /^(lai_(\w+)_attr_t)$/)
+        if ($key =~ /^(otai_(\w+)_attr_t)$/)
         {
             my $typedef = $1;
             next if $typedef =~ /null/;
             $worksheet->write($x_pos, 0, "$2");
-            my $enum = $main::LAI_ENUMS{$typedef};
+            my $enum = $main::OTAI_ENUMS{$typedef};
             my @values = @{ $enum->{values} };
             for my $attr (@values)
             {
@@ -87,10 +87,10 @@ sub GenLaiSpecFile
                $x_pos = $x_pos + 1;
             }
         }
-        elsif ($key =~ /^(lai_(\w+)_stat_t)$/)
+        elsif ($key =~ /^(otai_(\w+)_stat_t)$/)
         {
             my $typedef = $1;
-            my $enum = $main::LAI_ENUMS{$typedef};
+            my $enum = $main::OTAI_ENUMS{$typedef};
             my @values = @{ $enum->{values} };
             for my $stat (@values)
             {
@@ -121,14 +121,14 @@ sub GenLaiSpecFile
                }
                $x_pos = $x_pos + 1;
             }
-        } elsif ($key =~ /^lai_alarm_type_t$/)
+        } elsif ($key =~ /^otai_alarm_type_t$/)
         {
-            my $enum = $main::LAI_ENUMS{$key};
+            my $enum = $main::OTAI_ENUMS{$key};
             my @values = @{ $enum->{values} };
             my $alarm_x_pos = 1;
             for my $alarm_id (@values)
             {
-               next if $alarm_id =~ /LAI_ALARM_TYPE_MAX$/;
+               next if $alarm_id =~ /OTAI_ALARM_TYPE_MAX$/;
                $worksheet2->write($alarm_x_pos, 0, $alarm_id);
                $alarm_x_pos = $alarm_x_pos + 1;
             }

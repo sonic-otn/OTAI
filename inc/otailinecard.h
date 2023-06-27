@@ -13,18 +13,18 @@
  *    See the Apache Version 2.0 License for specific language governing
  *    permissions and limitations under the License.
  *
- * @file    lailinecard.h
+ * @file    otailinecard.h
  *
- * @brief   This module defines LAI Linecard interface
+ * @brief   This module defines OTAI Linecard interface
  */
 
-#if !defined (__LAILINECARD_H_)
-#define __LAILINECARD_H_
+#if !defined (__OTAILINECARD_H_)
+#define __OTAILINECARD_H_
 
-#include <laitypes.h>
+#include <otaitypes.h>
 
 /**
- * @defgroup LAILINECARD LAI - Linecard specific API definitions
+ * @defgroup OTAILINECARD OTAI - Linecard specific API definitions
  *
  * @{
  */
@@ -32,55 +32,55 @@
 /**
  * @brief Power admin state of the linecard
  */
-typedef enum _lai_linecard_power_admin_state_t
+typedef enum _otai_linecard_power_admin_state_t
 {
-    LAI_LINECARD_POWER_ADMIN_STATE_ENABLED,
-    LAI_LINECARD_POWER_ADMIN_STATE_DISABLED,
-    LAI_LINECARD_POWER_ADMIN_STATE_MAX,
-} lai_linecard_power_admin_state_t;
+    OTAI_LINECARD_POWER_ADMIN_STATE_ENABLED,
+    OTAI_LINECARD_POWER_ADMIN_STATE_DISABLED,
+    OTAI_LINECARD_POWER_ADMIN_STATE_MAX,
+} otai_linecard_power_admin_state_t;
 
 /**
  * @brief The reset type of the linecard
  */
-typedef enum _lai_linecard_reset_t
+typedef enum _otai_linecard_reset_t
 {
-    LAI_LINECARD_RESET_WARM,
-    LAI_LINECARD_RESET_COLD,
-    LAI_LINECARD_RESET_FORCE,
-    LAI_LINECARD_RESET_MAX,
-} lai_linecard_reset_t;
+    OTAI_LINECARD_RESET_WARM,
+    OTAI_LINECARD_RESET_COLD,
+    OTAI_LINECARD_RESET_FORCE,
+    OTAI_LINECARD_RESET_MAX,
+} otai_linecard_reset_t;
 
 /**
  * @brief Linecard upgrade state
  */
-typedef enum _lai_linecard_upgrade_state_t
+typedef enum _otai_linecard_upgrade_state_t
 {
-    LAI_LINECARD_UPGRADE_STATE_IDLE,
-    LAI_LINECARD_UPGRADE_STATE_DOWNLOADING,
-    LAI_LINECARD_UPGRADE_STATE_DOWNLOAD_FINISH,
-    LAI_LINECARD_UPGRADE_STATE_COMMITING,
-    LAI_LINECARD_UPGRADE_STATE_COMMIT_FINISH,
-    LAI_LINECARD_UPGRADE_STATE_REBOOTING,
-    LAI_LINECARD_UPGRADE_STATE_COMMIT_PAUSE,
-    LAI_LINECARD_UPGRADE_STATE_ROLLBACKING,
-    LAI_LINECARD_UPGRADE_STATE_COMMIT_ERROR,
-    LAI_LINECARD_UPGRADE_STATE_REBOOT_ERROR,
-    LAI_LINECARD_UPGRADE_STATE_COMMIT_STOP,
-    LAI_LINECARD_UPGRADE_STATE_MAX,
+    OTAI_LINECARD_UPGRADE_STATE_IDLE,
+    OTAI_LINECARD_UPGRADE_STATE_DOWNLOADING,
+    OTAI_LINECARD_UPGRADE_STATE_DOWNLOAD_FINISH,
+    OTAI_LINECARD_UPGRADE_STATE_COMMITING,
+    OTAI_LINECARD_UPGRADE_STATE_COMMIT_FINISH,
+    OTAI_LINECARD_UPGRADE_STATE_REBOOTING,
+    OTAI_LINECARD_UPGRADE_STATE_COMMIT_PAUSE,
+    OTAI_LINECARD_UPGRADE_STATE_ROLLBACKING,
+    OTAI_LINECARD_UPGRADE_STATE_COMMIT_ERROR,
+    OTAI_LINECARD_UPGRADE_STATE_REBOOT_ERROR,
+    OTAI_LINECARD_UPGRADE_STATE_COMMIT_STOP,
+    OTAI_LINECARD_UPGRADE_STATE_MAX,
 
-} lai_linecard_upgrade_state_t;
+} otai_linecard_upgrade_state_t;
 
 /**
  * @brief Linecard baud rate
  */
-typedef enum _lai_linecard_baud_rate_t
+typedef enum _otai_linecard_baud_rate_t
 {
-    LAI_LINECARD_BAUD_RATE_9600,
-    LAI_LINECARD_BAUD_RATE_19200,
-    LAI_LINECARD_BAUD_RATE_38400,
-    LAI_LINECARD_BAUD_RATE_57600,
-    LAI_LINECARD_BAUD_RATE_115200,
-} lai_linecard_baud_rate_t;
+    OTAI_LINECARD_BAUD_RATE_9600,
+    OTAI_LINECARD_BAUD_RATE_19200,
+    OTAI_LINECARD_BAUD_RATE_38400,
+    OTAI_LINECARD_BAUD_RATE_57600,
+    OTAI_LINECARD_BAUD_RATE_115200,
+} otai_linecard_baud_rate_t;
 
 /**
  * @brief Linecard operational state change notification
@@ -88,9 +88,9 @@ typedef enum _lai_linecard_baud_rate_t
  * @param[in] linecard_id Linecard Id
  * @param[in] linecard_oper_status New linecard operational state
  */
-typedef void (*lai_linecard_state_change_notification_fn)(
-        _In_ lai_object_id_t linecard_id,
-        _In_ lai_oper_status_t linecard_oper_status);
+typedef void (*otai_linecard_state_change_notification_fn)(
+        _In_ otai_object_id_t linecard_id,
+        _In_ otai_oper_status_t linecard_oper_status);
 
 /**
  * @brief Linecard alarm notification
@@ -99,10 +99,10 @@ typedef void (*lai_linecard_state_change_notification_fn)(
  * @param[in] alarm_type Alarm type
  * @param[in] alarm_info Alarm info
  */
-typedef void (*lai_linecard_alarm_notification_fn)(
-        _In_ lai_object_id_t linecard_id,
-        _In_ lai_alarm_type_t alarm_type,
-        _In_ lai_alarm_info_t alarm_info);
+typedef void (*otai_linecard_alarm_notification_fn)(
+        _In_ otai_object_id_t linecard_id,
+        _In_ otai_alarm_type_t alarm_type,
+        _In_ otai_alarm_info_t alarm_info);
 
 /**
  * @brief Linecard OCM spectrum power notification
@@ -111,10 +111,10 @@ typedef void (*lai_linecard_alarm_notification_fn)(
  * @param[in] ocm_id OCM Id
  * @param[in] ocm_result OCM Result
  */
-typedef void (*lai_linecard_ocm_spectrum_power_notification_fn)(
-        _In_ lai_object_id_t linecard_id,
-        _In_ lai_object_id_t ocm_id,
-        _In_ lai_spectrum_power_list_t ocm_result);
+typedef void (*otai_linecard_ocm_spectrum_power_notification_fn)(
+        _In_ otai_object_id_t linecard_id,
+        _In_ otai_object_id_t ocm_id,
+        _In_ otai_spectrum_power_list_t ocm_result);
 
 /**
  * @brief Linecard OTDR report result
@@ -123,21 +123,21 @@ typedef void (*lai_linecard_ocm_spectrum_power_notification_fn)(
  * @param[in] otdr_id OTDR Id
  * @param[in] otdr_result OTDR result
  */
-typedef void (*lai_linecard_otdr_result_notification_fn)(
-        _In_ lai_object_id_t linecard_id,
-        _In_ lai_object_id_t otdr_id,
-        _In_ lai_otdr_result_t otdr_result);
+typedef void (*otai_linecard_otdr_result_notification_fn)(
+        _In_ otai_object_id_t linecard_id,
+        _In_ otai_object_id_t otdr_id,
+        _In_ otai_otdr_result_t otdr_result);
 
 /**
- * @brief Attribute Id in lai_set_linecard_attribute() and
- *        lai_get_linecard_attribute() calls.
+ * @brief Attribute Id in otai_set_linecard_attribute() and
+ *        otai_get_linecard_attribute() calls.
  */
-typedef enum _lai_linecard_attr_t
+typedef enum _otai_linecard_attr_t
 {
     /**
      * @brief Start of attributes
      */
-    LAI_LINECARD_ATTR_START,
+    OTAI_LINECARD_ATTR_START,
 
     /**
      * @brief Linecard type
@@ -145,15 +145,15 @@ typedef enum _lai_linecard_attr_t
      * @type char
      * @flags MANDATORY_ON_CREATE | CREATE_AND_SET
      */
-    LAI_LINECARD_ATTR_LINECARD_TYPE = LAI_LINECARD_ATTR_START,
+    OTAI_LINECARD_ATTR_LINECARD_TYPE = OTAI_LINECARD_ATTR_START,
 
     /**
      * @brief The admin state of the linecard
      *
-     * @type lai_admin_state_t
+     * @type otai_admin_state_t
      * @flags CREATE_AND_SET
      */
-    LAI_LINECARD_ATTR_ADMIN_STATE,
+    OTAI_LINECARD_ATTR_ADMIN_STATE,
 
     /**
      * @brief The board mode of the linecard
@@ -161,15 +161,15 @@ typedef enum _lai_linecard_attr_t
      * @type char
      * @flags CREATE_AND_SET
      */
-    LAI_LINECARD_ATTR_BOARD_MODE,
+    OTAI_LINECARD_ATTR_BOARD_MODE,
 
     /**
      * @brief The operational state of the linecard
      *
-     * @type lai_oper_status_t
+     * @type otai_oper_status_t
      * @flags READ_ONLY
      */
-    LAI_LINECARD_ATTR_OPER_STATUS,
+    OTAI_LINECARD_ATTR_OPER_STATUS,
 
     /**
      * @brief Relay
@@ -177,7 +177,7 @@ typedef enum _lai_linecard_attr_t
      * @type bool
      * @flags CREATE_AND_SET
      */
-    LAI_LINECARD_ATTR_RELAY,
+    OTAI_LINECARD_ATTR_RELAY,
 
     /**
      * @brief Whether the linecard is present or not
@@ -185,7 +185,7 @@ typedef enum _lai_linecard_attr_t
      * @type bool
      * @flags READ_ONLY
      */
-    LAI_LINECARD_ATTR_EMPTY,
+    OTAI_LINECARD_ATTR_EMPTY,
 
     /**
      * @brief Whether the linecard is removable
@@ -193,24 +193,24 @@ typedef enum _lai_linecard_attr_t
      * @type bool
      * @flags READ_ONLY
      */
-    LAI_LINECARD_ATTR_REMOVABLE,
+    OTAI_LINECARD_ATTR_REMOVABLE,
 
     /**
      * @brief The reset type of the linecard
      *
-     * @type lai_linecard_reset_t
+     * @type otai_linecard_reset_t
      * @flags SET_ONLY
      * @isrecoverable false
      */
-    LAI_LINECARD_ATTR_RESET,
+    OTAI_LINECARD_ATTR_RESET,
 
     /**
      * @brief The power admin state of the linecard
      *
-     * @type lai_linecard_power_admin_state_t
+     * @type otai_linecard_power_admin_state_t
      * @flags CREATE_AND_SET
      */
-    LAI_LINECARD_ATTR_POWER_ADMIN_STATE,
+    OTAI_LINECARD_ATTR_POWER_ADMIN_STATE,
 
     /**
      * @brief Host name
@@ -218,7 +218,7 @@ typedef enum _lai_linecard_attr_t
      * @type char
      * @flags CREATE_AND_SET
      */
-    LAI_LINECARD_ATTR_HOSTNAME,
+    OTAI_LINECARD_ATTR_HOSTNAME,
 
     /**
      * @brief Serial number
@@ -226,7 +226,7 @@ typedef enum _lai_linecard_attr_t
      * @type char
      * @flags READ_ONLY
      */
-    LAI_LINECARD_ATTR_SERIAL_NO,
+    OTAI_LINECARD_ATTR_SERIAL_NO,
 
     /**
      * @brief Part number
@@ -234,7 +234,7 @@ typedef enum _lai_linecard_attr_t
      * @type char
      * @flags READ_ONLY
      */
-    LAI_LINECARD_ATTR_PART_NO,
+    OTAI_LINECARD_ATTR_PART_NO,
 
     /**
      * @brief Hardware version
@@ -242,7 +242,7 @@ typedef enum _lai_linecard_attr_t
      * @type char
      * @flags READ_ONLY
      */
-    LAI_LINECARD_ATTR_HARDWARE_VERSION,
+    OTAI_LINECARD_ATTR_HARDWARE_VERSION,
 
     /**
      * @brief Software version
@@ -250,7 +250,7 @@ typedef enum _lai_linecard_attr_t
      * @type char
      * @flags READ_ONLY
      */
-    LAI_LINECARD_ATTR_SOFTWARE_VERSION,
+    OTAI_LINECARD_ATTR_SOFTWARE_VERSION,
 
     /**
      * @brief CPLD version
@@ -258,7 +258,7 @@ typedef enum _lai_linecard_attr_t
      * @type char
      * @flags READ_ONLY
      */
-    LAI_LINECARD_ATTR_CPLD_VERSION,
+    OTAI_LINECARD_ATTR_CPLD_VERSION,
 
     /**
      * @brief Script version
@@ -266,7 +266,7 @@ typedef enum _lai_linecard_attr_t
      * @type char
      * @flags READ_ONLY
      */
-    LAI_LINECARD_ATTR_SCRIPT_VERSION,
+    OTAI_LINECARD_ATTR_SCRIPT_VERSION,
 
     /**
      * @brief Manufacture date
@@ -274,7 +274,7 @@ typedef enum _lai_linecard_attr_t
      * @type char
      * @flags READ_ONLY
      */
-    LAI_LINECARD_ATTR_MFG_DATE,
+    OTAI_LINECARD_ATTR_MFG_DATE,
 
     /**
      * @brief Manufacture name
@@ -282,7 +282,7 @@ typedef enum _lai_linecard_attr_t
      * @type char
      * @flags READ_ONLY
      */
-    LAI_LINECARD_ATTR_MFG_NAME,
+    OTAI_LINECARD_ATTR_MFG_NAME,
 
     /**
      * @brief Set to linecard initialization or connect to linecard.
@@ -293,34 +293,34 @@ typedef enum _lai_linecard_attr_t
      * @type bool
      * @flags CREATE_ONLY
      */
-    LAI_LINECARD_ATTR_INIT_LINECARD,
+    OTAI_LINECARD_ATTR_INIT_LINECARD,
 
     /**
      * @brief Linecard alarm notification
      *
-     * @type lai_pointer_t lai_linecard_alarm_notification_fn
+     * @type otai_pointer_t otai_linecard_alarm_notification_fn
      * @flags CREATE_ONLY
      * @default NULL
      */
-    LAI_LINECARD_ATTR_LINECARD_ALARM_NOTIFY,
+    OTAI_LINECARD_ATTR_LINECARD_ALARM_NOTIFY,
 
     /**
      * @brief Spectrum power notification
      *
-     * @type lai_pointer_t lai_linecard_ocm_spectrum_power_notification_fn
+     * @type otai_pointer_t otai_linecard_ocm_spectrum_power_notification_fn
      * @flags CREATE_ONLY
      * @default NULL
      */
-    LAI_LINECARD_ATTR_LINECARD_OCM_SPECTRUM_POWER_NOTIFY,
+    OTAI_LINECARD_ATTR_LINECARD_OCM_SPECTRUM_POWER_NOTIFY,
 
     /**
      * @brief OTDR result notification
      *
-     * @type lai_pointer_t lai_linecard_otdr_result_notification_fn
+     * @type otai_pointer_t otai_linecard_otdr_result_notification_fn
      * @flags CREATE_ONLY
      * @default NULL
      */
-    LAI_LINECARD_ATTR_LINECARD_OTDR_RESULT_NOTIFY,
+    OTAI_LINECARD_ATTR_LINECARD_OTDR_RESULT_NOTIFY,
 
     /**
      * @brief Collect linecard alarm.
@@ -328,7 +328,7 @@ typedef enum _lai_linecard_attr_t
      * @type bool
      * @flags SET_ONLY
      */
-    LAI_LINECARD_ATTR_COLLECT_LINECARD_ALARM,
+    OTAI_LINECARD_ATTR_COLLECT_LINECARD_ALARM,
 
     /**
      * @brief Collect linecard log.
@@ -337,59 +337,59 @@ typedef enum _lai_linecard_attr_t
      * @flags SET_ONLY
      * @isrecoverable false
      */
-    LAI_LINECARD_ATTR_COLLECT_LINECARD_LOG,
+    OTAI_LINECARD_ATTR_COLLECT_LINECARD_LOG,
 
     /**
      * @brief Linecard operational state change notification
      *
-     * @type lai_pointer_t lai_linecard_state_change_notification_fn
+     * @type otai_pointer_t otai_linecard_state_change_notification_fn
      * @flags CREATE_ONLY
      * @default NULL
      */
-    LAI_LINECARD_ATTR_LINECARD_STATE_CHANGE_NOTIFY,
+    OTAI_LINECARD_ATTR_LINECARD_STATE_CHANGE_NOTIFY,
 
     /**
      * @brief Led mode
      *
-     * @type lai_led_mode_t
+     * @type otai_led_mode_t
      * @flags CREATE_AND_SET
      * @isrecoverable false
      */
-    LAI_LINECARD_ATTR_LED_MODE,
+    OTAI_LINECARD_ATTR_LED_MODE,
 
     /**
      * @brief Led flash interval
      *
-     * @type lai_uint16_t
+     * @type otai_uint16_t
      * @flags CREATE_AND_SET
      * @isrecoverable false
      */
-    LAI_LINECARD_ATTR_LED_FLASH_INTERVAL,
+    OTAI_LINECARD_ATTR_LED_FLASH_INTERVAL,
 
     /**
      * @brief Led color
      *
-     * @type lai_led_color_t
+     * @type otai_led_color_t
      * @flags READ_ONLY
      */
-    LAI_LINECARD_ATTR_LED_COLOR,
+    OTAI_LINECARD_ATTR_LED_COLOR,
 
     /**
      * @brief Baud rate
      *
-     * @type lai_linecard_baud_rate_t
+     * @type otai_linecard_baud_rate_t
      * @flags CREATE_AND_SET
      */
-    LAI_LINECARD_ATTR_BAUD_RATE,
+    OTAI_LINECARD_ATTR_BAUD_RATE,
 
     /**
      * @brief Host IPv4 address
      *
-     * @type lai_uint32_t
+     * @type otai_uint32_t
      * @flags SET_ONLY
      * @isrecoverable false
      */
-    LAI_LINECARD_ATTR_HOST_IP,
+    OTAI_LINECARD_ATTR_HOST_IP,
 
     /**
      * @brief User name
@@ -398,7 +398,7 @@ typedef enum _lai_linecard_attr_t
      * @flags SET_ONLY
      * @isrecoverable false
      */
-    LAI_LINECARD_ATTR_USER_NAME,
+    OTAI_LINECARD_ATTR_USER_NAME,
 
     /**
      * @brief User password
@@ -407,7 +407,7 @@ typedef enum _lai_linecard_attr_t
      * @flags SET_ONLY
      * @isrecoverable false
      */
-    LAI_LINECARD_ATTR_USER_PASSWORD,
+    OTAI_LINECARD_ATTR_USER_PASSWORD,
 
     /**
      * @brief Linecard upgrade file name
@@ -416,7 +416,7 @@ typedef enum _lai_linecard_attr_t
      * @flags SET_ONLY
      * @isrecoverable false
      */
-    LAI_LINECARD_ATTR_UPGRADE_FILE_NAME,
+    OTAI_LINECARD_ATTR_UPGRADE_FILE_NAME,
 
     /**
      * @brief Linecard upgrade file path
@@ -425,7 +425,7 @@ typedef enum _lai_linecard_attr_t
      * @flags SET_ONLY
      * @isrecoverable false
      */
-    LAI_LINECARD_ATTR_UPGRADE_FILE_PATH,
+    OTAI_LINECARD_ATTR_UPGRADE_FILE_PATH,
 
     /**
      * @brief Upgrade download
@@ -434,7 +434,7 @@ typedef enum _lai_linecard_attr_t
      * @flags SET_ONLY
      * @isrecoverable false
      */
-    LAI_LINECARD_ATTR_UPGRADE_DOWNLOAD,
+    OTAI_LINECARD_ATTR_UPGRADE_DOWNLOAD,
 
     /**
      * @brief Upgrade commit
@@ -443,7 +443,7 @@ typedef enum _lai_linecard_attr_t
      * @flags SET_ONLY
      * @isrecoverable false
      */
-    LAI_LINECARD_ATTR_UPGRADE_COMMIT,
+    OTAI_LINECARD_ATTR_UPGRADE_COMMIT,
 
     /**
      * @brief Upgrade commit pause
@@ -452,7 +452,7 @@ typedef enum _lai_linecard_attr_t
      * @flags SET_ONLY
      * @isrecoverable false
      */
-    LAI_LINECARD_ATTR_UPGRADE_COMMIT_PAUSE,
+    OTAI_LINECARD_ATTR_UPGRADE_COMMIT_PAUSE,
 
     /**
      * @brief Upgrade commit resume
@@ -461,7 +461,7 @@ typedef enum _lai_linecard_attr_t
      * @flags SET_ONLY
      * @isrecoverable false
      */
-    LAI_LINECARD_ATTR_UPGRADE_COMMIT_RESUME,
+    OTAI_LINECARD_ATTR_UPGRADE_COMMIT_RESUME,
 
     /**
      * @brief Upgrade rollback
@@ -470,7 +470,7 @@ typedef enum _lai_linecard_attr_t
      * @flags SET_ONLY
      * @isrecoverable false
      */
-    LAI_LINECARD_ATTR_UPGRADE_ROLLBACK,
+    OTAI_LINECARD_ATTR_UPGRADE_ROLLBACK,
 
     /**
      * @brief Upgrade reboot
@@ -479,7 +479,7 @@ typedef enum _lai_linecard_attr_t
      * @flags SET_ONLY
      * @isrecoverable false
      */
-    LAI_LINECARD_ATTR_UPGRADE_REBOOT,
+    OTAI_LINECARD_ATTR_UPGRADE_REBOOT,
 
     /**
      * @brief Upgrade auto
@@ -488,15 +488,15 @@ typedef enum _lai_linecard_attr_t
      * @flags SET_ONLY
      * @isrecoverable false
      */
-    LAI_LINECARD_ATTR_UPGRADE_AUTO,
+    OTAI_LINECARD_ATTR_UPGRADE_AUTO,
 
     /**
      * @brief Upgrade state
      *
-     * @type lai_linecard_upgrade_state_t
+     * @type otai_linecard_upgrade_state_t
      * @flags READ_ONLY
      */
-    LAI_LINECARD_ATTR_UPGRADE_STATE,
+    OTAI_LINECARD_ATTR_UPGRADE_STATE,
 
     /**
      * @brief FPGA version
@@ -504,7 +504,7 @@ typedef enum _lai_linecard_attr_t
      * @type char
      * @flags READ_ONLY
      */
-    LAI_LINECARD_ATTR_FPGA_VERSION,
+    OTAI_LINECARD_ATTR_FPGA_VERSION,
 
     /**
      * @brief UCD version
@@ -512,47 +512,47 @@ typedef enum _lai_linecard_attr_t
      * @type char
      * @flags READ_ONLY
      */
-    LAI_LINECARD_ATTR_UCD_VERSION,
+    OTAI_LINECARD_ATTR_UCD_VERSION,
 
     /**
      * @brief Temperature high alarm threshold
      *
-     * @type lai_double_t
+     * @type otai_double_t
      * @flags CREATE_AND_SET
      */
-    LAI_LINECARD_ATTR_TEMP_HIGH_ALARM_THRESHOLD,
+    OTAI_LINECARD_ATTR_TEMP_HIGH_ALARM_THRESHOLD,
 
     /**
      * @brief Temperature high warn threshold
      *
-     * @type lai_double_t
+     * @type otai_double_t
      * @flags CREATE_AND_SET
      */
-    LAI_LINECARD_ATTR_TEMP_HIGH_WARN_THRESHOLD,
+    OTAI_LINECARD_ATTR_TEMP_HIGH_WARN_THRESHOLD,
 
     /**
      * @brief Temperature low alarm threshold
      *
-     * @type lai_double_t
+     * @type otai_double_t
      * @flags CREATE_AND_SET
      */
-    LAI_LINECARD_ATTR_TEMP_LOW_ALARM_THRESHOLD,
+    OTAI_LINECARD_ATTR_TEMP_LOW_ALARM_THRESHOLD,
 
     /**
      * @brief Temperature low warn threshold
      *
-     * @type lai_double_t
+     * @type otai_double_t
      * @flags CREATE_AND_SET
      */
-    LAI_LINECARD_ATTR_TEMP_LOW_WARN_THRESHOLD,
+    OTAI_LINECARD_ATTR_TEMP_LOW_WARN_THRESHOLD,
 
     /**
      * @brief Slot id
      *
-     * @type lai_int32_t
+     * @type otai_int32_t
      * @flags READ_ONLY
      */
-    LAI_LINECARD_ATTR_SLOT_ID,
+    OTAI_LINECARD_ATTR_SLOT_ID,
 
     /**
      * @brief Equipment failure
@@ -560,7 +560,7 @@ typedef enum _lai_linecard_attr_t
      * @type bool
      * @flags READ_ONLY
      */
-    LAI_LINECARD_ATTR_EQUIPMENT_FAILURE,
+    OTAI_LINECARD_ATTR_EQUIPMENT_FAILURE,
 
     /**
      * @brief Equipment mismatch
@@ -568,7 +568,7 @@ typedef enum _lai_linecard_attr_t
      * @type bool
      * @flags READ_ONLY
      */
-    LAI_LINECARD_ATTR_EQUIPMENT_MISMATCH,
+    OTAI_LINECARD_ATTR_EQUIPMENT_MISMATCH,
 
     /**
      * @brief Start Pre-configuration
@@ -577,7 +577,7 @@ typedef enum _lai_linecard_attr_t
      * @flags SET_ONLY
      * @isrecoverable false
      */
-    LAI_LINECARD_ATTR_START_PRE_CONFIGURATION,
+    OTAI_LINECARD_ATTR_START_PRE_CONFIGURATION,
 
     /**
      * @brief Stop Pre-configuration
@@ -586,7 +586,7 @@ typedef enum _lai_linecard_attr_t
      * @flags SET_ONLY
      * @isrecoverable false
      */
-    LAI_LINECARD_ATTR_STOP_PRE_CONFIGURATION,
+    OTAI_LINECARD_ATTR_STOP_PRE_CONFIGURATION,
 
     /**
      * @brief Led name
@@ -595,72 +595,72 @@ typedef enum _lai_linecard_attr_t
      * @flags CREATE_AND_SET
      * @isrecoverable false
      */
-    LAI_LINECARD_ATTR_LED_NAME,
+    OTAI_LINECARD_ATTR_LED_NAME,
 
     /**
      * @brief End of attributes
      */
-    LAI_LINECARD_ATTR_END,
+    OTAI_LINECARD_ATTR_END,
 
     /** Custom range base value */
-    LAI_LINECARD_ATTR_CUSTOM_RANGE_START = 0x10000000,
+    OTAI_LINECARD_ATTR_CUSTOM_RANGE_START = 0x10000000,
 
     /** End of custom range base */
-    LAI_LINECARD_ATTR_CUSTOM_RANGE_END
+    OTAI_LINECARD_ATTR_CUSTOM_RANGE_END
 
-} lai_linecard_attr_t;
+} otai_linecard_attr_t;
 
 /**
- * @brief Linecard counter IDs in lai_get_linecard_stats() call
+ * @brief Linecard counter IDs in otai_get_linecard_stats() call
  *
  * @flags Contains flags
  */
-typedef enum _lai_linecard_stat_t
+typedef enum _otai_linecard_stat_t
 {
     /**
      * @brief Start of statistics
      */
-    LAI_LINECARD_STAT_START,
+    OTAI_LINECARD_STAT_START,
 
     /**
      * @brief Memory available
      *
-     * @type lai_uint64_t
+     * @type otai_uint64_t
      * @iscounter false
      */
-    LAI_LINECARD_STAT_MEMORY_AVAILABLE = LAI_LINECARD_STAT_START,
+    OTAI_LINECARD_STAT_MEMORY_AVAILABLE = OTAI_LINECARD_STAT_START,
 
     /**
      * @brief Memory utilized
      *
-     * @type lai_uint64_t
+     * @type otai_uint64_t
      * @iscounter false
      */
-    LAI_LINECARD_STAT_MEMORY_UTILIZED,
+    OTAI_LINECARD_STAT_MEMORY_UTILIZED,
 
     /**
      * @brief CPU utilization
      *
-     * @type lai_uint32_t
+     * @type otai_uint32_t
      * @iscounter false
      */
-    LAI_LINECARD_STAT_CPU_UTILIZATION,
+    OTAI_LINECARD_STAT_CPU_UTILIZATION,
 
     /**
      * @brief Temperature
      *
-     * @type lai_double_t
+     * @type otai_double_t
      * @precision precision2
      * @iscounter false
      */
-    LAI_LINECARD_STAT_TEMPERATURE,
+    OTAI_LINECARD_STAT_TEMPERATURE,
 
     /**
      * @brief End of statistics
      */
-    LAI_LINECARD_STAT_END,
+    OTAI_LINECARD_STAT_END,
 
-} lai_linecard_stat_t;
+} otai_linecard_stat_t;
 
 /**
  * @brief Create linecard
@@ -669,12 +669,12 @@ typedef enum _lai_linecard_stat_t
  * @param[in] attr_count Number of attributes
  * @param[in] attr_list Array of attributes to set during initialization
  *
- * @return #LAI_STATUS_SUCCESS on success, failure status code on error
+ * @return #OTAI_STATUS_SUCCESS on success, failure status code on error
  */
-typedef lai_status_t (*lai_create_linecard_fn)(
-        _Out_ lai_object_id_t *linecard_id,
+typedef otai_status_t (*otai_create_linecard_fn)(
+        _Out_ otai_object_id_t *linecard_id,
         _In_ uint32_t attr_count,
-        _In_ const lai_attribute_t *attr_list);
+        _In_ const otai_attribute_t *attr_list);
 
 /**
  * @brief Remove/disconnect Linecard
@@ -683,10 +683,10 @@ typedef lai_status_t (*lai_create_linecard_fn)(
  *
  * @param[in] linecard_id The Linecard id
  *
- * @return #LAI_STATUS_SUCCESS on success, failure status code on error
+ * @return #OTAI_STATUS_SUCCESS on success, failure status code on error
  */
-typedef lai_status_t (*lai_remove_linecard_fn)(
-        _In_ lai_object_id_t linecard_id);
+typedef otai_status_t (*otai_remove_linecard_fn)(
+        _In_ otai_object_id_t linecard_id);
 
 /**
  * @brief Set linecard attribute value
@@ -694,11 +694,11 @@ typedef lai_status_t (*lai_remove_linecard_fn)(
  * @param[in] linecard_id Linecard id
  * @param[in] attr Linecard attribute
  *
- * @return #LAI_STATUS_SUCCESS on success, failure status code on error
+ * @return #OTAI_STATUS_SUCCESS on success, failure status code on error
  */
-typedef lai_status_t (*lai_set_linecard_attribute_fn)(
-        _In_ lai_object_id_t linecard_id,
-        _In_ const lai_attribute_t *attr);
+typedef otai_status_t (*otai_set_linecard_attribute_fn)(
+        _In_ otai_object_id_t linecard_id,
+        _In_ const otai_attribute_t *attr);
 
 /**
  * @brief Get linecard attribute value
@@ -707,12 +707,12 @@ typedef lai_status_t (*lai_set_linecard_attribute_fn)(
  * @param[in] attr_count Number of attributes
  * @param[inout] attr_list Array of linecard attributes
  *
- * @return #LAI_STATUS_SUCCESS on success, failure status code on error
+ * @return #OTAI_STATUS_SUCCESS on success, failure status code on error
  */
-typedef lai_status_t (*lai_get_linecard_attribute_fn)(
-        _In_ lai_object_id_t linecard_id,
+typedef otai_status_t (*otai_get_linecard_attribute_fn)(
+        _In_ otai_object_id_t linecard_id,
         _In_ uint32_t attr_count,
-        _Inout_ lai_attribute_t *attr_list);
+        _Inout_ otai_attribute_t *attr_list);
 
 /**
  * @brief Get linecard counters. Deprecated for backward compatibility.
@@ -722,13 +722,13 @@ typedef lai_status_t (*lai_get_linecard_attribute_fn)(
  * @param[in] counter_ids Specifies the array of counter ids
  * @param[out] counters Array of resulting counter values.
  *
- * @return #LAI_STATUS_SUCCESS on success, failure status code on error
+ * @return #OTAI_STATUS_SUCCESS on success, failure status code on error
  */
-typedef lai_status_t (*lai_get_linecard_stats_fn)(
-        _In_ lai_object_id_t linecard_id,
+typedef otai_status_t (*otai_get_linecard_stats_fn)(
+        _In_ otai_object_id_t linecard_id,
         _In_ uint32_t number_of_counters,
-        _In_ const lai_stat_id_t *counter_ids,
-        _Out_ lai_stat_value_t *counters);
+        _In_ const otai_stat_id_t *counter_ids,
+        _Out_ otai_stat_value_t *counters);
 
 /**
  * @brief Get linecard statistics counters extended.
@@ -739,14 +739,14 @@ typedef lai_status_t (*lai_get_linecard_stats_fn)(
  * @param[in] mode Statistics mode
  * @param[out] counters Array of resulting counter values.
  *
- * @return #LAI_STATUS_SUCCESS on success, failure status code on error
+ * @return #OTAI_STATUS_SUCCESS on success, failure status code on error
  */
-typedef lai_status_t (*lai_get_linecard_stats_ext_fn)(
-        _In_ lai_object_id_t linecard_id,
+typedef otai_status_t (*otai_get_linecard_stats_ext_fn)(
+        _In_ otai_object_id_t linecard_id,
         _In_ uint32_t number_of_counters,
-        _In_ const lai_stat_id_t *counter_ids,
-        _In_ lai_stats_mode_t mode,
-        _Out_ lai_stat_value_t *counters);
+        _In_ const otai_stat_id_t *counter_ids,
+        _In_ otai_stats_mode_t mode,
+        _Out_ otai_stat_value_t *counters);
 
 /**
  * @brief Clear linecard statistics counters.
@@ -755,28 +755,28 @@ typedef lai_status_t (*lai_get_linecard_stats_ext_fn)(
  * @param[in] number_of_counters Number of counters in the array
  * @param[in] counter_ids Specifies the array of counter ids
  *
- * @return #LAI_STATUS_SUCCESS on success, failure status code on error
+ * @return #OTAI_STATUS_SUCCESS on success, failure status code on error
  */
-typedef lai_status_t (*lai_clear_linecard_stats_fn)(
-        _In_ lai_object_id_t linecard_id,
+typedef otai_status_t (*otai_clear_linecard_stats_fn)(
+        _In_ otai_object_id_t linecard_id,
         _In_ uint32_t number_of_counters,
-        _In_ const lai_stat_id_t *counter_ids);
+        _In_ const otai_stat_id_t *counter_ids);
 
 /**
- * @brief Linecard method table retrieved with lai_api_query()
+ * @brief Linecard method table retrieved with otai_api_query()
  */
-typedef struct _lai_linecard_api_t
+typedef struct _otai_linecard_api_t
 {
-    lai_create_linecard_fn            create_linecard;
-    lai_remove_linecard_fn            remove_linecard;
-    lai_set_linecard_attribute_fn     set_linecard_attribute;
-    lai_get_linecard_attribute_fn     get_linecard_attribute;
-    lai_get_linecard_stats_fn         get_linecard_stats;
-    lai_get_linecard_stats_ext_fn     get_linecard_stats_ext;
-    lai_clear_linecard_stats_fn       clear_linecard_stats;
-} lai_linecard_api_t;
+    otai_create_linecard_fn            create_linecard;
+    otai_remove_linecard_fn            remove_linecard;
+    otai_set_linecard_attribute_fn     set_linecard_attribute;
+    otai_get_linecard_attribute_fn     get_linecard_attribute;
+    otai_get_linecard_stats_fn         get_linecard_stats;
+    otai_get_linecard_stats_ext_fn     get_linecard_stats_ext;
+    otai_clear_linecard_stats_fn       clear_linecard_stats;
+} otai_linecard_api_t;
 
 /**
  * @}
  */
-#endif /** __LAILINECARD_H_ */
+#endif /** __OTAILINECARD_H_ */

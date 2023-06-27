@@ -73,7 +73,7 @@ IPMC - Intelligent Platform Management Controller
 L2 - Layer 2
 L2MC - Layer 2 Multi Cast
 L3 - Layer 3
-LAI - Linecard Abstraction Interface
+OTAI - Linecard Abstraction Interface
 LAG - Link Aggregation Group
 LPM - Longest Prefix Match
 LSP - Label Switched Path

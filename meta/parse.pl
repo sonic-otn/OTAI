@@ -20,7 +20,7 @@
 #
 # @file    parse.pl
 #
-# @brief   This module defines LAI Metadata Parser
+# @brief   This module defines OTAI Metadata Parser
 #
 
 BEGIN { push @INC,'.'; }
@@ -42,9 +42,9 @@ use cap;
 our $XMLDIR = "xml";
 our $INCLUDE_DIR = "../inc/";
 
-our $LAI_VER = "";
-our %LAI_ENUMS = ();
-our %LAI_UNIONS = ();
+our $OTAI_VER = "";
+our %OTAI_ENUMS = ();
+our %OTAI_UNIONS = ();
 our %METADATA = ();
 our %NON_OBJECT_ID_STRUCTS = ();
 our %NOTIFICATIONS = ();
@@ -52,7 +52,7 @@ our %OBJTOAPIMAP = ();
 our %APITOOBJMAP = ();
 our %ALL_STRUCTS = ();
 our %OBJECT_TYPE_MAP = ();
-our %LAI_DEFINES = ();
+our %OTAI_DEFINES = ();
 our %EXTRA_RANGE_DEFINES = ();
 our %REVGRAPH = ();
 our %EXTENSIONS_ENUMS = ();
@@ -142,39 +142,39 @@ sub ProcessTagType
 {
     my ($type, $value, $val) = @_;
 
-    return $val if $val =~ /^lai_s32_list_t lai_\w+_t$/;
+    return $val if $val =~ /^otai_s32_list_t otai_\w+_t$/;
 
     return $val if $val =~ /^(bool|char)$/;
 
-    return $val if $val =~ /^lai_\w+_t$/ and not $val =~ /_attr_(extensions_)?t/;
+    return $val if $val =~ /^otai_\w+_t$/ and not $val =~ /_attr_(extensions_)?t/;
 
-    return $val if $val =~ /^lai_pointer_t lai_\w+_notification_fn$/;
+    return $val if $val =~ /^otai_pointer_t otai_\w+_notification_fn$/;
 
-    if ($val =~ /^lai_pointer_t (lai_linecard_\w+_fn)$/)
+    if ($val =~ /^otai_pointer_t (otai_linecard_\w+_fn)$/)
     {
         $ATTR_TO_CALLBACK{$value} = $1;
         return $val;
     }
 
-    if ($val =~ /^lai_pointer_t (lai_aps_\w+_fn)$/)
+    if ($val =~ /^otai_pointer_t (otai_aps_\w+_fn)$/)
     {
         $ATTR_TO_CALLBACK{$value} = $1;
         return $val;
     }
 
-    if ($val =~ /^lai_pointer_t (lai_otdr_\w+_fn)$/)
+    if ($val =~ /^otai_pointer_t (otai_otdr_\w+_fn)$/)
     {
         $ATTR_TO_CALLBACK{$value} = $1;
         return $val;
     }
 
-    if ($val =~ /^lai_pointer_t (lai_ocm_\w+_fn)$/)
+    if ($val =~ /^otai_pointer_t (otai_ocm_\w+_fn)$/)
     {
         $ATTR_TO_CALLBACK{$value} = $1;
         return $val;
     }
 
-    LogError "invalid type tag value '$val' expected lai type or enum";
+    LogError "invalid type tag value '$val' expected otai type or enum";
 
     return undef;
 }
@@ -209,7 +209,7 @@ sub ProcessTagObjects
 
     for my $ot (@ots)
     {
-        if (not $ot =~ /^LAI_OBJECT_TYPE_\w+$/)
+        if (not $ot =~ /^OTAI_OBJECT_TYPE_\w+$/)
         {
             LogError "invalid objecttype tag value '$val' ($ot) in $type $value";
             return undef;
@@ -243,16 +243,16 @@ sub ProcessTagCondition
 
     for my $cond (@conditions)
     {
-        if (not $cond =~ /^(LAI_\w+) == (true|false|LAI_\w+|$NUMBER_REGEX)$/)
+        if (not $cond =~ /^(OTAI_\w+) == (true|false|OTAI_\w+|$NUMBER_REGEX)$/)
         {
-            LogError "invalid condition tag value '$val' ($cond), expected LAI_ENUM == true|false|LAI_ENUM|number";
+            LogError "invalid condition tag value '$val' ($cond), expected OTAI_ENUM == true|false|OTAI_ENUM|number";
             return undef;
         }
     }
 
     # if there is only one condition, then type does not matter
 
-    $type = "LAI_ATTR_CONDITION_TYPE_" . (($val =~ /and/) ? "AND" : "OR");
+    $type = "OTAI_ATTR_CONDITION_TYPE_" . (($val =~ /and/) ? "AND" : "OR");
 
     unshift @conditions, $type;
 
@@ -265,9 +265,9 @@ sub ProcessTagDefault
 
     return $val if $val =~ /^(empty|internal|vendor|const)/;
 
-    return $val if $val =~ /^(attrvalue) LAI_\w+_ATTR_\w+$/;
+    return $val if $val =~ /^(attrvalue) OTAI_\w+_ATTR_\w+$/;
 
-    return $val if $val =~ /^(true|false|NULL|LAI_\w+|$NUMBER_REGEX)$/ and not $val =~ /_ATTR_|OBJECT_TYPE/;
+    return $val if $val =~ /^(true|false|NULL|OTAI_\w+|$NUMBER_REGEX)$/ and not $val =~ /_ATTR_|OBJECT_TYPE/;
 
     return $val if $val =~ /^0\.0\.0\.0$/;
 
@@ -313,15 +313,15 @@ sub ProcessTagRange
 
     $value = Trim $value;
 
-    if (not $value =~ /^LAI_\w+$/)
+    if (not $value =~ /^OTAI_\w+$/)
     {
-        LogWarning "invalid range value: '$value', expected 'LAI_\\w+'";
+        LogWarning "invalid range value: '$value', expected 'OTAI_\\w+'";
         return "-1"
     }
 
     LogInfo "Creating range attrs $attrName .. MAX";
 
-    my $range = $LAI_DEFINES{$value};
+    my $range = $OTAI_DEFINES{$value};
 
     if (not defined $range or not $range =~ /^$NUMBER_REGEX$/)
     {
@@ -452,13 +452,13 @@ sub ProcessDefineSection
 
         my $name = $memberdef->{name}[0];
 
-        next if (not $name =~ /^LAI_\w+$/);
+        next if (not $name =~ /^OTAI_\w+$/);
 
         my $initializer = $memberdef->{initializer}[0];
 
         next if (not $initializer =~ /^(\(?".*"|$NUMBER_REGEX\)?)$/);
 
-        $LAI_DEFINES{$name} = $1;
+        $OTAI_DEFINES{$name} = $1;
 
         LogDebug "adding define $name = $initializer";
     }
@@ -476,9 +476,9 @@ sub ProcessEnumSection
 
         $enumtypename =~ s/^_//;
 
-        if (not $enumtypename =~ /^(lai_\w+_)t$/)
+        if (not $enumtypename =~ /^(otai_\w+_)t$/)
         {
-            LogWarning "enum $enumtypename is not prefixed lai_";
+            LogWarning "enum $enumtypename is not prefixed otai_";
             next;
         }
 
@@ -494,7 +494,7 @@ sub ProcessEnumSection
             $EXTENSIONS_ENUMS{$enumtypename} = "${enumprefix}_t";
         }
 
-        if (defined $LAI_ENUMS{$enumtypename})
+        if (defined $OTAI_ENUMS{$enumtypename})
         {
             LogError "duplicated enum $enumtypename";
             next;
@@ -502,11 +502,11 @@ sub ProcessEnumSection
 
         my $ed = ExtractDescription($enumtypename, $enumtypename, $memberdef->{detaileddescription}[0]);
 
-        $LAI_ENUMS{$enumtypename}{flagsenum} = ($ed =~ /\@\@flags/s) ? "true" : "false";
+        $OTAI_ENUMS{$enumtypename}{flagsenum} = ($ed =~ /\@\@flags/s) ? "true" : "false";
 
         my @arr = ();
 
-        $LAI_ENUMS{$enumtypename}{values} = \@arr;
+        $OTAI_ENUMS{$enumtypename}{values} = \@arr;
 
         for my $ev (@{ $memberdef->{enumvalue} })
         {
@@ -520,13 +520,13 @@ sub ProcessEnumSection
 
                 # process ignore attributes
 
-                if (not defined $LAI_ENUMS{$enumtypename}{ignoreval})
+                if (not defined $OTAI_ENUMS{$enumtypename}{ignoreval})
                 {
                     my @ignoreval = ();
-                    $LAI_ENUMS{$enumtypename}{ignoreval} = \@ignoreval;
+                    $OTAI_ENUMS{$enumtypename}{ignoreval} = \@ignoreval;
                 }
 
-                my $ref = $LAI_ENUMS{$enumtypename}{ignoreval};
+                my $ref = $OTAI_ENUMS{$enumtypename}{ignoreval};
                 push @$ref, $enumvaluename;
 
                 next;
@@ -545,12 +545,12 @@ sub ProcessEnumSection
         }
 
         # remove unnecessary attributes
-        my @values = @{ $LAI_ENUMS{$enumtypename}{values} };
+        my @values = @{ $OTAI_ENUMS{$enumtypename}{values} };
 
-        @values = grep(!/^LAI_\w+_(ATTR|STAT|RANGE)_(START|END)$/, @values);
-        @values = grep(!/^LAI_\w+(RANGE_BASE)$/, @values);
+        @values = grep(!/^OTAI_\w+_(ATTR|STAT|RANGE)_(START|END)$/, @values);
+        @values = grep(!/^OTAI_\w+(RANGE_BASE)$/, @values);
 
-        if ($enumtypename =~ /^(lai_\w+)_t$/)
+        if ($enumtypename =~ /^(otai_\w+)_t$/)
         {
             my $valuescount = @values;
 
@@ -559,7 +559,7 @@ sub ProcessEnumSection
             {
                 LogError "enum $enumtypename is empty, after removing suffixed entries _START/_END/_RANGE_BASE";
                 LogError "  those suffixes are reserved for range markers and are removed by metadata parser, don't use them";
-                LogError "  as actual part of valid enum name, take a look at lai_udf_group_type_t for valid usage";
+                LogError "  as actual part of valid enum name, take a look at otai_udf_group_type_t for valid usage";
                 next;
             }
 
@@ -575,9 +575,9 @@ sub ProcessEnumSection
             }
         }
 
-        $LAI_ENUMS{$enumtypename}{values} = \@values;
+        $OTAI_ENUMS{$enumtypename}{values} = \@values;
 
-        if ($enumtypename =~ /^(lai_(\w+)_stat_)t$/)
+        if ($enumtypename =~ /^(otai_(\w+)_stat_)t$/)
         {
             my $prefix = uc$1;
             for my $ev (@{ $memberdef->{enumvalue} })
@@ -591,7 +591,7 @@ sub ProcessEnumSection
         }
 
 
-        if (not $enumtypename =~ /^(lai_(\w+)_attr_(extensions_)?)t$/)
+        if (not $enumtypename =~ /^(otai_(\w+)_attr_(extensions_)?)t$/)
         {
             for my $ev (@{ $memberdef->{enumvalue} })
             {
@@ -607,15 +607,15 @@ sub ProcessEnumSection
 
         # ENUM ATTRIBUTES PROCESSED BELOW
 
-        # TODO put to LAI_ATTR_ENUMS
+        # TODO put to OTAI_ATTR_ENUMS
 
         my $prefix = uc$1;
 
         # remove unnecessary attributes
-        @values = @{ $LAI_ENUMS{$enumtypename}{values} };
+        @values = @{ $OTAI_ENUMS{$enumtypename}{values} };
         @values = grep(!/^${prefix}(CUSTOM_RANGE_|FIELD_|ACTION_)?(START|END)$/, @values);
 
-        $LAI_ENUMS{$enumtypename}{values} = \@values;
+        $OTAI_ENUMS{$enumtypename}{values} = \@values;
 
         # this is attribute
 
@@ -634,11 +634,11 @@ sub ProcessEnumSection
             if (defined $METADATA{$enumtypename}{$enumvaluename}{ignore})
             {
                 @values = grep(!/^$enumvaluename$/, @values);
-                $LAI_ENUMS{$enumtypename}{values} = \@values;
+                $OTAI_ENUMS{$enumtypename}{values} = \@values;
                 next;
             }
 
-            if ($enumvaluename =~ /^(LAI_\w+_)MIN$/)
+            if ($enumvaluename =~ /^(OTAI_\w+_)MIN$/)
             {
                 my $prefix = $1;
 
@@ -683,13 +683,13 @@ sub ProcessEnumSection
 
                 # update enum values (this could be done in previous step
 
-                my @values = @{ $LAI_ENUMS{$enumtypename}{values} };
+                my @values = @{ $OTAI_ENUMS{$enumtypename}{values} };
 
                 my ($index) = grep { $values[$_] =~ /^$enumvaluename$/ } 0..$#values;
 
                 splice @values, $index+1,0, @rangeElements;
 
-                $LAI_ENUMS{$enumtypename}{values} = \@values;
+                $OTAI_ENUMS{$enumtypename}{values} = \@values;
             }
         }
     }
@@ -710,7 +710,7 @@ sub ProcessPrimitiveTypedef
 {
     my ($typedeftype, $definition) = @_;
 
-    if (not $definition =~ /^typedef (u?int\d+_t) ((lai_\w+_t)(\[\d+\])?)$/)
+    if (not $definition =~ /^typedef (u?int\d+_t) ((otai_\w+_t)(\[\d+\])?)$/)
     {
         LogError("unrecognized primitive type: '$definition'");
         return;
@@ -753,7 +753,7 @@ sub ProcessTypedefSection
             next;
         }
 
-        if ($typedefname =~ /^lai_\w+_notification_fn$/)
+        if ($typedefname =~ /^otai_\w+_notification_fn$/)
         {
             if (not $typedeftype =~ /void\(\*/)
             {
@@ -769,17 +769,17 @@ sub ProcessTypedefSection
 
         next if not $typedeftype =~ /^enum/;
 
-        if (not defined $LAI_ENUMS{$typedefname})
+        if (not defined $OTAI_ENUMS{$typedefname})
         {
             LogError "enum $typedefname has no typedef enum $typedefname";
             next;
         }
 
-        next if not $typedefname =~ /^lai_(\w+)_attr_(extensions_)?t$/;
+        next if not $typedefname =~ /^otai_(\w+)_attr_(extensions_)?t$/;
 
         # this enum is attribute definition for object
 
-        $LAI_ENUMS{$typedefname}{objecttype} = "LAI_OBJECT_TYPE_" . uc($1);
+        $OTAI_ENUMS{$typedefname}{objecttype} = "OTAI_OBJECT_TYPE_" . uc($1);
     }
 }
 
@@ -827,7 +827,7 @@ sub ProcessNotificationObjects
 
     %objectTypes = %{ $previousTagValue } if defined $previousTagValue;
 
-    if (not $tagValue =~ /^(\w+)\s+(LAI_OBJECT_TYPE_\w+)$/g)
+    if (not $tagValue =~ /^(\w+)\s+(OTAI_OBJECT_TYPE_\w+)$/g)
     {
         LogError "invalid object type tag value '$tagValue' in $ntfName";
         return undef;
@@ -970,10 +970,10 @@ sub ProcessNotifications
 
         my $countType = $N{membersHash}->{$countParamName}{type};
 
-        if (not $countType =~ /^(uint32_t|lai_size_t)$/)
+        if (not $countType =~ /^(uint32_t|otai_size_t)$/)
         {
             LogWarning "param '$countParamName' used as count for param '$name' ($typedefname)";
-            LogWarning " is wrong type '$countType' allowed: (uint32_t|lai_size_t)";
+            LogWarning " is wrong type '$countType' allowed: (uint32_t|otai_size_t)";
         }
     }
 
@@ -982,7 +982,7 @@ sub ProcessNotifications
     $N{members} = \@Members;
     $N{ismethod} = 1;
 
-    $N{baseName} = $1 if $typedefname =~ /^lai_(\w+_notification)_fn$/;
+    $N{baseName} = $1 if $typedefname =~ /^otai_(\w+_notification)_fn$/;
 
     $NOTIFICATIONS{$typedefname} = \%N;
 }
@@ -1004,7 +1004,7 @@ sub ProcessXmlFile
         ProcessTypedefSection($section) if $section->{kind} eq "typedef";
 
     }
-    if ($file =~ /^xml\/lai_8h\.xml$/)
+    if ($file =~ /^xml\/otai_8h\.xml$/)
     {
         my $bd = ${$ref->{compounddef}[0]->{briefdescription}}[0];
         if (defined $bd->{para})
@@ -1012,8 +1012,8 @@ sub ProcessXmlFile
             my @para = @{ $bd->{para} };
             for my $p (@para)
             {
-               next if not $p =~ /^This module defines an entry point into LAI-(\d.\d+).$/;
-               $LAI_VER = $1;
+               next if not $p =~ /^This module defines an entry point into OTAI-(\d.\d+).$/;
+               $OTAI_VER = $1;
             }
         }
     }
@@ -1025,13 +1025,13 @@ sub ProcessSingleEnum
 
     $prefix =~ s/EXTENSIONS_$// if ($typedef =~ /_extensions_t$/);
 
-    my $enum = $LAI_ENUMS{$key};
+    my $enum = $OTAI_ENUMS{$key};
 
     my @values = @{$enum->{values}};
 
     my $flags = (defined $enum->{flagsenum}) ? $enum->{flagsenum} : "false";
 
-    WriteSource "const $typedef lai_metadata_${typedef}_enum_values[] = {";
+    WriteSource "const $typedef otai_metadata_${typedef}_enum_values[] = {";
 
     for my $value (@values)
     {
@@ -1045,7 +1045,7 @@ sub ProcessSingleEnum
     WriteSource "-1"; # guard
     WriteSource "};";
 
-    WriteSource "const char* const lai_metadata_${typedef}_enum_values_names[] = {";
+    WriteSource "const char* const otai_metadata_${typedef}_enum_values_names[] = {";
 
     for my $value (@values)
     {
@@ -1055,7 +1055,7 @@ sub ProcessSingleEnum
     WriteSource "NULL";
     WriteSource "};";
 
-    WriteSource "const char* const lai_metadata_${typedef}_enum_values_short_names[] = {";
+    WriteSource "const char* const otai_metadata_${typedef}_enum_values_short_names[] = {";
 
     for my $value (@values)
     {
@@ -1071,7 +1071,7 @@ sub ProcessSingleEnum
     {
         my @ignoreval = @{ $enum->{ignoreval} };
 
-        WriteSource "const $typedef lai_metadata_${typedef}_enum_ignore_values[] = {";
+        WriteSource "const $typedef otai_metadata_${typedef}_enum_ignore_values[] = {";
 
         for my $value (@ignoreval)
         {
@@ -1081,7 +1081,7 @@ sub ProcessSingleEnum
         WriteSource "-1"; # guard
         WriteSource "};";
 
-        WriteSource "const char* const lai_metadata_${typedef}_enum_ignore_values_names[] = {";
+        WriteSource "const char* const otai_metadata_${typedef}_enum_ignore_values_names[] = {";
 
         for my $value (@ignoreval)
         {
@@ -1094,20 +1094,20 @@ sub ProcessSingleEnum
 
     my $count = @values;
 
-    WriteHeader "extern const lai_enum_metadata_t lai_metadata_enum_$typedef;";
+    WriteHeader "extern const otai_enum_metadata_t otai_metadata_enum_$typedef;";
 
-    WriteSource "const lai_enum_metadata_t lai_metadata_enum_$typedef = {";
+    WriteSource "const otai_enum_metadata_t otai_metadata_enum_$typedef = {";
     WriteSource ".name              = \"${typedef}\",";
     WriteSource ".valuescount       = $count,";
-    WriteSource ".values            = (const int*)lai_metadata_${typedef}_enum_values,";
-    WriteSource ".valuesnames       = lai_metadata_${typedef}_enum_values_names,";
-    WriteSource ".valuesshortnames  = lai_metadata_${typedef}_enum_values_short_names,";
+    WriteSource ".values            = (const int*)otai_metadata_${typedef}_enum_values,";
+    WriteSource ".valuesnames       = otai_metadata_${typedef}_enum_values_names,";
+    WriteSource ".valuesshortnames  = otai_metadata_${typedef}_enum_values_short_names,";
     WriteSource ".containsflags     = $flags,";
 
     if (defined $enum->{ignoreval})
     {
-        WriteSource ".ignorevalues      = (const int*)lai_metadata_${typedef}_enum_ignore_values,";
-        WriteSource ".ignorevaluesnames = lai_metadata_${typedef}_enum_ignore_values_names,";
+        WriteSource ".ignorevalues      = (const int*)otai_metadata_${typedef}_enum_ignore_values,";
+        WriteSource ".ignorevaluesnames = otai_metadata_${typedef}_enum_ignore_values_names,";
     }
     else
     {
@@ -1136,15 +1136,15 @@ sub CreateMetadataHeaderAndSource
     WriteSource "#include <string.h>";
     WriteSource "#include <stdlib.h>";
     WriteSource "#include <stddef.h>";
-    WriteSource "#include \"laimetadata.h\"";
+    WriteSource "#include \"otaimetadata.h\"";
 
     WriteSectionComment "Enums metadata";
 
-    for my $key (sort keys %LAI_ENUMS)
+    for my $key (sort keys %OTAI_ENUMS)
     {
-        if (not $key =~ /^((lai_\w+_)t)$/)
+        if (not $key =~ /^((otai_\w+_)t)$/)
         {
-            LogWarning "Enum typedef $key is not matching LAI format";
+            LogWarning "Enum typedef $key is not matching OTAI format";
             next;
         }
 
@@ -1153,42 +1153,42 @@ sub CreateMetadataHeaderAndSource
 
     # all enums
 
-    WriteHeader "extern const lai_enum_metadata_t* const lai_metadata_all_enums[];";
-    WriteSource "const lai_enum_metadata_t* const lai_metadata_all_enums[] = {";
+    WriteHeader "extern const otai_enum_metadata_t* const otai_metadata_all_enums[];";
+    WriteSource "const otai_enum_metadata_t* const otai_metadata_all_enums[] = {";
 
-    for my $key (sort keys %LAI_ENUMS)
+    for my $key (sort keys %OTAI_ENUMS)
     {
-        if (not $key =~ /^((lai_\w+_)t)$/)
+        if (not $key =~ /^((otai_\w+_)t)$/)
         {
-            LogWarning "Enum typedef $key is not matching LAI format";
+            LogWarning "Enum typedef $key is not matching OTAI format";
             next;
         }
 
         my $typedef = $1;
 
-        WriteSource "&lai_metadata_enum_$typedef,";
+        WriteSource "&otai_metadata_enum_$typedef,";
     }
 
     WriteSource "NULL";
     WriteSource "};";
 
-    my $count = keys %LAI_ENUMS;
+    my $count = keys %OTAI_ENUMS;
 
-    WriteHeader "extern const size_t lai_metadata_all_enums_count;";
-    WriteSource "const size_t lai_metadata_all_enums_count = $count;";
+    WriteHeader "extern const size_t otai_metadata_all_enums_count;";
+    WriteSource "const size_t otai_metadata_all_enums_count = $count;";
 
-    WriteHeader "extern const lai_enum_metadata_t* const lai_metadata_attr_enums[];";
-    WriteSource "const lai_enum_metadata_t* const lai_metadata_attr_enums[] = {";
+    WriteHeader "extern const otai_enum_metadata_t* const otai_metadata_attr_enums[];";
+    WriteSource "const otai_enum_metadata_t* const otai_metadata_attr_enums[] = {";
 
     $count = 0;
 
-    for my $key (sort keys %LAI_ENUMS)
+    for my $key (sort keys %OTAI_ENUMS)
     {
-        next if not $key =~ /^(lai_\w+_attr_t)$/;
+        next if not $key =~ /^(otai_\w+_attr_t)$/;
 
         my $typedef = $1;
 
-        WriteSource "&lai_metadata_enum_$typedef,";
+        WriteSource "&otai_metadata_enum_$typedef,";
 
         $count++;
     }
@@ -1196,16 +1196,16 @@ sub CreateMetadataHeaderAndSource
     WriteSource "NULL";
     WriteSource "};";
 
-    WriteHeader "extern const size_t lai_metadata_attr_enums_count;";
-    WriteSource "const size_t lai_metadata_attr_enums_count = $count;";
+    WriteHeader "extern const size_t otai_metadata_attr_enums_count;";
+    WriteSource "const size_t otai_metadata_attr_enums_count = $count;";
 
     # attr enums as object types for sanity check
 
-    WriteSource "const lai_object_type_t lai_metadata_object_types[] = {";
+    WriteSource "const otai_object_type_t otai_metadata_object_types[] = {";
 
-    for my $key (sort keys %LAI_ENUMS)
+    for my $key (sort keys %OTAI_ENUMS)
     {
-        if (not $key =~ /^(lai_(\w+)_attr_t)$/)
+        if (not $key =~ /^(otai_(\w+)_attr_t)$/)
         {
             next;
         }
@@ -1213,7 +1213,7 @@ sub CreateMetadataHeaderAndSource
         my $typedef = $1;
         my $objtype = $2;
 
-        WriteSource "LAI_OBJECT_TYPE_" . uc($objtype). ",";
+        WriteSource "OTAI_OBJECT_TYPE_" . uc($objtype). ",";
     }
 
     WriteSource "-1";
@@ -1225,12 +1225,12 @@ sub ProcessStatUnit
     my ($stat, $unit) = @_;
     if (not defined $unit)
     {
-        return "LAI_STAT_VALUE_UNIT_NORMAL";
+        return "OTAI_STAT_VALUE_UNIT_NORMAL";
     }
-    return "LAI_STAT_VALUE_UNIT_DBM" if $unit eq "dBm";
-    return "LAI_STAT_VALUE_UNIT_DB" if $unit eq "dB";
+    return "OTAI_STAT_VALUE_UNIT_DBM" if $unit eq "dBm";
+    return "OTAI_STAT_VALUE_UNIT_DB" if $unit eq "dB";
 
-    return "LAI_STAT_VALUE_UNIT_NORMAL";
+    return "OTAI_STAT_VALUE_UNIT_NORMAL";
 }
 
 sub ProcessStatPrecision
@@ -1238,13 +1238,13 @@ sub ProcessStatPrecision
     my ($stat, $precision) = @_;
     if (not defined $precision)
     {
-        return "LAI_STAT_VALUE_PRECISION_0";
+        return "OTAI_STAT_VALUE_PRECISION_0";
     }
-    return "LAI_STAT_VALUE_PRECISION_1" if $precision eq "precision1";
-    return "LAI_STAT_VALUE_PRECISION_2" if $precision eq "precision2";
-    return "LAI_STAT_VALUE_PRECISION_18" if $precision eq "precision18";
+    return "OTAI_STAT_VALUE_PRECISION_1" if $precision eq "precision1";
+    return "OTAI_STAT_VALUE_PRECISION_2" if $precision eq "precision2";
+    return "OTAI_STAT_VALUE_PRECISION_18" if $precision eq "precision18";
 
-    return "LAI_STAT_VALUE_PRECISION_0";
+    return "OTAI_STAT_VALUE_PRECISION_0";
 }
 
 sub ProcessStatIsCounter
@@ -1266,14 +1266,14 @@ sub ProcessStatType
         return "";
     }
 
-    if ($type =~ /^(lai_\w+_t)$/)
+    if ($type =~ /^(otai_\w+_t)$/)
     {
-        my $prefix = "LAI_STAT_VALUE_TYPE";
+        my $prefix = "OTAI_STAT_VALUE_TYPE";
 
-        return "LAI_STAT_VALUE_TYPE_DOUBLE" if $1 eq "lai_double_t";
+        return "OTAI_STAT_VALUE_TYPE_DOUBLE" if $1 eq "otai_double_t";
         return "${prefix}_$VALUE_TYPES_TO_VT{$1}" if defined $VALUE_TYPES_TO_VT{$1};
 
-        if (not defined $LAI_ENUMS{$1})
+        if (not defined $OTAI_ENUMS{$1})
         {
             LogError "invalid enum specified '$type' on $stat";
             return "";
@@ -1298,7 +1298,7 @@ sub ProcessStatKebabName
     my ($stat, $type) = @_;
     my $kebab;
 
-    if ($stat =~ /^(LAI_\w+_STAT_)(\w+)$/) {
+    if ($stat =~ /^(OTAI_\w+_STAT_)(\w+)$/) {
         $kebab = lc $2;
         $kebab =~ s/_/-/g;
     }
@@ -1311,7 +1311,7 @@ sub ProcessStatCamelName
     my ($stat, $type) = @_;
     my $camel;
 
-    if ($stat =~ /^(LAI_\w+_STAT_)(\w+)$/) {
+    if ($stat =~ /^(OTAI_\w+_STAT_)(\w+)$/) {
         $camel = lc $2;
         $camel =~ s/(_|^)(.)/\u$2/g;
     }
@@ -1329,29 +1329,29 @@ sub ProcessType
         return "";
     }
 
-    if ($type =~ /^lai_s32_list_t (lai_\w+_t)$/)
+    if ($type =~ /^otai_s32_list_t (otai_\w+_t)$/)
     {
-        if (not defined $LAI_ENUMS{$1})
+        if (not defined $OTAI_ENUMS{$1})
         {
             LogError "invalid enum list specified '$type' on $attr";
             return "";
         }
 
-        return "LAI_ATTR_VALUE_TYPE_INT32_LIST";
+        return "OTAI_ATTR_VALUE_TYPE_INT32_LIST";
     }
 
-    if ($type eq "lai_double_t")
+    if ($type eq "otai_double_t")
     {
-        return "LAI_ATTR_VALUE_TYPE_DOUBLE";
+        return "OTAI_ATTR_VALUE_TYPE_DOUBLE";
     }
 
-    if ($type =~ /^(lai_\w+_t)$/)
+    if ($type =~ /^(otai_\w+_t)$/)
     {
-        my $prefix = "LAI_ATTR_VALUE_TYPE";
+        my $prefix = "OTAI_ATTR_VALUE_TYPE";
 
         return "${prefix}_$VALUE_TYPES_TO_VT{$1}" if defined $VALUE_TYPES_TO_VT{$1};
 
-        if (not defined $LAI_ENUMS{$1})
+        if (not defined $OTAI_ENUMS{$1})
         {
             LogError "invalid enum specified '$type' on $attr";
             return "";
@@ -1362,17 +1362,17 @@ sub ProcessType
 
     if ($type eq "bool")
     {
-        return "LAI_ATTR_VALUE_TYPE_BOOL";
+        return "OTAI_ATTR_VALUE_TYPE_BOOL";
     }
 
     if ($type eq "char")
     {
-        return "LAI_ATTR_VALUE_TYPE_CHARDATA";
+        return "OTAI_ATTR_VALUE_TYPE_CHARDATA";
     }
 
-    if ($type =~ /^lai_pointer_t lai_\w+_fn$/)
+    if ($type =~ /^otai_pointer_t otai_\w+_fn$/)
     {
-        return "LAI_ATTR_VALUE_TYPE_POINTER";
+        return "OTAI_ATTR_VALUE_TYPE_POINTER";
     }
 
     LogError "invalid type '$type' for $attr";
@@ -1391,9 +1391,9 @@ sub ProcessFlags
 
     my @flags = @{ $flags };
 
-    @flags = map {s/^/LAI_ATTR_FLAGS_/; $_; } @flags;
+    @flags = map {s/^/OTAI_ATTR_FLAGS_/; $_; } @flags;
 
-    return "(lai_attr_flags_t)(" . join("|",@flags) . ")";
+    return "(otai_attr_flags_t)(" . join("|",@flags) . ")";
 }
 
 sub ProcessAllowNull
@@ -1438,9 +1438,9 @@ sub ProcessObjects
 
     return "NULL" if not defined $objects;
 
-    WriteSource "const lai_object_type_t lai_metadata_${attr}_allowed_objects[] = {";
+    WriteSource "const otai_object_type_t otai_metadata_${attr}_allowed_objects[] = {";
 
-    my @all = @{ $LAI_ENUMS{lai_object_type_t}{values} };
+    my @all = @{ $OTAI_ENUMS{otai_object_type_t}{values} };
 
     for my $obj (@{ $objects })
     {
@@ -1456,7 +1456,7 @@ sub ProcessObjects
     WriteSource "-1"; # guard
     WriteSource "};";
 
-    return "lai_metadata_${attr}_allowed_objects";
+    return "otai_metadata_${attr}_allowed_objects";
 }
 
 sub ProcessObjectsLen
@@ -1474,27 +1474,27 @@ sub ProcessDefaultValueType
 {
     my ($attr, $default) = @_;
 
-    return "LAI_DEFAULT_VALUE_TYPE_NONE" if not defined $default;
+    return "OTAI_DEFAULT_VALUE_TYPE_NONE" if not defined $default;
 
-    return "LAI_DEFAULT_VALUE_TYPE_CONST" if $default =~ /^LAI_NULL_OBJECT_ID$/;
+    return "OTAI_DEFAULT_VALUE_TYPE_CONST" if $default =~ /^OTAI_NULL_OBJECT_ID$/;
 
-    return "LAI_DEFAULT_VALUE_TYPE_LINECARD_INTERNAL" if $default =~ /^internal$/;
+    return "OTAI_DEFAULT_VALUE_TYPE_LINECARD_INTERNAL" if $default =~ /^internal$/;
 
-    return "LAI_DEFAULT_VALUE_TYPE_CONST" if $default =~ /^(true|false|const|NULL|$NUMBER_REGEX|LAI_\w+)$/ and not $default =~ /_ATTR_|LAI_OBJECT_TYPE_/;
+    return "OTAI_DEFAULT_VALUE_TYPE_CONST" if $default =~ /^(true|false|const|NULL|$NUMBER_REGEX|OTAI_\w+)$/ and not $default =~ /_ATTR_|OTAI_OBJECT_TYPE_/;
 
-    return "LAI_DEFAULT_VALUE_TYPE_EMPTY_LIST" if $default =~ /^empty$/;
+    return "OTAI_DEFAULT_VALUE_TYPE_EMPTY_LIST" if $default =~ /^empty$/;
 
-    return "LAI_DEFAULT_VALUE_TYPE_VENDOR_SPECIFIC" if $default =~ /^vendor$/;
+    return "OTAI_DEFAULT_VALUE_TYPE_VENDOR_SPECIFIC" if $default =~ /^vendor$/;
 
-    return "LAI_DEFAULT_VALUE_TYPE_ATTR_VALUE" if $default =~ /^attrvalue LAI_\w+$/ and $default =~ /_ATTR_/;
+    return "OTAI_DEFAULT_VALUE_TYPE_ATTR_VALUE" if $default =~ /^attrvalue OTAI_\w+$/ and $default =~ /_ATTR_/;
 
-    return "LAI_DEFAULT_VALUE_TYPE_ATTR_RANGE" if $default =~ /^attrrange LAI_\w+$/ and $default =~ /_ATTR_/;
+    return "OTAI_DEFAULT_VALUE_TYPE_ATTR_RANGE" if $default =~ /^attrrange OTAI_\w+$/ and $default =~ /_ATTR_/;
 
-    return "LAI_DEFAULT_VALUE_TYPE_CONST" if $default =~ /^0\.0\.0\.0$/;
+    return "OTAI_DEFAULT_VALUE_TYPE_CONST" if $default =~ /^0\.0\.0\.0$/;
 
-    return "LAI_DEFAULT_VALUE_TYPE_CONST" if $default eq "disabled";
+    return "OTAI_DEFAULT_VALUE_TYPE_CONST" if $default eq "disabled";
 
-    return "LAI_DEFAULT_VALUE_TYPE_CONST" if $default eq "\"\"";
+    return "OTAI_DEFAULT_VALUE_TYPE_CONST" if $default eq "\"\"";
 
     LogError "invalid default value type '$default' on $attr";
 
@@ -1507,25 +1507,25 @@ sub ProcessDefaultValue
 
     return "NULL" if not defined $default;
 
-    my $val = "const lai_attribute_value_t lai_metadata_${attr}_default_value";
+    my $val = "const otai_attribute_value_t otai_metadata_${attr}_default_value";
 
     if ($default =~ /^(true|false)$/ and $type eq "bool")
     {
         WriteSource "$val = { .booldata = $default };";
     }
-    elsif ($default =~ /^LAI_NULL_OBJECT_ID$/ and $type =~ /^lai_object_id_t$/)
+    elsif ($default =~ /^OTAI_NULL_OBJECT_ID$/ and $type =~ /^otai_object_id_t$/)
     {
         WriteSource "$val = { .oid = $default };";
     }
-    elsif ($default =~ /^LAI_\w+$/ and $type =~ /^lai_\w+_t$/ and not defined $VALUE_TYPES{$type})
+    elsif ($default =~ /^OTAI_\w+$/ and $type =~ /^otai_\w+_t$/ and not defined $VALUE_TYPES{$type})
     {
         WriteSource "$val = { .s32 = $default };";
     }
-    elsif ($default =~ /^$NUMBER_REGEX$/ and $type =~ /^lai_u?int\d+_t/)
+    elsif ($default =~ /^$NUMBER_REGEX$/ and $type =~ /^otai_u?int\d+_t/)
     {
         WriteSource "$val = { .$VALUE_TYPES{$type} = $default };";
     }
-    elsif ($default =~ /^NULL$/ and $type =~ /^(lai_pointer_t) (lai_\w+_fn)$/)
+    elsif ($default =~ /^NULL$/ and $type =~ /^(otai_pointer_t) (otai_\w+_fn)$/)
     {
         WriteSource "$val = { .$VALUE_TYPES{$1} = $default };";
     }
@@ -1533,21 +1533,21 @@ sub ProcessDefaultValue
     {
         return "NULL";
     }
-    elsif ($default =~ /^NULL$/ and $type =~ /^lai_pointer_t/)
+    elsif ($default =~ /^NULL$/ and $type =~ /^otai_pointer_t/)
     {
-        LogError "missing typedef function in format 'lai_\\w+_fn' on $attr ($type)";
+        LogError "missing typedef function in format 'otai_\\w+_fn' on $attr ($type)";
     }
-    elsif ($default =~ /^0\.0\.0\.0$/ and $type =~ /^(lai_ip_address_t)/)
+    elsif ($default =~ /^0\.0\.0\.0$/ and $type =~ /^(otai_ip_address_t)/)
     {
         # ipv4 address needs to be converted to uint32 number so we support now only 0.0.0.0
 
-        WriteSource "$val = { .$VALUE_TYPES{$1} = { .addr_family = LAI_IP_ADDR_FAMILY_IPV4, .addr = { .ip4 = 0 } } };";
+        WriteSource "$val = { .$VALUE_TYPES{$1} = { .addr_family = OTAI_IP_ADDR_FAMILY_IPV4, .addr = { .ip4 = 0 } } };";
     }
     elsif ($default =~ /^""$/ and $type eq "char")
     {
         WriteSource "$val = { .chardata = { 0 } };";
     }
-    elsif ($default =~ /^0\.0\.0\.0$/ and $type =~ /^(lai_ip4_t)/)
+    elsif ($default =~ /^0\.0\.0\.0$/ and $type =~ /^(otai_ip4_t)/)
     {
         WriteSource "$val = { 0 };";
     }
@@ -1556,7 +1556,7 @@ sub ProcessDefaultValue
         LogError "invalid default value '$default' on $attr ($type)";
     }
 
-    return "&lai_metadata_${attr}_default_value";
+    return "&otai_metadata_${attr}_default_value";
 }
 
 sub ProcessDefaultValueObjectType
@@ -1565,9 +1565,9 @@ sub ProcessDefaultValueObjectType
 
     $value = "" if not defined $value;
 
-    return "LAI_OBJECT_TYPE_$2" if $value =~ /^(attrvalue|attrrange) LAI_(\w+)_ATTR_\w+$/;
+    return "OTAI_OBJECT_TYPE_$2" if $value =~ /^(attrvalue|attrrange) OTAI_(\w+)_ATTR_\w+$/;
 
-    return "LAI_OBJECT_TYPE_NULL";
+    return "OTAI_OBJECT_TYPE_NULL";
 }
 
 sub ProcessDefaultValueAttrId
@@ -1576,9 +1576,9 @@ sub ProcessDefaultValueAttrId
 
     $value = "" if not defined $value;
 
-    return $2 if $value =~ /^(attrvalue|attrrange) ((LAI_\w+)_ATTR_\w+)$/;
+    return $2 if $value =~ /^(attrvalue|attrrange) ((OTAI_\w+)_ATTR_\w+)$/;
 
-    return "LAI_INVALID_ATTRIBUTE_ID";
+    return "OTAI_INVALID_ATTRIBUTE_ID";
 }
 
 sub ProcessStoreDefaultValue
@@ -1610,7 +1610,7 @@ sub ProcessIsEnum
 
     return "false" if not defined $type;
 
-    return "true" if $type =~ /^lai_\w+_t$/ and not defined $VALUE_TYPES{$type};
+    return "true" if $type =~ /^otai_\w+_t$/ and not defined $VALUE_TYPES{$type};
 
     return "false";
 }
@@ -1621,7 +1621,7 @@ sub ProcessIsEnumList
 
     return "false" if not defined $type;
 
-    return "true" if $type =~ /^lai_s32_list_t lai_\w+_t$/;
+    return "true" if $type =~ /^otai_s32_list_t otai_\w+_t$/;
 
     return "false";
 }
@@ -1632,8 +1632,8 @@ sub ProcessEnumMetadata
 
     return "NULL" if not defined $type;
 
-    return "&lai_metadata_enum_$1" if $type =~ /^(lai_\w+_t)$/ and not defined $VALUE_TYPES{$type};
-    return "&lai_metadata_enum_$1" if $type =~ /^lai_s32_list_t (lai_\w+_t)$/;
+    return "&otai_metadata_enum_$1" if $type =~ /^(otai_\w+_t)$/ and not defined $VALUE_TYPES{$type};
+    return "&otai_metadata_enum_$1" if $type =~ /^otai_s32_list_t (otai_\w+_t)$/;
 
     return "NULL";
 }
@@ -1651,7 +1651,7 @@ sub ProcessConditionType
 {
     my ($attr, $value) = @_;
 
-    return "LAI_ATTR_CONDITION_TYPE_NONE" if not defined $value;
+    return "OTAI_ATTR_CONDITION_TYPE_NONE" if not defined $value;
 
     return @{$value}[0];
 }
@@ -1672,7 +1672,7 @@ sub ProcessConditionsGeneric
 
     for my $cond (@conditions)
     {
-        if (not $cond =~ /^(LAI_\w+) == (true|false|LAI_\w+|$NUMBER_REGEX)$/)
+        if (not $cond =~ /^(OTAI_\w+) == (true|false|OTAI_\w+|$NUMBER_REGEX)$/)
         {
             LogError "invalid condition '$cond' on $attr";
             return "";
@@ -1681,8 +1681,8 @@ sub ProcessConditionsGeneric
         my $attrid = $1;
         my $val = $2;
 
-        my $main_attr = $1 if $attr =~ /^LAI_(\w+?)_ATTR_/;
-        my $cond_attr = $1 if $attrid =~ /^LAI_(\w+?)_ATTR_/;
+        my $main_attr = $1 if $attr =~ /^OTAI_(\w+?)_ATTR_/;
+        my $cond_attr = $1 if $attrid =~ /^OTAI_(\w+?)_ATTR_/;
 
         if ($main_attr ne $cond_attr)
         {
@@ -1690,19 +1690,19 @@ sub ProcessConditionsGeneric
             return "";
         }
 
-        WriteSource "const lai_attr_condition_t lai_metadata_${name}_${attr}_$count = {";
+        WriteSource "const otai_attr_condition_t otai_metadata_${name}_${attr}_$count = {";
 
         if ($val eq "true" or $val eq "false")
         {
             WriteSource ".attrid = $attrid,";
             WriteSource ".condition = { .booldata = $val }";
         }
-        elsif ($val =~ /^LAI_/)
+        elsif ($val =~ /^OTAI_/)
         {
             WriteSource "    .attrid = $attrid,";
             WriteSource "    .condition = { .s32 = $val }";
 
-            my $attrType = lc("$1t") if $attrid =~ /^(LAI_\w+_ATTR_)/;
+            my $attrType = lc("$1t") if $attrid =~ /^(OTAI_\w+_ATTR_)/;
 
             my $enumTypeName = $METADATA{$attrType}{$attrid}{type};
 
@@ -1712,12 +1712,12 @@ sub ProcessConditionsGeneric
                 next;
             }
 
-            if (defined $LAI_ENUMS{$enumTypeName})
+            if (defined $OTAI_ENUMS{$enumTypeName})
             {
                 # this condition is enum condition, check if condition value
                 # belongs to that enum
 
-                my @values = @{ $LAI_ENUMS{$enumTypeName}{values} };
+                my @values = @{ $OTAI_ENUMS{$enumTypeName}{values} };
 
                 if (not grep( /^$val$/, @values))
                 {
@@ -1725,7 +1725,7 @@ sub ProcessConditionsGeneric
                 }
             }
         }
-        elsif ($val =~ /^$NUMBER_REGEX$/ and $enumtype =~ /^lai_u?int(\d+)_t$/)
+        elsif ($val =~ /^$NUMBER_REGEX$/ and $enumtype =~ /^otai_u?int(\d+)_t$/)
         {
             my $n = $1;
             my $item = ($enumtype =~ /uint/) ? "u$n" : "s$n";
@@ -1744,13 +1744,13 @@ sub ProcessConditionsGeneric
         $count++;
     }
 
-    WriteSource "const lai_attr_condition_t* const lai_metadata_${name}s_${attr}\[\] = {";
+    WriteSource "const otai_attr_condition_t* const otai_metadata_${name}s_${attr}\[\] = {";
 
     $count = 0;
 
     for my $cond (@conditions)
     {
-        WriteSource "&lai_metadata_${name}_${attr}_$count,";
+        WriteSource "&otai_metadata_${name}_${attr}_$count,";
 
         $count++;
     }
@@ -1758,7 +1758,7 @@ sub ProcessConditionsGeneric
     WriteSource "NULL";
     WriteSource "};";
 
-    return "lai_metadata_${name}s_${attr}";
+    return "otai_metadata_${name}s_${attr}";
 }
 
 sub ProcessConditions
@@ -1783,7 +1783,7 @@ sub ProcessValidOnlyType
 {
     my ($attr, $value) = @_;
 
-    return "LAI_ATTR_CONDITION_TYPE_NONE" if not defined $value;
+    return "OTAI_ATTR_CONDITION_TYPE_NONE" if not defined $value;
 
     return @{$value}[0];
 }
@@ -1845,7 +1845,7 @@ sub ProcessAttrKebabName
     my ($attr, $type) = @_;
     my $kebabname;
 
-    if ($attr =~ /^(LAI_\w+_ATTR_)(\w+)$/) {
+    if ($attr =~ /^(OTAI_\w+_ATTR_)(\w+)$/) {
         $kebabname = lc $2;
         $kebabname =~ s/_/-/g;
     }
@@ -1866,7 +1866,7 @@ sub ProcessNotificationType
 {
     my ($attr, $type) = @_;
 
-    return "LAI_LINECARD_NOTIFICATION_TYPE_$1" if $attr =~ /^LAI_LINECARD_ATTR_(\w+)_NOTIFY$/;
+    return "OTAI_LINECARD_NOTIFICATION_TYPE_$1" if $attr =~ /^OTAI_LINECARD_ATTR_(\w+)_NOTIFY$/;
 
     return "-1";
 }
@@ -1922,7 +1922,7 @@ sub ProcessCapability
 
         if (defined $CAP{$vid}{enumcapability})
         {
-            if (not $enummetadata =~ /lai_metadata_enum_((lai_\w+_)t)/)
+            if (not $enummetadata =~ /otai_metadata_enum_((otai_\w+_)t)/)
             {
                 LogError "enum capability defined on $attr, but attribute is not enum";
                 next;
@@ -1935,7 +1935,7 @@ sub ProcessCapability
 
             $enumcount = scalar @values;
 
-            WriteSource "const int lai_metadata_enumcapability_${attr}_$vid\[\] = {";
+            WriteSource "const int otai_metadata_enumcapability_${attr}_$vid\[\] = {";
 
             my %vals = ();
 
@@ -1953,7 +1953,7 @@ sub ProcessCapability
             WriteSource "   -1,";
             WriteSource "};";
 
-            $enumvalues = "lai_metadata_enumcapability_${attr}_$vid";
+            $enumvalues = "otai_metadata_enumcapability_${attr}_$vid";
         }
 
         if (not defined $CAP{$vid}{capability})
@@ -1962,7 +1962,7 @@ sub ProcessCapability
             next;
         }
 
-        WriteSource "const lai_attr_capability_metadata_t lai_metadata_attr_capability_${attr}_$count = {";
+        WriteSource "const otai_attr_capability_metadata_t otai_metadata_attr_capability_${attr}_$count = {";
 
         my %cap = ();
 
@@ -1990,13 +1990,13 @@ sub ProcessCapability
         $count++;
     }
 
-    WriteSource "const lai_attr_capability_metadata_t* const lai_metadata_attr_capability_${attr}\[\] = {";
+    WriteSource "const otai_attr_capability_metadata_t* const otai_metadata_attr_capability_${attr}\[\] = {";
 
     $count = 0;
 
     for my $vid (sort keys %CAP)
     {
-        WriteSource "    &lai_metadata_attr_capability_${attr}_$count,";
+        WriteSource "    &otai_metadata_attr_capability_${attr}_$count,";
 
         $count++;
     }
@@ -2005,7 +2005,7 @@ sub ProcessCapability
 
     WriteSource "};";
 
-    return "lai_metadata_attr_capability_$attr";
+    return "otai_metadata_attr_capability_$attr";
 }
 
 sub ProcessCapabilityLen
@@ -2030,7 +2030,7 @@ sub ProcessSingleObjectTypeStat
 {
     my ($typedef, $objecttype) = @_;
 
-    my $enum = $LAI_ENUMS{$typedef};
+    my $enum = $OTAI_ENUMS{$typedef};
 
     my @values = @{ $enum->{values} };
 
@@ -2054,7 +2054,7 @@ sub ProcessSingleObjectTypeStat
         my $kebabname       = ProcessStatKebabName($stat, $meta{type});
         my $camelname       = ProcessStatCamelName($stat, $meta{type});
 
-        WriteSource "const lai_stat_metadata_t lai_metadata_stat_$stat = {";
+        WriteSource "const otai_stat_metadata_t otai_metadata_stat_$stat = {";
 
         WriteSource ".objecttype                    = $objecttype,";
         WriteSource ".statid                        = $stat,";
@@ -2073,7 +2073,7 @@ sub ProcessSingleObjectType
 {
     my ($typedef, $objecttype) = @_;
 
-    my $enum = $LAI_ENUMS{$typedef};
+    my $enum = $OTAI_ENUMS{$typedef};
 
     my @values = @{ $enum->{values} };
 
@@ -2135,7 +2135,7 @@ sub ProcessSingleObjectType
 
         my $kebabname           = ProcessAttrKebabName($attr, $meta{type});
 
-        WriteSource "const lai_attr_metadata_t lai_metadata_attr_$attr = {";
+        WriteSource "const otai_attr_metadata_t otai_metadata_attr_$attr = {";
 
         WriteSource ".objecttype                    = $objecttype,";
         WriteSource ".attrid                        = $attr,";
@@ -2196,14 +2196,14 @@ sub CheckEnumNaming
 {
     my ($attr, $type) = @_;
 
-    LogError "can't match lai type on '$type'" if not $type =~ /.*lai_(\w+)_t/;
+    LogError "can't match otai type on '$type'" if not $type =~ /.*otai_(\w+)_t/;
 
     my $enumTypeName = uc($1);
 
     return if $attr =~ /_${enumTypeName}_LIST$/;
     return if $attr =~ /_$enumTypeName$/;
 
-    $attr =~ /LAI_(\w+?)_ATTR(_\w+?)(_LIST)?$/;
+    $attr =~ /OTAI_(\w+?)_ATTR(_\w+?)(_LIST)?$/;
 
     my $attrObjectType = $1;
     my $attrSuffix = $2;
@@ -2214,8 +2214,8 @@ sub CheckEnumNaming
 
         return if $attrSuffix =~ /_$enumTypeNameSuffix$/;
 
-        return if $attr eq "LAI_TRANSCEIVER_ATTR_ETHERNET_PMD_PRECONF";
-        return if $attr eq "LAI_ETHERNET_ATTR_CLIENT_RX_ALS";
+        return if $attr eq "OTAI_TRANSCEIVER_ATTR_ETHERNET_PMD_PRECONF";
+        return if $attr eq "OTAI_ETHERNET_ATTR_CLIENT_RX_ALS";
 
         LogError "attr = $attr, type = $type";
         LogError "enum starts by object type $attrObjectType but not ending on $enumTypeNameSuffix in $enumTypeName";
@@ -2226,19 +2226,19 @@ sub CheckEnumNaming
 
 sub CreateMetadata
 {
-    for my $key (sort keys %LAI_ENUMS)
+    for my $key (sort keys %OTAI_ENUMS)
     {
-        if ($key =~ /^(lai_(\w+)_attr_t)$/)
+        if ($key =~ /^(otai_(\w+)_attr_t)$/)
         {
             my $typedef = $1;
-            my $objtype = "LAI_OBJECT_TYPE_" . uc($2);
+            my $objtype = "OTAI_OBJECT_TYPE_" . uc($2);
 
             ProcessSingleObjectType($typedef, $objtype);
         }
-        elsif ($key =~ /^(lai_(\w+)_stat_t)$/)
+        elsif ($key =~ /^(otai_(\w+)_stat_t)$/)
         {
             my $typedef = $1;
-            my $objtype = "LAI_OBJECT_TYPE_" . uc($2);
+            my $objtype = "OTAI_OBJECT_TYPE_" . uc($2);
 
             ProcessSingleObjectTypeStat($typedef, $objtype);
         }
@@ -2247,30 +2247,30 @@ sub CreateMetadata
 
 sub ProcessLaiStatus
 {
-    my $filename = "../inc/laistatus.h";
+    my $filename = "../inc/otaistatus.h";
 
     open(my $fh, '<', $filename) or die "Could not open file '$filename' $!";
 
     my @values = ();
 
-    WriteSectionComment "Extra LAI statuses";
+    WriteSectionComment "Extra OTAI statuses";
 
     while (my $line = <$fh>)
     {
-        next if not $line =~ /define\s+(LAI_STATUS_\w+).+(0x00\w+)/;
+        next if not $line =~ /define\s+(OTAI_STATUS_\w+).+(0x00\w+)/;
 
         my $status = $1;
         my $base = $2;
 
         push@values,$status;
 
-        next if not ($status =~ /(LAI_\w+)_0$/);
+        next if not ($status =~ /(OTAI_\w+)_0$/);
 
         for my $idx (1..10)
         {
             $status = "$1_$idx";
 
-            WriteHeader "#define $status  LAI_STATUS_CODE(($base + ${idx}))";
+            WriteHeader "#define $status  OTAI_STATUS_CODE(($base + ${idx}))";
 
             push@values,$status;
         }
@@ -2278,61 +2278,61 @@ sub ProcessLaiStatus
 
     close $fh;
 
-    $LAI_ENUMS{"lai_status_t"}{values} = \@values;
-    $LAI_ENUMS{"lai_status_t"}{flagsenum} = "true";
+    $OTAI_ENUMS{"otai_status_t"}{values} = \@values;
+    $OTAI_ENUMS{"otai_status_t"}{flagsenum} = "true";
 }
 
 sub CreateMetadataForStatistics
 {
-    my @objects = @{ $LAI_ENUMS{lai_object_type_t}{values} };
+    my @objects = @{ $OTAI_ENUMS{otai_object_type_t}{values} };
 
     for my $ot (@objects)
     {
 
-        if (not $ot =~ /^LAI_OBJECT_TYPE_(\w+)$/)
+        if (not $ot =~ /^OTAI_OBJECT_TYPE_(\w+)$/)
         {
             LogError "invalid obejct type '$ot'";
             next;
         }
 
-        my $type = "lai_" . lc($1) . "_stat_t";
+        my $type = "otai_" . lc($1) . "_stat_t";
 
-        if (not defined $LAI_ENUMS{$type})
+        if (not defined $OTAI_ENUMS{$type})
         {
             my @empty = ();
 
-            $LAI_ENUMS{$type}{values} = \@empty;
+            $OTAI_ENUMS{$type}{values} = \@empty;
         }
 
-        WriteSource "const lai_stat_metadata_t* const lai_metadata_stat_object_type_$type\[\] = {";
+        WriteSource "const otai_stat_metadata_t* const otai_metadata_stat_object_type_$type\[\] = {";
 
-        my @values = @{ $LAI_ENUMS{$type}{values} };
+        my @values = @{ $OTAI_ENUMS{$type}{values} };
 
         for my $value (@values)
         {
             next if defined $METADATA{$type}{$value}{ignore};
 
-            WriteSource "&lai_metadata_stat_$value,";
+            WriteSource "&otai_metadata_stat_$value,";
         }
 
         WriteSource "NULL";
         WriteSource "};";
     }
 
-    WriteHeader "extern const lai_stat_metadata_t* const* const lai_metadata_stat_by_object_type[];";
-    WriteSource "const lai_stat_metadata_t* const* const lai_metadata_stat_by_object_type[] = {";
+    WriteHeader "extern const otai_stat_metadata_t* const* const otai_metadata_stat_by_object_type[];";
+    WriteSource "const otai_stat_metadata_t* const* const otai_metadata_stat_by_object_type[] = {";
 
     for my $ot (@objects)
     {
-        if (not $ot =~ /^LAI_OBJECT_TYPE_(\w+)$/)
+        if (not $ot =~ /^OTAI_OBJECT_TYPE_(\w+)$/)
         {
             LogError "invalid obejct type '$ot'";
             next;
         }
 
-        my $type = "lai_" . lc($1) . "_stat_t";
+        my $type = "otai_" . lc($1) . "_stat_t";
 
-        WriteSource "lai_metadata_stat_object_type_$type,";
+        WriteSource "otai_metadata_stat_object_type_$type,";
     }
 
     WriteSource "NULL";
@@ -2340,61 +2340,61 @@ sub CreateMetadataForStatistics
 
     my $count = @objects;
 
-    WriteHeader "extern const size_t lai_metadata_stat_by_object_type_count;";
-    WriteSource "const size_t lai_metadata_stat_by_object_type_count = $count;";
+    WriteHeader "extern const size_t otai_metadata_stat_by_object_type_count;";
+    WriteSource "const size_t otai_metadata_stat_by_object_type_count = $count;";
 }
 
 sub CreateMetadataForAttributes
 {
-    my @objects = @{ $LAI_ENUMS{lai_object_type_t}{values} };
+    my @objects = @{ $OTAI_ENUMS{otai_object_type_t}{values} };
 
     for my $ot (@objects)
     {
 
-        if (not $ot =~ /^LAI_OBJECT_TYPE_(\w+)$/)
+        if (not $ot =~ /^OTAI_OBJECT_TYPE_(\w+)$/)
         {
             LogError "invalid obejct type '$ot'";
             next;
         }
 
-        my $type = "lai_" . lc($1) . "_attr_t";
+        my $type = "otai_" . lc($1) . "_attr_t";
 
-        if (not defined $LAI_ENUMS{$type})
+        if (not defined $OTAI_ENUMS{$type})
         {
             my @empty = ();
 
-            $LAI_ENUMS{$type}{values} = \@empty;
+            $OTAI_ENUMS{$type}{values} = \@empty;
         }
 
-        WriteSource "const lai_attr_metadata_t* const lai_metadata_object_type_$type\[\] = {";
+        WriteSource "const otai_attr_metadata_t* const otai_metadata_object_type_$type\[\] = {";
 
-        my @values = @{ $LAI_ENUMS{$type}{values} };
+        my @values = @{ $OTAI_ENUMS{$type}{values} };
 
         for my $value (@values)
         {
             next if defined $METADATA{$type}{$value}{ignore};
 
-            WriteSource "&lai_metadata_attr_$value,";
+            WriteSource "&otai_metadata_attr_$value,";
         }
 
         WriteSource "NULL";
         WriteSource "};";
     }
 
-    WriteHeader "extern const lai_attr_metadata_t* const* const lai_metadata_attr_by_object_type[];";
-    WriteSource "const lai_attr_metadata_t* const* const lai_metadata_attr_by_object_type[] = {";
+    WriteHeader "extern const otai_attr_metadata_t* const* const otai_metadata_attr_by_object_type[];";
+    WriteSource "const otai_attr_metadata_t* const* const otai_metadata_attr_by_object_type[] = {";
 
     for my $ot (@objects)
     {
-        if (not $ot =~ /^LAI_OBJECT_TYPE_(\w+)$/)
+        if (not $ot =~ /^OTAI_OBJECT_TYPE_(\w+)$/)
         {
             LogError "invalid obejct type '$ot'";
             next;
         }
 
-        my $type = "lai_" . lc($1) . "_attr_t";
+        my $type = "otai_" . lc($1) . "_attr_t";
 
-        WriteSource "lai_metadata_object_type_$type,";
+        WriteSource "otai_metadata_object_type_$type,";
     }
 
     WriteSource "NULL";
@@ -2402,27 +2402,27 @@ sub CreateMetadataForAttributes
 
     my $count = @objects;
 
-    WriteHeader "extern const size_t lai_metadata_attr_by_object_type_count;";
-    WriteSource "const size_t lai_metadata_attr_by_object_type_count = $count;";
+    WriteHeader "extern const size_t otai_metadata_attr_by_object_type_count;";
+    WriteSource "const size_t otai_metadata_attr_by_object_type_count = $count;";
 
-    WriteSectionComment "Define LAI_OBJECT_TYPE_EXTENSIONS_MAX";
+    WriteSectionComment "Define OTAI_OBJECT_TYPE_EXTENSIONS_MAX";
 
-    WriteHeader "#define LAI_OBJECT_TYPE_EXTENSIONS_MAX ((lai_object_type_t)$count)";
+    WriteHeader "#define OTAI_OBJECT_TYPE_EXTENSIONS_MAX ((otai_object_type_t)$count)";
 }
 
 sub CreateEnumHelperMethod
 {
     my $key = shift;
 
-    return if not $key =~ /^lai_(\w+)_t/;
+    return if not $key =~ /^otai_(\w+)_t/;
 
-    WriteSource "const char* lai_metadata_get_$1_name(";
+    WriteSource "const char* otai_metadata_get_$1_name(";
     WriteSource "_In_ $key value)";
     WriteSource "{";
-    WriteSource "return lai_metadata_get_enum_value_name(&lai_metadata_enum_$key, value);";
+    WriteSource "return otai_metadata_get_enum_value_name(&otai_metadata_enum_$key, value);";
     WriteSource "}";
 
-    WriteHeader "extern const char* lai_metadata_get_$1_name(";
+    WriteHeader "extern const char* otai_metadata_get_$1_name(";
     WriteHeader "_In_ $key value);\n";
 }
 
@@ -2430,7 +2430,7 @@ sub CreateEnumHelperMethods
 {
     WriteSectionComment "Get enum name helper methods";
 
-    for my $key (sort keys %LAI_ENUMS)
+    for my $key (sort keys %OTAI_ENUMS)
     {
         next if $key =~ /_attr_(extensions_)?t$/;
 
@@ -2453,14 +2453,14 @@ sub ProcessStructValueType
 {
     my $type = shift;
 
-    return "LAI_ATTR_VALUE_TYPE_OBJECT_ID"      if $type eq "lai_object_id_t";
-    return "LAI_ATTR_VALUE_TYPE_UINT32"         if $type eq "lai_label_id_t";
-    return "LAI_ATTR_VALUE_TYPE_UINT32"         if $type eq "uint32_t";
-    return "LAI_ATTR_VALUE_TYPE_INT32"          if $type =~ /^lai_\w+_type_t$/; # enum
-    return "LAI_ATTR_VALUE_TYPE_BOOL"           if $type eq "bool";
-    return "LAI_ATTR_VALUE_TYPE_INT32"          if defined $LAI_ENUMS{$type}; # enum
+    return "OTAI_ATTR_VALUE_TYPE_OBJECT_ID"      if $type eq "otai_object_id_t";
+    return "OTAI_ATTR_VALUE_TYPE_UINT32"         if $type eq "otai_label_id_t";
+    return "OTAI_ATTR_VALUE_TYPE_UINT32"         if $type eq "uint32_t";
+    return "OTAI_ATTR_VALUE_TYPE_INT32"          if $type =~ /^otai_\w+_type_t$/; # enum
+    return "OTAI_ATTR_VALUE_TYPE_BOOL"           if $type eq "bool";
+    return "OTAI_ATTR_VALUE_TYPE_INT32"          if defined $OTAI_ENUMS{$type}; # enum
 
-    return "-1"                                 if $type eq "lai_attribute_t*";
+    return "-1"                                 if $type eq "otai_attribute_t*";
 
     LogError "invalid struct member value type $type";
 
@@ -2471,7 +2471,7 @@ sub ProcessStructIsVlan
 {
     my $type = shift;
 
-    return "true" if $type eq "lai_vlan_id_t";
+    return "true" if $type eq "otai_vlan_id_t";
 
     return "false";
 }
@@ -2482,9 +2482,9 @@ sub ProcessStructObjects
 
     my $type = $struct->{type};
 
-    return "NULL" if not $type eq "lai_object_id_t" and not $type eq "lai_attribute_t*";
+    return "NULL" if not $type eq "otai_object_id_t" and not $type eq "otai_attribute_t*";
 
-    WriteSource "const lai_object_type_t lai_metadata_struct_member_lai_${rawname}_t_${key}_allowed_objects[] = {";
+    WriteSource "const otai_object_type_t otai_metadata_struct_member_otai_${rawname}_t_${key}_allowed_objects[] = {";
 
     my $objects = $struct->{objects};
 
@@ -2497,7 +2497,7 @@ sub ProcessStructObjects
 
     WriteSource "};";
 
-    return "lai_metadata_struct_member_lai_${rawname}_t_${key}_allowed_objects";
+    return "otai_metadata_struct_member_otai_${rawname}_t_${key}_allowed_objects";
 }
 
 sub ProcessStructObjectLen
@@ -2506,7 +2506,7 @@ sub ProcessStructObjectLen
 
     my $type = $struct->{type};
 
-    return 0 if not $type eq "lai_object_id_t" and not $type eq "lai_attribute_t*";
+    return 0 if not $type eq "otai_object_id_t" and not $type eq "otai_attribute_t*";
 
     my @objects = @{ $struct->{objects} };
 
@@ -2519,8 +2519,8 @@ sub ProcessStructEnumData
 {
     my $type = shift;
 
-    return "&lai_metadata_enum_$type" if defined $LAI_ENUMS{$type};
-    return "&lai_metadata_enum_$type" if $type =~ /^lai_\w+_type_t$/; # enum
+    return "&otai_metadata_enum_$type" if defined $OTAI_ENUMS{$type};
+    return "&otai_metadata_enum_$type" if $type =~ /^otai_\w+_type_t$/; # enum
 
     return "NULL";
 }
@@ -2529,8 +2529,8 @@ sub ProcessStructIsEnum
 {
     my $type = shift;
 
-    return "true" if defined $LAI_ENUMS{$type};
-    return "true" if $type =~ /^lai_\w+_type_t$/; # enum
+    return "true" if defined $OTAI_ENUMS{$type};
+    return "true" if $type =~ /^otai_\w+_type_t$/; # enum
 
     return "false";
 }
@@ -2539,14 +2539,14 @@ sub ProcessStructGetOid
 {
     my ($type, $key, $rawname, $any) = @_;
 
-    return "NULL" if $type ne "lai_object_id_t";
+    return "NULL" if $type ne "otai_object_id_t";
 
-    my $fname = "lai_metadata_struct_member_get_lai_${rawname}_t_${key}";
+    my $fname = "otai_metadata_struct_member_get_otai_${rawname}_t_${key}";
 
     return "NULL" if (defined $any);
 
-    WriteSource "lai_object_id_t $fname(";
-    WriteSource "_In_ const lai_object_meta_key_t *object_meta_key)";
+    WriteSource "otai_object_id_t $fname(";
+    WriteSource "_In_ const otai_object_meta_key_t *object_meta_key)";
     WriteSource "{";
     WriteSource "return object_meta_key->objectkey.key.${rawname}.${key};";
     WriteSource "}";
@@ -2558,15 +2558,15 @@ sub ProcessStructSetOid
 {
     my ($type, $key, $rawname, $any) = @_;
 
-    return "NULL" if $type ne "lai_object_id_t";
+    return "NULL" if $type ne "otai_object_id_t";
 
-    my $fname = "lai_metadata_struct_member_set_lai_${rawname}_t_${key}";
+    my $fname = "otai_metadata_struct_member_set_otai_${rawname}_t_${key}";
 
     return "NULL" if (defined $any);
 
     WriteSource "void $fname(";
-    WriteSource "_Inout_ lai_object_meta_key_t *object_meta_key,";
-    WriteSource "_In_ lai_object_id_t oid)";
+    WriteSource "_Inout_ otai_object_meta_key_t *object_meta_key,";
+    WriteSource "_In_ otai_object_id_t oid)";
     WriteSource "{";
     WriteSource "object_meta_key->objectkey.key.${rawname}.${key} = oid;";
     WriteSource "}";
@@ -2578,7 +2578,7 @@ sub ProcessStructOffset
 {
     my ($type, $key, $rawname) = @_;
 
-    return "offsetof(lai_${rawname}_t,$key)";
+    return "offsetof(otai_${rawname}_t,$key)";
 }
 
 sub ProcessStructSize
@@ -2613,7 +2613,7 @@ sub ProcessStructMembers
         my $offset      = ProcessStructOffset($struct->{$key}{type}, $key, $rawname);
         my $size        = ProcessStructSize($struct->{$key}{type}, $key, $rawname);
 
-        WriteSource "const lai_struct_member_info_t lai_metadata_struct_member_lai_${rawname}_t_$key = {";
+        WriteSource "const otai_struct_member_info_t otai_metadata_struct_member_otai_${rawname}_t_$key = {";
 
         WriteSource ".membervaluetype           = $valuetype,";
         WriteSource ".membername                = \"$key\",";
@@ -2632,21 +2632,21 @@ sub ProcessStructMembers
 
         if ($objectlen > 0 and not $key =~ /_id$/ and not defined $any)
         {
-            LogWarning "struct member key '$key' should end at _id in lai_${rawname}_t";
+            LogWarning "struct member key '$key' should end at _id in otai_${rawname}_t";
         }
     }
 
-    WriteSource "const lai_struct_member_info_t* const lai_metadata_struct_members_lai_${rawname}_t[] = {";
+    WriteSource "const otai_struct_member_info_t* const otai_metadata_struct_members_otai_${rawname}_t[] = {";
 
     for my $key (@keys)
     {
-        WriteSource "&lai_metadata_struct_member_lai_${rawname}_t_$key,";
+        WriteSource "&otai_metadata_struct_member_otai_${rawname}_t_$key,";
     }
 
     WriteSource "NULL";
     WriteSource "};";
 
-    return "lai_metadata_struct_members_lai_${rawname}_t";
+    return "otai_metadata_struct_members_otai_${rawname}_t";
 }
 
 sub ProcessStructMembersCount
@@ -2697,30 +2697,30 @@ sub ProcessRevGraph
     {
         my ($depObjectType, $attrId) = split/,/,$dep;
 
-        my $membername = "lai_metadata_${objectType}_rev_graph_member_$index";
+        my $membername = "otai_metadata_${objectType}_rev_graph_member_$index";
 
         push@membernames,$membername;
 
-        WriteSource "const lai_rev_graph_member_t $membername = {";
+        WriteSource "const otai_rev_graph_member_t $membername = {";
 
         WriteSource ".objecttype          = $objectType,";
         WriteSource ".depobjecttype       = $depObjectType,";
 
-        if ($attrId =~ /^LAI_\w+_ATTR_\w+/)
+        if ($attrId =~ /^OTAI_\w+_ATTR_\w+/)
         {
             # this is attribute
 
-            WriteSource ".attrmetadata        = &lai_metadata_attr_$attrId,";
+            WriteSource ".attrmetadata        = &otai_metadata_attr_$attrId,";
             WriteSource ".structmember        = NULL,";
         }
         else
         {
             # this is struct member inside non object id struct
 
-            my $DEPOT = lc ($1) if $depObjectType =~ /LAI_OBJECT_TYPE_(\w+)/;
+            my $DEPOT = lc ($1) if $depObjectType =~ /OTAI_OBJECT_TYPE_(\w+)/;
 
             WriteSource ".attrmetadata        = NULL,";
-            WriteSource ".structmember        = &lai_metadata_struct_member_lai_${DEPOT}_t_$attrId,";
+            WriteSource ".structmember        = &otai_metadata_struct_member_otai_${DEPOT}_t_$attrId,";
         }
 
         WriteSource "};";
@@ -2728,7 +2728,7 @@ sub ProcessRevGraph
         $index++;
     }
 
-    WriteSource "const lai_rev_graph_member_t* const lai_metadata_${objectType}_rev_graph_members[] = {";
+    WriteSource "const otai_rev_graph_member_t* const otai_metadata_${objectType}_rev_graph_members[] = {";
 
     for my $mn (@membernames)
     {
@@ -2739,7 +2739,7 @@ sub ProcessRevGraph
 
     WriteSource "};";
 
-    return "lai_metadata_${objectType}_rev_graph_members";
+    return "otai_metadata_${objectType}_rev_graph_members";
 }
 
 sub ProcessRevGraphCount
@@ -2753,11 +2753,11 @@ sub ProcessRevGraphCount
 
 sub CreateStructNonObjectId
 {
-    my @objects = @{ $LAI_ENUMS{lai_object_type_t}{values} };
+    my @objects = @{ $OTAI_ENUMS{otai_object_type_t}{values} };
 
     for my $ot (@objects)
     {
-        if (not $ot =~ /^LAI_OBJECT_TYPE_(\w+)$/)
+        if (not $ot =~ /^OTAI_OBJECT_TYPE_(\w+)$/)
         {
             LogError "invalid obejct type '$ot'";
             next;
@@ -2765,9 +2765,9 @@ sub CreateStructNonObjectId
 
         next if $1 eq "NULL" or $1 eq "MAX";
 
-        my $type = "lai_" . lc($1) . "_attr_t";
+        my $type = "otai_" . lc($1) . "_attr_t";
 
-        my $enum  = "&lai_metadata_enum_${type}";
+        my $enum  = "&otai_metadata_enum_${type}";
 
         my $struct = $NON_OBJECT_ID_STRUCTS{$ot};
 
@@ -2781,7 +2781,7 @@ sub ProcessStructMembersName
 
     return "NULL" if not defined $struct;
 
-    return "lai_metadata_struct_members_lai_${rawname}_t";
+    return "otai_metadata_struct_members_otai_${rawname}_t";
 }
 
 sub ProcessCreate
@@ -2789,36 +2789,36 @@ sub ProcessCreate
     my $struct = shift;
     my $ot = shift;
 
-    my $small = lc($1) if $ot =~ /LAI_OBJECT_TYPE_(\w+)/;
+    my $small = lc($1) if $ot =~ /OTAI_OBJECT_TYPE_(\w+)/;
 
     my $api = $OBJTOAPIMAP{$ot};
 
-    WriteSource "lai_status_t lai_metadata_generic_create_$ot(";
-    WriteSource "_Inout_ lai_object_meta_key_t *meta_key,";
-    WriteSource "_In_ lai_object_id_t linecard_id,";
+    WriteSource "otai_status_t otai_metadata_generic_create_$ot(";
+    WriteSource "_Inout_ otai_object_meta_key_t *meta_key,";
+    WriteSource "_In_ otai_object_id_t linecard_id,";
     WriteSource "_In_ uint32_t attr_count,";
-    WriteSource "_In_ const lai_attribute_t *attr_list)";
+    WriteSource "_In_ const otai_attribute_t *attr_list)";
     WriteSource "{";
 
     if (not defined $struct)
     {
         if ($small eq "linecard")
         {
-            WriteSource "return lai_metadata_lai_${api}_api->create_$small(&meta_key->objectkey.key.object_id, attr_count, attr_list);";
+            WriteSource "return otai_metadata_otai_${api}_api->create_$small(&meta_key->objectkey.key.object_id, attr_count, attr_list);";
         }
         else
         {
-            WriteSource "return lai_metadata_lai_${api}_api->create_$small(&meta_key->objectkey.key.object_id, linecard_id, attr_count, attr_list);";
+            WriteSource "return otai_metadata_otai_${api}_api->create_$small(&meta_key->objectkey.key.object_id, linecard_id, attr_count, attr_list);";
         }
     }
     else
     {
-        WriteSource "return lai_metadata_lai_${api}_api->create_$small(&meta_key->objectkey.key.$small, attr_count, attr_list);";
+        WriteSource "return otai_metadata_otai_${api}_api->create_$small(&meta_key->objectkey.key.$small, attr_count, attr_list);";
     }
 
     WriteSource "}";
 
-    return "lai_metadata_generic_create_$ot";
+    return "otai_metadata_generic_create_$ot";
 }
 
 sub ProcessRemove
@@ -2826,26 +2826,26 @@ sub ProcessRemove
     my $struct = shift;
     my $ot = shift;
 
-    my $small = lc($1) if $ot =~ /LAI_OBJECT_TYPE_(\w+)/;
+    my $small = lc($1) if $ot =~ /OTAI_OBJECT_TYPE_(\w+)/;
 
     my $api = $OBJTOAPIMAP{$ot};
 
-    WriteSource "lai_status_t lai_metadata_generic_remove_$ot(";
-    WriteSource "_In_ const lai_object_meta_key_t *meta_key)";
+    WriteSource "otai_status_t otai_metadata_generic_remove_$ot(";
+    WriteSource "_In_ const otai_object_meta_key_t *meta_key)";
     WriteSource "{";
 
     if (not defined $struct)
     {
-        WriteSource "return lai_metadata_lai_${api}_api->remove_$small(meta_key->objectkey.key.object_id);";
+        WriteSource "return otai_metadata_otai_${api}_api->remove_$small(meta_key->objectkey.key.object_id);";
     }
     else
     {
-        WriteSource "return lai_metadata_lai_${api}_api->remove_$small(&meta_key->objectkey.key.$small);";
+        WriteSource "return otai_metadata_otai_${api}_api->remove_$small(&meta_key->objectkey.key.$small);";
     }
 
     WriteSource "}";
 
-    return "lai_metadata_generic_remove_$ot";
+    return "otai_metadata_generic_remove_$ot";
 }
 
 sub ProcessSet
@@ -2853,27 +2853,27 @@ sub ProcessSet
     my $struct = shift;
     my $ot = shift;
 
-    my $small = lc($1) if $ot =~ /LAI_OBJECT_TYPE_(\w+)/;
+    my $small = lc($1) if $ot =~ /OTAI_OBJECT_TYPE_(\w+)/;
 
     my $api = $OBJTOAPIMAP{$ot};
 
-    WriteSource "lai_status_t lai_metadata_generic_set_$ot(";
-    WriteSource "_In_ const lai_object_meta_key_t *meta_key,";
-    WriteSource "_In_ const lai_attribute_t *attr)";
+    WriteSource "otai_status_t otai_metadata_generic_set_$ot(";
+    WriteSource "_In_ const otai_object_meta_key_t *meta_key,";
+    WriteSource "_In_ const otai_attribute_t *attr)";
     WriteSource "{";
 
     if (not defined $struct)
     {
-        WriteSource "return lai_metadata_lai_${api}_api->set_${small}_attribute(meta_key->objectkey.key.object_id, attr);";
+        WriteSource "return otai_metadata_otai_${api}_api->set_${small}_attribute(meta_key->objectkey.key.object_id, attr);";
     }
     else
     {
-        WriteSource "return lai_metadata_lai_${api}_api->set_${small}_attribute(&meta_key->objectkey.key.$small, attr);";
+        WriteSource "return otai_metadata_otai_${api}_api->set_${small}_attribute(&meta_key->objectkey.key.$small, attr);";
     }
 
     WriteSource "}";
 
-    return "lai_metadata_generic_set_$ot";
+    return "otai_metadata_generic_set_$ot";
 }
 
 sub ProcessGet
@@ -2881,28 +2881,28 @@ sub ProcessGet
     my $struct = shift;
     my $ot = shift;
 
-    my $small = lc($1) if $ot =~ /LAI_OBJECT_TYPE_(\w+)/;
+    my $small = lc($1) if $ot =~ /OTAI_OBJECT_TYPE_(\w+)/;
 
     my $api = $OBJTOAPIMAP{$ot};
 
-    WriteSource "lai_status_t lai_metadata_generic_get_$ot(";
-    WriteSource "_In_ const lai_object_meta_key_t *meta_key,";
+    WriteSource "otai_status_t otai_metadata_generic_get_$ot(";
+    WriteSource "_In_ const otai_object_meta_key_t *meta_key,";
     WriteSource "_In_ uint32_t attr_count,";
-    WriteSource "_Inout_ lai_attribute_t *attr_list)";
+    WriteSource "_Inout_ otai_attribute_t *attr_list)";
     WriteSource "{";
 
     if (not defined $struct)
     {
-        WriteSource "return lai_metadata_lai_${api}_api->get_${small}_attribute(meta_key->objectkey.key.object_id, attr_count, attr_list);";
+        WriteSource "return otai_metadata_otai_${api}_api->get_${small}_attribute(meta_key->objectkey.key.object_id, attr_count, attr_list);";
     }
     else
     {
-        WriteSource "return lai_metadata_lai_${api}_api->get_${small}_attribute(&meta_key->objectkey.key.$small, attr_count, attr_list);";
+        WriteSource "return otai_metadata_otai_${api}_api->get_${small}_attribute(&meta_key->objectkey.key.$small, attr_count, attr_list);";
     }
 
     WriteSource "}";
 
-    return "lai_metadata_generic_get_$ot";
+    return "otai_metadata_generic_get_$ot";
 }
 
 sub ProcessGetStats
@@ -2910,33 +2910,33 @@ sub ProcessGetStats
     my $struct = shift;
     my $ot = shift;
 
-    my $small = lc($1) if $ot =~ /LAI_OBJECT_TYPE_(\w+)/;
+    my $small = lc($1) if $ot =~ /OTAI_OBJECT_TYPE_(\w+)/;
 
     my $api = $OBJTOAPIMAP{$ot};
 
-    WriteSource "lai_status_t lai_metadata_generic_get_stats_$ot(";
-    WriteSource "_In_ const lai_object_meta_key_t *meta_key,";
+    WriteSource "otai_status_t otai_metadata_generic_get_stats_$ot(";
+    WriteSource "_In_ const otai_object_meta_key_t *meta_key,";
     WriteSource "_In_ uint32_t number_of_counters,";
-    WriteSource "_In_ const lai_stat_id_t *counter_ids,";
-    WriteSource "_Out_ lai_stat_value_t *counters)";
+    WriteSource "_In_ const otai_stat_id_t *counter_ids,";
+    WriteSource "_Out_ otai_stat_value_t *counters)";
     WriteSource "{";
 
     if (not defined $OBJECT_TYPE_TO_STATS_MAP{$small})
     {
-        WriteSource "return LAI_STATUS_NOT_SUPPORTED;";
+        WriteSource "return OTAI_STATUS_NOT_SUPPORTED;";
     }
     elsif (not defined $struct)
     {
-        WriteSource "return lai_metadata_lai_${api}_api->get_${small}_stats(meta_key->objectkey.key.object_id, number_of_counters, counter_ids, counters);";
+        WriteSource "return otai_metadata_otai_${api}_api->get_${small}_stats(meta_key->objectkey.key.object_id, number_of_counters, counter_ids, counters);";
     }
     else
     {
-        WriteSource "return lai_metadata_lai_${api}_api->get_${small}_stats(&meta_key->objectkey.key.$small, number_of_counters, counter_ids, counters);";
+        WriteSource "return otai_metadata_otai_${api}_api->get_${small}_stats(&meta_key->objectkey.key.$small, number_of_counters, counter_ids, counters);";
     }
 
     WriteSource "}";
 
-    return "lai_metadata_generic_get_stats_$ot";
+    return "otai_metadata_generic_get_stats_$ot";
 }
 
 sub ProcessGetStatsExt
@@ -2944,34 +2944,34 @@ sub ProcessGetStatsExt
     my $struct = shift;
     my $ot = shift;
 
-    my $small = lc($1) if $ot =~ /LAI_OBJECT_TYPE_(\w+)/;
+    my $small = lc($1) if $ot =~ /OTAI_OBJECT_TYPE_(\w+)/;
 
     my $api = $OBJTOAPIMAP{$ot};
 
-    WriteSource "lai_status_t lai_metadata_generic_get_stats_ext_$ot(";
-    WriteSource "_In_ const lai_object_meta_key_t *meta_key,";
+    WriteSource "otai_status_t otai_metadata_generic_get_stats_ext_$ot(";
+    WriteSource "_In_ const otai_object_meta_key_t *meta_key,";
     WriteSource "_In_ uint32_t number_of_counters,";
-    WriteSource "_In_ const lai_stat_id_t *counter_ids,";
-    WriteSource "_In_ lai_stats_mode_t mode,";
-    WriteSource "_Out_ lai_stat_value_t *counters)";
+    WriteSource "_In_ const otai_stat_id_t *counter_ids,";
+    WriteSource "_In_ otai_stats_mode_t mode,";
+    WriteSource "_Out_ otai_stat_value_t *counters)";
     WriteSource "{";
 
     if (not defined $OBJECT_TYPE_TO_STATS_MAP{$small})
     {
-        WriteSource "return LAI_STATUS_NOT_SUPPORTED;";
+        WriteSource "return OTAI_STATUS_NOT_SUPPORTED;";
     }
     elsif (not defined $struct)
     {
-        WriteSource "return lai_metadata_lai_${api}_api->get_${small}_stats_ext(meta_key->objectkey.key.object_id, number_of_counters, counter_ids, mode, counters);";
+        WriteSource "return otai_metadata_otai_${api}_api->get_${small}_stats_ext(meta_key->objectkey.key.object_id, number_of_counters, counter_ids, mode, counters);";
     }
     else
     {
-        WriteSource "return lai_metadata_lai_${api}_api->get_${small}_stats_ext(&meta_key->objectkey.key.$small, number_of_counters, counter_ids, mode, counters);";
+        WriteSource "return otai_metadata_otai_${api}_api->get_${small}_stats_ext(&meta_key->objectkey.key.$small, number_of_counters, counter_ids, mode, counters);";
     }
 
     WriteSource "}";
 
-    return "lai_metadata_generic_get_stats_ext_$ot";
+    return "otai_metadata_generic_get_stats_ext_$ot";
 }
 
 sub ProcessClearStats
@@ -2979,97 +2979,97 @@ sub ProcessClearStats
     my $struct = shift;
     my $ot = shift;
 
-    my $small = lc($1) if $ot =~ /LAI_OBJECT_TYPE_(\w+)/;
+    my $small = lc($1) if $ot =~ /OTAI_OBJECT_TYPE_(\w+)/;
 
     my $api = $OBJTOAPIMAP{$ot};
 
-    WriteSource "lai_status_t lai_metadata_generic_clear_stats_$ot(";
-    WriteSource "_In_ const lai_object_meta_key_t *meta_key,";
+    WriteSource "otai_status_t otai_metadata_generic_clear_stats_$ot(";
+    WriteSource "_In_ const otai_object_meta_key_t *meta_key,";
     WriteSource "_In_ uint32_t number_of_counters,";
-    WriteSource "_In_ const lai_stat_id_t *counter_ids)";
+    WriteSource "_In_ const otai_stat_id_t *counter_ids)";
     WriteSource "{";
 
     if (not defined $OBJECT_TYPE_TO_STATS_MAP{$small})
     {
-        WriteSource "return LAI_STATUS_NOT_SUPPORTED;";
+        WriteSource "return OTAI_STATUS_NOT_SUPPORTED;";
     }
     elsif (not defined $struct)
     {
-        WriteSource "return lai_metadata_lai_${api}_api->clear_${small}_stats(meta_key->objectkey.key.object_id, number_of_counters, counter_ids);";
+        WriteSource "return otai_metadata_otai_${api}_api->clear_${small}_stats(meta_key->objectkey.key.object_id, number_of_counters, counter_ids);";
     }
     else
     {
-        WriteSource "return lai_metadata_lai_${api}_api->clear_${small}_stats(&meta_key->objectkey.key.$small, number_of_counters, counter_ids);";
+        WriteSource "return otai_metadata_otai_${api}_api->clear_${small}_stats(&meta_key->objectkey.key.$small, number_of_counters, counter_ids);";
     }
 
     WriteSource "}";
 
-    return "lai_metadata_generic_clear_stats_$ot";
+    return "otai_metadata_generic_clear_stats_$ot";
 }
 
 sub CreateApis
 {
-    WriteSectionComment "Global LAI API declarations";
+    WriteSectionComment "Global OTAI API declarations";
 
     for my $key (sort keys %APITOOBJMAP)
     {
-        WriteSource "lai_${key}_api_t *lai_metadata_lai_${key}_api = NULL;";
-        WriteHeader "extern lai_${key}_api_t *lai_metadata_lai_${key}_api;";
+        WriteSource "otai_${key}_api_t *otai_metadata_otai_${key}_api = NULL;";
+        WriteHeader "extern otai_${key}_api_t *otai_metadata_otai_${key}_api;";
     }
 }
 
 sub CreateApisStruct
 {
-    my @apis = @{ $LAI_ENUMS{lai_api_t}{values} };
+    my @apis = @{ $OTAI_ENUMS{otai_api_t}{values} };
 
     WriteSectionComment "All APIs struct";
 
-    WriteHeader "typedef struct _lai_apis_t {";
+    WriteHeader "typedef struct _otai_apis_t {";
 
     for my $api (@apis)
     {
-        $api =~ /^LAI_API_(\w+)/;
+        $api =~ /^OTAI_API_(\w+)/;
 
         $api = lc($1);
 
         next if $api =~ /unspecified/;
 
-        WriteHeader "lai_${api}_api_t* ${api}_api;";
+        WriteHeader "otai_${api}_api_t* ${api}_api;";
     }
 
-    WriteHeader "} lai_apis_t;";
+    WriteHeader "} otai_apis_t;";
 
     my $count = scalar @apis;
 
-    WriteSectionComment "Define LAI_API_EXTENSIONS_MAX";
+    WriteSectionComment "Define OTAI_API_EXTENSIONS_MAX";
 
-    WriteHeader "#define LAI_API_EXTENSIONS_MAX ((lai_api_t)$count)";
+    WriteHeader "#define OTAI_API_EXTENSIONS_MAX ((otai_api_t)$count)";
 }
 
 sub CreateGlobalApis
 {
-    WriteSectionComment "Global LAI API declarations";
+    WriteSectionComment "Global OTAI API declarations";
 
-    WriteSource "lai_apis_t lai_metadata_apis = { 0 };";
-    WriteHeader "extern lai_apis_t lai_metadata_apis;";
+    WriteSource "otai_apis_t otai_metadata_apis = { 0 };";
+    WriteHeader "extern otai_apis_t otai_metadata_apis;";
 }
 
 sub CreateApisQuery
 {
-    WriteSectionComment "LAI API query";
+    WriteSectionComment "OTAI API query";
 
-    WriteHeader "typedef lai_status_t (*lai_api_query_fn)(";
-    WriteHeader "_In_ lai_api_t lai_api_id,";
+    WriteHeader "typedef otai_status_t (*otai_api_query_fn)(";
+    WriteHeader "_In_ otai_api_t otai_api_id,";
     WriteHeader "_Out_ void** api_method_table);";
 
     # for linecard we need to generate wrapper, for others we can use pointers
     # so we don't need to use meta key then
 
-    WriteSource "int lai_metadata_apis_query(";
-    WriteSource "_In_ const lai_api_query_fn api_query,";
-    WriteSource "_Inout_ lai_apis_t *apis)";
+    WriteSource "int otai_metadata_apis_query(";
+    WriteSource "_In_ const otai_api_query_fn api_query,";
+    WriteSource "_Inout_ otai_apis_t *apis)";
     WriteSource "{";
-    WriteSource "lai_status_t status = LAI_STATUS_SUCCESS;";
+    WriteSource "otai_status_t status = OTAI_STATUS_SUCCESS;";
     WriteSource "int count = 0;";
 
     WriteSource "if (api_query == NULL)";
@@ -3077,26 +3077,26 @@ sub CreateApisQuery
 
     for my $key (sort keys %APITOOBJMAP)
     {
-        WriteSource "lai_metadata_lai_${key}_api = NULL;";
+        WriteSource "otai_metadata_otai_${key}_api = NULL;";
     }
 
-    WriteSource "memset(apis, 0, sizeof(lai_apis_t));";
-    WriteSource "memset(&lai_metadata_apis, 0, sizeof(lai_apis_t));";
+    WriteSource "memset(apis, 0, sizeof(otai_apis_t));";
+    WriteSource "memset(&otai_metadata_apis, 0, sizeof(otai_apis_t));";
 
     WriteSource "return count;";
     WriteSource "}";
 
     for my $key (sort keys %APITOOBJMAP)
     {
-        my $api = uc("LAI_API_${key}");
+        my $api = uc("OTAI_API_${key}");
 
-        WriteSource "status = api_query($api, (void**)&lai_metadata_lai_${key}_api);";
-        WriteSource "apis->${key}_api = lai_metadata_lai_${key}_api;";
-        WriteSource "if (status != LAI_STATUS_SUCCESS)";
+        WriteSource "status = api_query($api, (void**)&otai_metadata_otai_${key}_api);";
+        WriteSource "apis->${key}_api = otai_metadata_otai_${key}_api;";
+        WriteSource "if (status != OTAI_STATUS_SUCCESS)";
         WriteSource "{";
         WriteSource "count++;";
-        WriteSource "const char *name = lai_metadata_get_enum_value_name(&lai_metadata_enum_lai_status_t, status);";
-        WriteSource "LAI_META_LOG_NOTICE(\"failed to query api $api: %s (%d)\", name, status);";
+        WriteSource "const char *name = otai_metadata_get_enum_value_name(&otai_metadata_enum_otai_status_t, status);";
+        WriteSource "OTAI_META_LOG_NOTICE(\"failed to query api $api: %s (%d)\", name, status);";
         WriteSource "}";
     }
 
@@ -3104,9 +3104,9 @@ sub CreateApisQuery
 
     WriteSource "}";
 
-    WriteHeader "extern int lai_metadata_apis_query(";
-    WriteHeader "_In_ const lai_api_query_fn api_query,";
-    WriteHeader "_Inout_ lai_apis_t *apis);";
+    WriteHeader "extern int otai_metadata_apis_query(";
+    WriteHeader "_In_ const otai_api_query_fn api_query,";
+    WriteHeader "_Inout_ otai_apis_t *apis);";
 }
 
 sub ProcessIsExperimental
@@ -3122,9 +3122,9 @@ sub ProcessStatEnum
 {
     my $shortot = shift;
 
-    my $statenumname = "lai_${shortot}_stat_t";
+    my $statenumname = "otai_${shortot}_stat_t";
 
-    return "&lai_metadata_enum_$statenumname" if defined $LAI_ENUMS{$statenumname};
+    return "&otai_metadata_enum_$statenumname" if defined $OTAI_ENUMS{$statenumname};
 
     return "NULL";
 }
@@ -3133,9 +3133,9 @@ sub ProcessAlarmEnum
 {
     my $shortot = shift;
 
-    my $alarmenumname = "lai_${shortot}_alarm_type_t";
+    my $alarmenumname = "otai_${shortot}_alarm_type_t";
 
-    return "&lai_metadata_enum_$alarmenumname" if defined $LAI_ENUMS{$alarmenumname};
+    return "&otai_metadata_enum_$alarmenumname" if defined $OTAI_ENUMS{$alarmenumname};
 
     return "NULL";
 }
@@ -3147,11 +3147,11 @@ sub CreateObjectInfo
 
     %REVGRAPH = GetReverseDependencyGraph();
 
-    my @objects = @{ $LAI_ENUMS{lai_object_type_t}{values} };
+    my @objects = @{ $OTAI_ENUMS{otai_object_type_t}{values} };
 
     for my $ot (@objects)
     {
-        if (not $ot =~ /^LAI_OBJECT_TYPE_(\w+)$/)
+        if (not $ot =~ /^OTAI_OBJECT_TYPE_(\w+)$/)
         {
             LogError "invalid obejct type '$ot'";
             next;
@@ -3161,18 +3161,18 @@ sub CreateObjectInfo
 
         if (not defined $OBJTOAPIMAP{$ot})
         {
-            LogError "$ot is not defined in OBJTOAPIMAP, missing lai_XXX_api_t declaration?";
+            LogError "$ot is not defined in OBJTOAPIMAP, missing otai_XXX_api_t declaration?";
             next;
         }
 
         my $shortot = lc($1);
 
-        my $type = "lai_" . lc($1) . "_attr_t";
+        my $type = "otai_" . lc($1) . "_attr_t";
 
-        my $start = "LAI_" . uc($1) . "_ATTR_START";
-        my $end   = "LAI_" . uc($1) . "_ATTR_END";
+        my $start = "OTAI_" . uc($1) . "_ATTR_START";
+        my $end   = "OTAI_" . uc($1) . "_ATTR_END";
 
-        my $enum  = "&lai_metadata_enum_${type}";
+        my $enum  = "&otai_metadata_enum_${type}";
 
         my $struct = $NON_OBJECT_ID_STRUCTS{$ot};
 
@@ -3190,7 +3190,7 @@ sub CreateObjectInfo
         my $isexperimental      = ProcessIsExperimental($ot);
         my $statenum            = ProcessStatEnum($shortot);
         my $alarmenum           = ProcessAlarmEnum($shortot);
-        my $attrmetalength      = @{ $LAI_ENUMS{$type}{values} };
+        my $attrmetalength      = @{ $OTAI_ENUMS{$type}{values} };
 
         my $create      = ProcessCreate($struct, $ot);
         my $remove      = ProcessRemove($struct, $ot);
@@ -3201,16 +3201,16 @@ sub CreateObjectInfo
         my $getstatsext = ProcessGetStatsExt($struct, $ot);
         my $clearstats  = ProcessClearStats($struct, $ot);
 
-        WriteHeader "extern const lai_object_type_info_t lai_metadata_object_type_info_$ot;";
+        WriteHeader "extern const otai_object_type_info_t otai_metadata_object_type_info_$ot;";
 
-        WriteSource "const lai_object_type_info_t lai_metadata_object_type_info_$ot = {";
+        WriteSource "const otai_object_type_info_t otai_metadata_object_type_info_$ot = {";
 
         WriteSource ".objecttype           = $ot,";
         WriteSource ".objecttypename       = \"$ot\",";
         WriteSource ".attridstart          = $start,";
         WriteSource ".attridend            = $end,";
         WriteSource ".enummetadata         = $enum,";
-        WriteSource ".attrmetadata         = lai_metadata_object_type_$type,";
+        WriteSource ".attrmetadata         = otai_metadata_object_type_$type,";
         WriteSource ".attrmetadatalength   = $attrmetalength,";
         WriteSource ".isnonobjectid        = $isnonobjectid,";
         WriteSource ".isobjectid           = !$isnonobjectid,";
@@ -3234,13 +3234,13 @@ sub CreateObjectInfo
 
     WriteSectionComment "Object infos table";
 
-    WriteHeader "extern const lai_object_type_info_t* const lai_metadata_all_object_type_infos[];";
+    WriteHeader "extern const otai_object_type_info_t* const otai_metadata_all_object_type_infos[];";
 
-    WriteSource "const lai_object_type_info_t* const lai_metadata_all_object_type_infos[] = {";
+    WriteSource "const otai_object_type_info_t* const otai_metadata_all_object_type_infos[] = {";
 
     for my $ot (@objects)
     {
-        if (not $ot =~ /^LAI_OBJECT_TYPE_(\w+)$/)
+        if (not $ot =~ /^OTAI_OBJECT_TYPE_(\w+)$/)
         {
             LogError "invalid obejct type '$ot'";
             next;
@@ -3252,7 +3252,7 @@ sub CreateObjectInfo
             next;
         }
 
-        WriteSource "&lai_metadata_object_type_info_$ot,";
+        WriteSource "&otai_metadata_object_type_info_$ot,";
     }
 
     WriteSource "NULL";
@@ -3284,13 +3284,13 @@ sub ProcessSingleNonObjectId
 {
     my $rawname = shift;
 
-    my @types = @{ $LAI_ENUMS{lai_object_type_t}{values} };
+    my @types = @{ $OTAI_ENUMS{otai_object_type_t}{values} };
 
-    my $structname = "lai_${rawname}_t";
+    my $structname = "otai_${rawname}_t";
 
     LogDebug "ProcessSingleNonObjectId: processing $structname";
 
-    my $ot = "LAI_OBJECT_TYPE_" .uc(${rawname});
+    my $ot = "OTAI_OBJECT_TYPE_" .uc(${rawname});
 
     if (not grep(/$ot/,@types))
     {
@@ -3310,13 +3310,13 @@ sub ProcessSingleNonObjectId
 
         # allowed entries on object structs
 
-        if (not $type =~ /^lai_(nat_entry_data|mac|object_id|vlan_id|ip_address|ip_prefix|label_id|\w+_type)_t$/)
+        if (not $type =~ /^otai_(nat_entry_data|mac|object_id|vlan_id|ip_address|ip_prefix|label_id|\w+_type)_t$/)
         {
             LogError "struct member $member type '$type' is not allowed on struct $structname";
             next;
         }
 
-        next if not $type eq "lai_object_id_t";
+        next if not $type eq "otai_object_id_t";
 
         my $objects = ExtractObjectsFromDesc($structname, $member, $desc);
 
@@ -3340,7 +3340,7 @@ sub ProcessNonObjectIdObjects
     {
         my %struct = ProcessSingleNonObjectId($rawname);
 
-        my $objecttype = "LAI_OBJECT_TYPE_" . uc($rawname);
+        my $objecttype = "OTAI_OBJECT_TYPE_" . uc($rawname);
 
         $NON_OBJECT_ID_STRUCTS{$objecttype} = \%struct;
     }
@@ -3353,13 +3353,13 @@ sub GetHashOfAllAttributes
 
     my %ATTRIBUTES = ();
 
-    for my $key (sort keys %LAI_ENUMS)
+    for my $key (sort keys %OTAI_ENUMS)
     {
-        next if not $key =~ /^(lai_(\w+)_attr_t)$/;
+        next if not $key =~ /^(otai_(\w+)_attr_t)$/;
 
         my $typedef = $1;
 
-        my $enum = $LAI_ENUMS{$typedef};
+        my $enum = $OTAI_ENUMS{$typedef};
 
         my @values = @{ $enum->{values} };
 
@@ -3401,14 +3401,14 @@ sub CreateListOfAllAttributes
 
     my %ATTRIBUTES = GetHashOfAllAttributes();
 
-    WriteHeader "extern const lai_attr_metadata_t* const lai_metadata_attr_sorted_by_id_name[];";
-    WriteSource "const lai_attr_metadata_t* const lai_metadata_attr_sorted_by_id_name[] = {";
+    WriteHeader "extern const otai_attr_metadata_t* const otai_metadata_attr_sorted_by_id_name[];";
+    WriteSource "const otai_attr_metadata_t* const otai_metadata_attr_sorted_by_id_name[] = {";
 
     my @keys = sort keys %ATTRIBUTES;
 
     for my $attr (@keys)
     {
-        WriteSource "&lai_metadata_attr_$attr,";
+        WriteSource "&otai_metadata_attr_$attr,";
     }
 
     my $count = @keys;
@@ -3416,21 +3416,21 @@ sub CreateListOfAllAttributes
     WriteSource "NULL";
     WriteSource "};";
 
-    WriteSource "const size_t lai_metadata_attr_sorted_by_id_name_count = $count;";
-    WriteHeader "extern const size_t lai_metadata_attr_sorted_by_id_name_count;";
+    WriteSource "const size_t otai_metadata_attr_sorted_by_id_name_count = $count;";
+    WriteHeader "extern const size_t otai_metadata_attr_sorted_by_id_name_count;";
 }
 
 sub GetHashOfAllStatistics
 {
     my %STATISTICS = ();
 
-    for my $key (sort keys %LAI_ENUMS)
+    for my $key (sort keys %OTAI_ENUMS)
     {
-        next if not $key =~ /^(lai_(\w+)_stat_t)$/;
+        next if not $key =~ /^(otai_(\w+)_stat_t)$/;
 
         my $typedef = $1;
 
-        my $enum = $LAI_ENUMS{$typedef};
+        my $enum = $OTAI_ENUMS{$typedef};
 
         my @values = @{ $enum->{values} };
 
@@ -3455,14 +3455,14 @@ sub CreateListOfAllStatistics
 
     my %STATISTICS = GetHashOfAllStatistics();
 
-    WriteHeader "extern const lai_stat_metadata_t* const lai_metadata_stat_sorted_by_id_name[];";
-    WriteSource "const lai_stat_metadata_t* const lai_metadata_stat_sorted_by_id_name[] = {";
+    WriteHeader "extern const otai_stat_metadata_t* const otai_metadata_stat_sorted_by_id_name[];";
+    WriteSource "const otai_stat_metadata_t* const otai_metadata_stat_sorted_by_id_name[] = {";
 
     my @keys = sort keys %STATISTICS;
 
     for my $stat (@keys)
     {
-        WriteSource "&lai_metadata_stat_$stat,"
+        WriteSource "&otai_metadata_stat_$stat,"
     }
 
     my $count = @keys;
@@ -3470,25 +3470,25 @@ sub CreateListOfAllStatistics
     WriteSource "NULL";
     WriteSource "};";
 
-    WriteSource "const size_t lai_metadata_stat_sorted_by_id_name_count = $count;";
-    WriteHeader "extern const size_t lai_metadata_stat_sorted_by_id_name_count;";
+    WriteSource "const size_t otai_metadata_stat_sorted_by_id_name_count = $count;";
+    WriteHeader "extern const size_t otai_metadata_stat_sorted_by_id_name_count;";
 }
 
 sub CheckApiStructNames
 {
     #
     # purpose of this check is to find out
-    # whether lai_api_t enums match actual
+    # whether otai_api_t enums match actual
     # struct of api declarations
     #
 
-    my @values = @{ $LAI_ENUMS{"lai_api_t"}{values} };
+    my @values = @{ $OTAI_ENUMS{"otai_api_t"}{values} };
 
     for my $value (@values)
     {
-        next if $value eq "LAI_API_UNSPECIFIED";
+        next if $value eq "OTAI_API_UNSPECIFIED";
 
-        if (not $value =~ /^LAI_API_(\w+)$/)
+        if (not $value =~ /^OTAI_API_(\w+)$/)
         {
             LogError "invalie api name $value";
             next;
@@ -3496,7 +3496,7 @@ sub CheckApiStructNames
 
         my $api = lc $1;
 
-        my $structName = "lai_${api}_api_t";
+        my $structName = "otai_${api}_api_t";
 
         my $structFile = "struct_$structName.xml";
 
@@ -3514,13 +3514,13 @@ sub CheckApiStructNames
 
     for my $name (sort keys %ALL_STRUCTS)
     {
-        next if not $name =~ /^lai_(\w+)_api_t$/;
+        next if not $name =~ /^otai_(\w+)_api_t$/;
 
-        my $val = uc("LAI_API_$1");
+        my $val = uc("OTAI_API_$1");
 
         if (not grep(/^$val$/,@values))
         {
-            LogError "struct '$name' defined, but enum entry $val is missing on lai_api_t";
+            LogError "struct '$name' defined, but enum entry $val is missing on otai_api_t";
         }
     }
 }
@@ -3529,22 +3529,22 @@ sub CheckApiDefines
 {
     #
     # purpose of this check is to check whether
-    # all enum entries defined in lai_api_t
+    # all enum entries defined in otai_api_t
     # have corresponding structs defined for each
-    # defined object like lai_fdb_api_t
+    # defined object like otai_fdb_api_t
     #
 
-    my @apis = @{ $LAI_ENUMS{lai_api_t}{values} };
+    my @apis = @{ $OTAI_ENUMS{otai_api_t}{values} };
 
     for my $api (@apis)
     {
-        my $short = lc($1) if $api =~ /LAI_API_(\w+)/;
+        my $short = lc($1) if $api =~ /OTAI_API_(\w+)/;
 
         next if $short eq "unspecified";
 
         if (not defined $APITOOBJMAP{$short})
         {
-            LogError "$api is defined in lai.h but no corresponding struct for objects found";
+            LogError "$api is defined in otai.h but no corresponding struct for objects found";
         }
     }
 }
@@ -3566,11 +3566,11 @@ sub ExtractStatsFunctionMap
     {
         my $data = ReadHeaderFile($header);
 
-        next if not $data =~ m!(lai_\w+_api_t)(.+?)\1;!igs;
+        next if not $data =~ m!(otai_\w+_api_t)(.+?)\1;!igs;
 
         my $apis = $2;
 
-        my @fns = $apis =~ /lai_(\w+_stats(?:_ext)?)_fn/g;
+        my @fns = $apis =~ /otai_(\w+_stats(?:_ext)?)_fn/g;
 
         for my $fn (@fns)
         {
@@ -3619,9 +3619,9 @@ sub CheckObjectTypeStatitics
         LogWarning uc($ot) . " has only '$stats' functions, expected: $expected";
     }
 
-    for my $key (keys %LAI_ENUMS)
+    for my $key (keys %OTAI_ENUMS)
     {
-        next if not $key =~ /lai_(\w+)_stat_t/;
+        next if not $key =~ /otai_(\w+)_stat_t/;
 
         my $ot = $1;
 
@@ -3657,12 +3657,12 @@ sub ExtractApiToObjectMap
 
         for my $line (@lines)
         {
-            if ($line =~ /typedef\s+enum\s+_lai_(\w+)_attr_t/)
+            if ($line =~ /typedef\s+enum\s+_otai_(\w+)_attr_t/)
             {
-                push@objects,uc("LAI_OBJECT_TYPE_$1");
+                push@objects,uc("OTAI_OBJECT_TYPE_$1");
             }
 
-            if ($line =~ /typedef\s+struct\s+_lai_(\w+)_api_t/)
+            if ($line =~ /typedef\s+struct\s+_otai_(\w+)_api_t/)
             {
                 $api = $1;
                 last;
@@ -3686,7 +3686,7 @@ sub ExtractApiToObjectMap
 
         $shortapi =~ s/_//g;
 
-        my $correct = "lai$shortapi.h";
+        my $correct = "otai$shortapi.h";
 
         if ($header ne $correct)
         {
@@ -3699,7 +3699,7 @@ sub ExtractApiToObjectMap
         {
             $OBJTOAPIMAP{$obj} = $api;
 
-            $EXPERIMENTAL_OBJECTS{uc($obj)} = 1 if $correct =~ /^laiexperimental/;
+            $EXPERIMENTAL_OBJECTS{uc($obj)} = 1 if $correct =~ /^otaiexperimental/;
         }
 
         $APITOOBJMAP{$api} = \@objects;
@@ -3715,11 +3715,11 @@ sub GetReverseDependencyGraph
 
     my %REVGRAPH = ();
 
-    my @objects = @{ $LAI_ENUMS{lai_object_type_t}{values} };
+    my @objects = @{ $OTAI_ENUMS{otai_object_type_t}{values} };
 
     for my $ot (@objects)
     {
-        if (not $ot =~ /^LAI_OBJECT_TYPE_(\w+)$/)
+        if (not $ot =~ /^OTAI_OBJECT_TYPE_(\w+)$/)
         {
             LogError "invalid obejct type '$ot'";
             next;
@@ -3727,14 +3727,14 @@ sub GetReverseDependencyGraph
 
         my $otname = $1;
 
-        my $typedef = lc "lai_${otname}_attr_t";
+        my $typedef = lc "otai_${otname}_attr_t";
 
-        next if $ot =~ /^LAI_OBJECT_TYPE_(MAX|NULL)$/;
+        next if $ot =~ /^OTAI_OBJECT_TYPE_(MAX|NULL)$/;
 
         # for each objec types we need to scann all objects
         # also non object id structs
 
-        my $enum = $LAI_ENUMS{$typedef};
+        my $enum = $OTAI_ENUMS{$typedef};
 
         my @values = @{ $enum->{values} };
 
@@ -3805,14 +3805,14 @@ sub WriteLoggerVariables
     # - log level
     # - log function
     #
-    # we can extract this to another source file laimetadatalogger.c
+    # we can extract this to another source file otaimetadatalogger.c
     # but now seems to be unnecessary
     #
 
     WriteSectionComment "Loglevel variables";
 
-    WriteSource "volatile lai_log_level_t lai_metadata_log_level = LAI_LOG_LEVEL_NOTICE;";
-    WriteSource "volatile lai_metadata_log_fn lai_metadata_log = NULL;";
+    WriteSource "volatile otai_log_level_t otai_metadata_log_level = OTAI_LOG_LEVEL_NOTICE;";
+    WriteSource "volatile otai_metadata_log_fn otai_metadata_log = NULL;";
 }
 
 my %ProcessedItems = ();
@@ -3821,20 +3821,20 @@ sub ProcessStructItem
 {
     my ($type, $struct) = @_;
 
-    $type = $1 if $struct =~ /^lai_(\w+)_list_t$/ and $type =~ /^(\w+)\*$/;
+    $type = $1 if $struct =~ /^otai_(\w+)_list_t$/ and $type =~ /^(\w+)\*$/;
 
     return if defined $ProcessedItems{$type};
 
-    return if defined $LAI_ENUMS{$type}; # struct entry is enum
+    return if defined $OTAI_ENUMS{$type}; # struct entry is enum
 
     return if $type eq "bool";
 
-    return if $type =~ /^lai_(u?int\d+|ip[46]|mac|cos|vlan_id|queue_index)_t/; # primitives, we could get that from defines
+    return if $type =~ /^otai_(u?int\d+|ip[46]|mac|cos|vlan_id|queue_index)_t/; # primitives, we could get that from defines
     return if $type =~ /^u?int\d+_t/;
-    return if $type =~ /^lai_[su]\d+_list_t/;
-    return if $type =~ /^lai_double_t/;
+    return if $type =~ /^otai_[su]\d+_list_t/;
+    return if $type =~ /^otai_double_t/;
 
-    if ($type eq "lai_object_id_t" or $type eq "lai_object_list_t")
+    if ($type eq "otai_object_id_t" or $type eq "otai_object_list_t")
     {
         # NOTE: don't change that, we can't have object id's inside complicated structures
 
@@ -3887,34 +3887,34 @@ sub CheckAttributeValueUnion
     # object dependencies via metadata and comparison logic
     #
 
-    my %Union = ExtractStructInfo("lai_attribute_value_t", "union_");
+    my %Union = ExtractStructInfo("otai_attribute_value_t", "union_");
 
-    my @primitives = qw/lai_pointer_t lai_object_id_t lai_object_list_t char/;
+    my @primitives = qw/otai_pointer_t otai_object_id_t otai_object_list_t char/;
 
     for my $key (sort keys %Union)
     {
         my $type = $Union{$key}{type};
 
         next if $type eq "char[512]";
-        next if $type =~ /lai_u?int\d+_t/;
-        next if $type =~ /lai_float_t/;
-        next if $type =~ /lai_[su]\d+_list_t/;
+        next if $type =~ /otai_u?int\d+_t/;
+        next if $type =~ /otai_float_t/;
+        next if $type =~ /otai_[su]\d+_list_t/;
 
         next if defined $PRIMITIVE_TYPES{$type};
 
         next if grep(/^$type$/, @primitives);
 
-        ProcessStructItem($type, "lai_attribute_value_t");
+        ProcessStructItem($type, "otai_attribute_value_t");
     }
 }
 
 sub CheckStatEnum
 {
-    for my $key (keys %LAI_ENUMS)
+    for my $key (keys %OTAI_ENUMS)
     {
-        next if not $key =~ /lai_(\w+)_stat_t/;
+        next if not $key =~ /otai_(\w+)_stat_t/;
 
-        my $ot = uc("LAI_OBJECT_TYPE_$1");
+        my $ot = uc("OTAI_OBJECT_TYPE_$1");
 
         next if defined $OBJECT_TYPE_MAP{$ot};
 
@@ -3929,13 +3929,13 @@ sub CreateNotificationStruct
     # manipulation in code
     #
 
-    WriteSectionComment "LAI notifications struct";
+    WriteSectionComment "OTAI notifications struct";
 
-    WriteHeader "typedef struct _lai_linecard_notifications_t {";
+    WriteHeader "typedef struct _otai_linecard_notifications_t {";
 
     for my $name (sort keys %NOTIFICATIONS)
     {
-        if (not $name =~ /^lai_(\w+)_notification_fn/)
+        if (not $name =~ /^otai_(\w+)_notification_fn/)
         {
             LogWarning "notification function $name is not ending on _notification_fn";
             next;
@@ -3944,7 +3944,7 @@ sub CreateNotificationStruct
         WriteHeader "$name on_$1;";
     }
 
-    WriteHeader "} lai_linecard_notifications_t;";
+    WriteHeader "} otai_linecard_notifications_t;";
 }
 
 sub CreateNotificationEnum
@@ -3954,9 +3954,9 @@ sub CreateNotificationEnum
     # manipulation in code
     #
 
-    WriteSectionComment "LAI notifications enum";
+    WriteSectionComment "OTAI notifications enum";
 
-    my $typename = "lai_linecard_notification_type_t";
+    my $typename = "otai_linecard_notification_type_t";
 
     WriteHeader "typedef enum _$typename {";
 
@@ -3968,7 +3968,7 @@ sub CreateNotificationEnum
 
     for my $name (sort keys %NOTIFICATIONS)
     {
-        if (not $name =~ /^lai_(\w+)_notification_fn/)
+        if (not $name =~ /^otai_(\w+)_notification_fn/)
         {
             LogWarning "notification function '$name' is not ending on _notification_fn";
             next;
@@ -3983,15 +3983,15 @@ sub CreateNotificationEnum
 
     WriteHeader "} $typename;";
 
-    $LAI_ENUMS{$typename}{values} = \@values;
+    $OTAI_ENUMS{$typename}{values} = \@values;
 
-    WriteSectionComment "lai_linecard_notification_type_t metadata";
+    WriteSectionComment "otai_linecard_notification_type_t metadata";
 
     ProcessSingleEnum($typename, $typename, $prefix);
 
-    WriteSectionComment "Get lai_linecard_notification_type_t helper method";
+    WriteSectionComment "Get otai_linecard_notification_type_t helper method";
 
-    CreateEnumHelperMethod("lai_linecard_notification_type_t");
+    CreateEnumHelperMethod("otai_linecard_notification_type_t");
 }
 
 sub CreateSwitchNotificationAttributesList
@@ -4002,16 +4002,16 @@ sub CreateSwitchNotificationAttributesList
     # attributes
     #
 
-    WriteSectionComment "LAI Switch Notification Attributes List";
+    WriteSectionComment "OTAI Switch Notification Attributes List";
 
-    WriteHeader "extern const lai_attr_metadata_t* const lai_metadata_linecard_notify_attr[];";
-    WriteSource "const lai_attr_metadata_t* const lai_metadata_linecard_notify_attr[] = {";
+    WriteHeader "extern const otai_attr_metadata_t* const otai_metadata_linecard_notify_attr[];";
+    WriteSource "const otai_attr_metadata_t* const otai_metadata_linecard_notify_attr[] = {";
 
     for my $name (sort keys %NOTIFICATIONS)
     {
-        next if not $name =~ /^lai_(\w+)_notification_fn/;
+        next if not $name =~ /^otai_(\w+)_notification_fn/;
 
-        WriteSource "&lai_metadata_attr_LAI_LINECARD_ATTR_" . uc($1) . "_NOTIFY,";
+        WriteSource "&otai_metadata_attr_OTAI_LINECARD_ATTR_" . uc($1) . "_NOTIFY,";
     }
 
     WriteSource "NULL";
@@ -4019,32 +4019,32 @@ sub CreateSwitchNotificationAttributesList
 
     my $count = scalar(keys %NOTIFICATIONS);
 
-    WriteHeader "extern const size_t lai_metadata_linecard_notify_attr_count;";
-    WriteSource "const size_t lai_metadata_linecard_notify_attr_count = $count;";
+    WriteHeader "extern const size_t otai_metadata_linecard_notify_attr_count;";
+    WriteSource "const size_t otai_metadata_linecard_notify_attr_count = $count;";
 
-    WriteSectionComment "Define LAI_METADATA_LINECARD_NOTIFY_ATTR_COUNT";
+    WriteSectionComment "Define OTAI_METADATA_LINECARD_NOTIFY_ATTR_COUNT";
 
-    WriteHeader "#define LAI_METADATA_LINECARD_NOTIFY_ATTR_COUNT $count";
+    WriteHeader "#define OTAI_METADATA_LINECARD_NOTIFY_ATTR_COUNT $count";
 }
 
 sub WriteHeaderHeader
 {
     WriteSectionComment "AUTOGENERATED FILE! DO NOT EDIT";
 
-    WriteHeader "#ifndef __LAI_METADATA_H__";
-    WriteHeader "#define __LAI_METADATA_H__";
+    WriteHeader "#ifndef __OTAI_METADATA_H__";
+    WriteHeader "#define __OTAI_METADATA_H__";
 
-    WriteHeader "#include <lai.h>";
+    WriteHeader "#include <otai.h>";
 
-    WriteHeader "#include \"laimetadatatypes.h\"";
-    WriteHeader "#include \"laimetadatautils.h\"";
-    WriteHeader "#include \"laimetadatalogger.h\"";
-    WriteHeader "#include \"laiserialize.h\"";
+    WriteHeader "#include \"otaimetadatatypes.h\"";
+    WriteHeader "#include \"otaimetadatautils.h\"";
+    WriteHeader "#include \"otaimetadatalogger.h\"";
+    WriteHeader "#include \"otaiserialize.h\"";
 }
 
 sub WriteHeaderFotter
 {
-    WriteHeader "#endif /* __LAI_METADATA_H__ */";
+    WriteHeader "#endif /* __OTAI_METADATA_H__ */";
 }
 
 sub ProcessXmlFiles
@@ -4067,7 +4067,7 @@ sub ProcessValues
 
         next if $type eq "char[512]" or $type eq "bool";
 
-        if (not $type =~ /^lai_(\w+)_t$/)
+        if (not $type =~ /^otai_(\w+)_t$/)
         {
             LogWarning "skipping type $type, FIXME";
             next;
@@ -4086,14 +4086,14 @@ sub ProcessValues
 
 sub PopulateValueTypes
 {
-    my %Union = ExtractStructInfo("lai_attribute_value_t", "union_");
+    my %Union = ExtractStructInfo("otai_attribute_value_t", "union_");
 
     ProcessValues(\%Union, \%VALUE_TYPES, \%VALUE_TYPES_TO_VT);
 }
 
 sub CreateObjectTypeMap
 {
-    map { $OBJECT_TYPE_MAP{$_} = $_ } @{ $LAI_ENUMS{lai_object_type_t}{values} };
+    map { $OBJECT_TYPE_MAP{$_} = $_ } @{ $OTAI_ENUMS{otai_object_type_t}{values} };
 }
 
 sub ExtractUnionsInfo
@@ -4114,20 +4114,20 @@ sub ExtractUnionsInfo
 
         my $def = $ref->{compounddef}[0]->{compoundname}[0];
 
-        if (not $def =~ /^(_lai_\w+::)*_(\w+)$/)
+        if (not $def =~ /^(_otai_\w+::)*_(\w+)$/)
         {
-            LogWarning "union name '$def' not match pattern: (_lai_\\w+::)*(_\\w+)";
+            LogWarning "union name '$def' not match pattern: (_otai_\\w+::)*(_\\w+)";
             next;
         }
 
         my $name = $2;
 
-        LogError "Name $name should be in format lai_\\w+_t" if not $name =~ /^lai_\w+_t$/;
+        LogError "Name $name should be in format otai_\\w+_t" if not $name =~ /^otai_\w+_t$/;
 
-        $LAI_UNIONS{$name}{file}    = $file;
-        $LAI_UNIONS{$name}{name}    = $name;
-        $LAI_UNIONS{$name}{def}     = $def;
-        $LAI_UNIONS{$name}{nested}  = 1 if $def =~ /::/;
+        $OTAI_UNIONS{$name}{file}    = $file;
+        $OTAI_UNIONS{$name}{name}    = $name;
+        $OTAI_UNIONS{$name}{def}     = $def;
+        $OTAI_UNIONS{$name}{nested}  = 1 if $def =~ /::/;
 
         my %s = ExtractStructInfoEx($name, $file);
 
@@ -4145,7 +4145,7 @@ sub MergeExtensionsEnums
 {
     for my $exenum (sort keys%EXTENSIONS_ENUMS)
     {
-        if (not $exenum =~ /^(lai_\w+)_extensions_t$/)
+        if (not $exenum =~ /^(otai_\w+)_extensions_t$/)
         {
             LogError "Enum $exenum is not extension enum";
             next;
@@ -4153,19 +4153,19 @@ sub MergeExtensionsEnums
 
         my $enum = "$1_t";
 
-        if (not defined $LAI_ENUMS{$enum})
+        if (not defined $OTAI_ENUMS{$enum})
         {
             LogError "Enum $exenum is extending not existing enum $enum";
             next;
         }
 
-        my @exvalues = @{ $LAI_ENUMS{$exenum}{values} };
+        my @exvalues = @{ $OTAI_ENUMS{$exenum}{values} };
 
-        my @values = @{ $LAI_ENUMS{$enum}{values} };
+        my @values = @{ $OTAI_ENUMS{$enum}{values} };
 
         push@values,@exvalues;
 
-        $LAI_ENUMS{$enum}{values} = \@values;
+        $OTAI_ENUMS{$enum}{values} = \@values;
 
         next if not $exenum =~ /_attr_extensions_t/;
 
@@ -4182,15 +4182,15 @@ sub ProcessNotificationStruct
 {
     my $rawname = shift;
 
-    my @types = @{ $LAI_ENUMS{lai_object_type_t}{values} };
+    my @types = @{ $OTAI_ENUMS{otai_object_type_t}{values} };
 
-    my $structname = "lai_${rawname}_t";
+    my $structname = "otai_${rawname}_t";
 
     LogDebug "ProcessProcessNotificationStruct: processing $structname";
 
     my %struct = ExtractStructInfo($structname, "struct_");
 
-    #print Dumper(%LAI_ENUMS);
+    #print Dumper(%OTAI_ENUMS);
     for my $member (GetStructKeysInOrder(\%struct))
     {
         my $type = $struct{$member}{type};
@@ -4198,11 +4198,11 @@ sub ProcessNotificationStruct
 
         # allowed entries on notification object structs
 
-        next if defined $LAI_ENUMS{$type};          # type is enum !
-        next if $type =~ /^lai_\w+_entry_t/;        # non object id struct
+        next if defined $OTAI_ENUMS{$type};          # type is enum !
+        next if $type =~ /^otai_\w+_entry_t/;        # non object id struct
         next if $type =~ /^(uint32_t|bool)$/;
 
-        if ($type =~ /^(lai_object_id_t|lai_attribute_t\*)$/)
+        if ($type =~ /^(otai_object_id_t|otai_attribute_t\*)$/)
         {
             my $objects = ExtractObjectsFromDesc($structname, $member, $desc);
 
@@ -4230,9 +4230,9 @@ sub CreateOtherStructs
 
     for my $name (sort keys %ALL_STRUCTS)
     {
-        next if $name =~ /^lai_\w+_(api|list|entry)_t$/;
+        next if $name =~ /^otai_\w+_(api|list|entry)_t$/;
 
-        next if not $name =~ /^lai_(\w+_notification(_data)?)_t$/;
+        next if not $name =~ /^otai_(\w+_notification(_data)?)_t$/;
 
         my $rawname = $1;
 
@@ -4245,7 +4245,7 @@ sub CreateOtherStructs
 
     for my $name(@ntfstructs)
     {
-        WriteHeader "extern const lai_struct_member_info_t* const $name\[\];";
+        WriteHeader "extern const otai_struct_member_info_t* const $name\[\];";
     }
 }
 

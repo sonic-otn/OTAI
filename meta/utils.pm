@@ -20,7 +20,7 @@
 #
 # @file    utils.pm
 #
-# @brief   This module defines LAI Metadata Utils Parser
+# @brief   This module defines OTAI Metadata Utils Parser
 #
 
 package utils;
@@ -151,7 +151,7 @@ sub GetHeaderFiles
 
     opendir(my $dh, $dir) or die "Can't opendir $dir: $!";
 
-    my @headers = grep { /^lai\w*\.h$/ and -f "$dir/$_" } readdir($dh);
+    my @headers = grep { /^otai\w*\.h$/ and -f "$dir/$_" } readdir($dh);
 
     closedir $dh;
 
@@ -228,7 +228,7 @@ sub GetNonObjectIdStructNames
 
         # TODO there should be better way to extract those
 
-        while ($data =~ /lai_(?:create|set)_\w+.+?\n.+const\s+(lai_(\w+)_t)/gim)
+        while ($data =~ /otai_(?:create|set)_\w+.+?\n.+const\s+(otai_(\w+)_t)/gim)
         {
             my $name = $1;
             my $rawname = $2;
@@ -248,7 +248,7 @@ sub GetNonObjectIdStructNames
 
 sub GetStructLists
 {
-    my $data = ReadHeaderFile("$main::INCLUDE_DIR/laitypes.h");
+    my $data = ReadHeaderFile("$main::INCLUDE_DIR/otaitypes.h");
 
     my %StructLists = ();
 
@@ -256,7 +256,7 @@ sub GetStructLists
 
     for my $line (@lines)
     {
-        next if not $line =~ /typedef\s+struct\s+_(lai_\w+_list_t)/;
+        next if not $line =~ /typedef\s+struct\s+_(otai_\w+_list_t)/;
 
         $StructLists{$1} = $1;
     }
@@ -283,17 +283,17 @@ sub SanityCheckContent
 #
 #    if (length($HEADER_CONTENT) < $metaHeaderSize)
 #    {
-#        LogError "generated laimetadata.h size is too small";
+#        LogError "generated otaimetadata.h size is too small";
 #    }
 #
 #    if (length($SOURCE_CONTENT) < $metaSourceSize)
 #    {
-#        LogError "generated laimetadata.c size is too small";
+#        LogError "generated otaimetadata.c size is too small";
 #    }
 #
 #    if (length($TEST_CONTENT) < $metaTestSize)
 #    {
-#        LogError "generated laimetadatatest.c size is too small";
+#        LogError "generated otaimetadatatest.c size is too small";
 #    }
 }
 
@@ -303,9 +303,9 @@ sub WriteMetaDataFiles
 
     exit 1 if ($warnings > 0 or $errors > 0);
 
-    WriteFile("laimetadata.h", $HEADER_CONTENT);
-    WriteFile("laimetadata.c", $SOURCE_CONTENT);
-    WriteFile("laimetadatatest.c", $TEST_CONTENT);
+    WriteFile("otaimetadata.h", $HEADER_CONTENT);
+    WriteFile("otaimetadata.c", $SOURCE_CONTENT);
+    WriteFile("otaimetadatatest.c", $TEST_CONTENT);
 }
 
 sub GetStructKeysInOrder

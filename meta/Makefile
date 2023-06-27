@@ -19,7 +19,7 @@
 #
 # @file    Makefile
 #
-# @brief   This module defines LAI Metadata Makefile
+# @brief   This module defines OTAI Metadata Makefile
 #
 
 WARNINGS = \
@@ -71,14 +71,14 @@ CFLAGS += -I../inc $(WARNINGS)
 DEPS = $(wildcard ../inc/*.h)
 XMLDEPS = $(wildcard xml/*.xml)
 
-OBJ = laimetadata.o laimetadatautils.o laiserialize.o
+OBJ = otaimetadata.o otaimetadatautils.o otaiserialize.o
 
 SYMBOLS = $(OBJ:=.symbols)
 
 all: $(SYMBOLS)
 	./checkheaders.pl ../inc ../inc
 
-CONSTHEADERS = laimetadatatypes.h laimetadatalogger.h laimetadatautils.h laiserialize.h
+CONSTHEADERS = otaimetadatatypes.h otaimetadatalogger.h otaimetadatautils.h otaiserialize.h
 
 xml: $(DEPS) Doxyfile $(CONSTHEADERS)
 	doxygen Doxyfile 2>&1 | perl -npe '$$e=1 if /warning/i; END{exit $$e}'
@@ -86,10 +86,10 @@ xml: $(DEPS) Doxyfile $(CONSTHEADERS)
 
 EXTRA = acronyms.txt aspell.en.pws *.pm *.cap
 
-laimetadata.c laimetadata.h: install_excel_writer xml $(XMLDEPS) parse.pl $(CONSTHEADERS) $(EXTRA)
+otaimetadata.c otaimetadata.h: install_excel_writer xml $(XMLDEPS) parse.pl $(CONSTHEADERS) $(EXTRA)
 	perl -I. parse.pl
 
-HEADERS = laimetadata.h $(CONSTHEADERS)
+HEADERS = otaimetadata.h $(CONSTHEADERS)
 
 %.o: %.c $(HEADERS)
 	gcc -c -o $@ $< $(CFLAGS)
@@ -109,7 +109,7 @@ install_excel_writer: excel-writer-xlsx-main.tar.gz
 .PHONY: clean install_excel_writer
 
 clean:
-	rm -f *.o *~ .*~ *.tmp .*.swp .*.swo *.bak lai*.gv lai*.svg *.o.symbols
-	rm -f laimetadata.h laimetadata.c
+	rm -f *.o *~ .*~ *.tmp .*.swp .*.swo *.bak otai*.gv otai*.svg *.o.symbols
+	rm -f otaimetadata.h otaimetadata.c
 	rm -rf xml html dist
 	rm -rf excel-writer-xlsx-main

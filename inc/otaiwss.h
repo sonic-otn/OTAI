@@ -13,17 +13,17 @@
  *    See the Apache Version 2.0 License for specific language governing
  *    permissions and limitations under the License.
  *
- * @file    laiwss.h
- * @brief   This module defines the WSS for the LAI
+ * @file    otaiwss.h
+ * @brief   This module defines the WSS for the OTAI
  */
 
-#if !defined (__LAIWSS_H_)
-#define __LAIWSS_H_
+#if !defined (__OTAIWSS_H_)
+#define __OTAIWSS_H_
 
-#include <laitypes.h>
+#include <otaitypes.h>
 
 /**
- * @defgroup LAIWSS LAI - WSS specific API definitions
+ * @defgroup OTAIWSS OTAI - WSS specific API definitions
  *
  * @{
  */
@@ -31,20 +31,20 @@
 /**
  * @brief WSS attribute IDs
  */
-typedef enum _lai_wss_attr_t
+typedef enum _otai_wss_attr_t
 {
     /**
      * @brief Start of attributes
      */
-    LAI_WSS_ATTR_START,
+    OTAI_WSS_ATTR_START,
 
     /**
      * @brief ID
      *
-     * @type lai_uint32_t
+     * @type otai_uint32_t
      * @flags MANDATORY_ON_CREATE | CREATE_ONLY
      */
-    LAI_WSS_ATTR_ID = LAI_WSS_ATTR_START,
+    OTAI_WSS_ATTR_ID = OTAI_WSS_ATTR_START,
 
     /**
      * @brief Serial No
@@ -52,7 +52,7 @@ typedef enum _lai_wss_attr_t
      * @type char
      * @flags READ_ONLY
      */
-    LAI_WSS_ATTR_SERIAL_NO,
+    OTAI_WSS_ATTR_SERIAL_NO,
 
     /**
      * @brief Part no
@@ -60,7 +60,7 @@ typedef enum _lai_wss_attr_t
      * @type char
      * @flags READ_ONLY
      */
-    LAI_WSS_ATTR_PART_NO,
+    OTAI_WSS_ATTR_PART_NO,
 
     /**
      * @brief Manufacture name
@@ -68,7 +68,7 @@ typedef enum _lai_wss_attr_t
      * @type char
      * @flags READ_ONLY
      */
-    LAI_WSS_ATTR_MFG_NAME,
+    OTAI_WSS_ATTR_MFG_NAME,
 
     /**
      * @brief Manufacture date
@@ -76,7 +76,7 @@ typedef enum _lai_wss_attr_t
      * @type char
      * @flags READ_ONLY
      */
-    LAI_WSS_ATTR_MFG_DATE,
+    OTAI_WSS_ATTR_MFG_DATE,
 
     /**
      * @brief Hardware version
@@ -84,15 +84,15 @@ typedef enum _lai_wss_attr_t
      * @type char
      * @flags READ_ONLY
      */
-    LAI_WSS_ATTR_HARDWARE_VERSION,
+    OTAI_WSS_ATTR_HARDWARE_VERSION,
 
     /**
      * @brief The operational state of the WSS
      *
-     * @type lai_oper_status_t
+     * @type otai_oper_status_t
      * @flags READ_ONLY
      */
-    LAI_WSS_ATTR_OPER_STATUS,
+    OTAI_WSS_ATTR_OPER_STATUS,
 
     /**
      * @brief Whether the WSS is present or not
@@ -100,7 +100,7 @@ typedef enum _lai_wss_attr_t
      * @type bool
      * @flags READ_ONLY
      */
-    LAI_WSS_ATTR_EMPTY,
+    OTAI_WSS_ATTR_EMPTY,
 
     /**
      * @brief Whether the WSS is removable
@@ -108,7 +108,7 @@ typedef enum _lai_wss_attr_t
      * @type bool
      * @flags READ_ONLY
      */
-    LAI_WSS_ATTR_REMOVABLE,
+    OTAI_WSS_ATTR_REMOVABLE,
 
     /**
      * @brief Software version
@@ -116,46 +116,46 @@ typedef enum _lai_wss_attr_t
      * @type char
      * @flags READ_ONLY
      */
-    LAI_WSS_ATTR_SOFTWARE_VERSION,
+    OTAI_WSS_ATTR_SOFTWARE_VERSION,
 
     /**
      * @brief End of attributes
      */
-    LAI_WSS_ATTR_END,
+    OTAI_WSS_ATTR_END,
 
     /** Custom range base value */
-    LAI_WSS_ATTR_CUSTOM_RANGE_START = 0x10000000,
+    OTAI_WSS_ATTR_CUSTOM_RANGE_START = 0x10000000,
 
     /** End of custom range base */
-    LAI_WSS_ATTR_CUSTOM_RANGE_END
+    OTAI_WSS_ATTR_CUSTOM_RANGE_END
 
-} lai_wss_attr_t;
+} otai_wss_attr_t;
 
 /**
  * @brief WSS stat IDs
  *
  * @flags Contains flags
  */
-typedef enum _lai_wss_stat_t
+typedef enum _otai_wss_stat_t
 {
     /**
      * @brief Start of statistics
      */
-    LAI_WSS_STAT_START,
+    OTAI_WSS_STAT_START,
 
     /**
      * @brief A placeholder
      *
-     * @type lai_uint64_t
+     * @type otai_uint64_t
      */
-    LAI_WSS_STAT_NOT_USE = LAI_WSS_STAT_START,
+    OTAI_WSS_STAT_NOT_USE = OTAI_WSS_STAT_START,
 
     /**
      * @brief End of statistics
      */
-    LAI_WSS_STAT_END,
+    OTAI_WSS_STAT_END,
 
-} lai_wss_stat_t;
+} otai_wss_stat_t;
 
 /**
  * @brief Create WSS.
@@ -167,23 +167,23 @@ typedef enum _lai_wss_stat_t
  * @param[in] attr_count Number of attributes
  * @param[in] attr_list Array of attributes
  *
- * @return #LAI_STATUS_SUCCESS on success, failure status code on error
+ * @return #OTAI_STATUS_SUCCESS on success, failure status code on error
  */
-typedef lai_status_t (*lai_create_wss_fn)(
-        _Out_ lai_object_id_t *wss_id,
-        _In_ lai_object_id_t linecard_id,
+typedef otai_status_t (*otai_create_wss_fn)(
+        _Out_ otai_object_id_t *wss_id,
+        _In_ otai_object_id_t linecard_id,
         _In_ uint32_t attr_count,
-        _In_ const lai_attribute_t *attr_list);
+        _In_ const otai_attribute_t *attr_list);
 
 /**
  * @brief Remove WSS
  *
  * @param[in] wss_id WSS id
  *
- * @return #LAI_STATUS_SUCCESS on success, failure status code on error
+ * @return #OTAI_STATUS_SUCCESS on success, failure status code on error
  */
-typedef lai_status_t (*lai_remove_wss_fn)(
-        _In_ lai_object_id_t wss_id);
+typedef otai_status_t (*otai_remove_wss_fn)(
+        _In_ otai_object_id_t wss_id);
 
 /**
  * @brief Set WSS attribute
@@ -191,11 +191,11 @@ typedef lai_status_t (*lai_remove_wss_fn)(
  * @param[in] wss_id WSS id
  * @param[in] attr Attribute
  *
- * @return #LAI_STATUS_SUCCESS on success, failure status code on error
+ * @return #OTAI_STATUS_SUCCESS on success, failure status code on error
  */
-typedef lai_status_t (*lai_set_wss_attribute_fn)(
-        _In_ lai_object_id_t wss_id,
-        _In_ const lai_attribute_t *attr);
+typedef otai_status_t (*otai_set_wss_attribute_fn)(
+        _In_ otai_object_id_t wss_id,
+        _In_ const otai_attribute_t *attr);
 
 /**
  * @brief Get WSS attribute
@@ -204,12 +204,12 @@ typedef lai_status_t (*lai_set_wss_attribute_fn)(
  * @param[in] attr_count Number of attributes
  * @param[inout] attr_list Array of attributes
  *
- * @return #LAI_STATUS_SUCCESS on success, failure status code on error
+ * @return #OTAI_STATUS_SUCCESS on success, failure status code on error
  */
-typedef lai_status_t (*lai_get_wss_attribute_fn)(
-        _In_ lai_object_id_t wss_id,
+typedef otai_status_t (*otai_get_wss_attribute_fn)(
+        _In_ otai_object_id_t wss_id,
         _In_ uint32_t attr_count,
-        _Inout_ lai_attribute_t *attr_list);
+        _Inout_ otai_attribute_t *attr_list);
 
 /**
  * @brief Get WSS statistics.
@@ -219,13 +219,13 @@ typedef lai_status_t (*lai_get_wss_attribute_fn)(
  * @param[in] counter_ids Specifies the array of counter ids
  * @param[out] counters Array of resulting counter values.
  *
- * @return #LAI_STATUS_SUCCESS on success, failure status code on error
+ * @return #OTAI_STATUS_SUCCESS on success, failure status code on error
  */
-typedef lai_status_t (*lai_get_wss_stats_fn)(
-        _In_ lai_object_id_t wss_id,
+typedef otai_status_t (*otai_get_wss_stats_fn)(
+        _In_ otai_object_id_t wss_id,
         _In_ uint32_t number_of_counters,
-        _In_ const lai_stat_id_t *counter_ids,
-        _Out_ lai_stat_value_t *counters);
+        _In_ const otai_stat_id_t *counter_ids,
+        _Out_ otai_stat_value_t *counters);
 
 /**
  * @brief Get WSS statistics extended.
@@ -236,14 +236,14 @@ typedef lai_status_t (*lai_get_wss_stats_fn)(
  * @param[in] mode Statistics mode
  * @param[out] counters Array of resulting counter values.
  *
- * @return #LAI_STATUS_SUCCESS on success, failure status code on error
+ * @return #OTAI_STATUS_SUCCESS on success, failure status code on error
  */
-typedef lai_status_t (*lai_get_wss_stats_ext_fn)(
-        _In_ lai_object_id_t wss_id,
+typedef otai_status_t (*otai_get_wss_stats_ext_fn)(
+        _In_ otai_object_id_t wss_id,
         _In_ uint32_t number_of_counters,
-        _In_ const lai_stat_id_t *counter_ids,
-        _In_ lai_stats_mode_t mode,
-        _Out_ lai_stat_value_t *counters);
+        _In_ const otai_stat_id_t *counter_ids,
+        _In_ otai_stats_mode_t mode,
+        _Out_ otai_stat_value_t *counters);
 
 /**
  * @brief Clear WSS statistics counters.
@@ -252,28 +252,28 @@ typedef lai_status_t (*lai_get_wss_stats_ext_fn)(
  * @param[in] number_of_counters Number of counters in the array
  * @param[in] counter_ids Specifies the array of counter ids
  *
- * @return #LAI_STATUS_SUCCESS on success, failure status code on error
+ * @return #OTAI_STATUS_SUCCESS on success, failure status code on error
  */
-typedef lai_status_t (*lai_clear_wss_stats_fn)(
-        _In_ lai_object_id_t wss_id,
+typedef otai_status_t (*otai_clear_wss_stats_fn)(
+        _In_ otai_object_id_t wss_id,
         _In_ uint32_t number_of_counters,
-        _In_ const lai_stat_id_t *counter_ids);
+        _In_ const otai_stat_id_t *counter_ids);
 
 /**
- * @brief Routing interface methods table retrieved with lai_api_query()
+ * @brief Routing interface methods table retrieved with otai_api_query()
  */
-typedef struct _lai_wss_api_t
+typedef struct _otai_wss_api_t
 {
-    lai_create_wss_fn                create_wss;
-    lai_remove_wss_fn                remove_wss;
-    lai_set_wss_attribute_fn         set_wss_attribute;
-    lai_get_wss_attribute_fn         get_wss_attribute;
-    lai_get_wss_stats_fn             get_wss_stats;
-    lai_get_wss_stats_ext_fn         get_wss_stats_ext;
-    lai_clear_wss_stats_fn           clear_wss_stats;
-} lai_wss_api_t;
+    otai_create_wss_fn                create_wss;
+    otai_remove_wss_fn                remove_wss;
+    otai_set_wss_attribute_fn         set_wss_attribute;
+    otai_get_wss_attribute_fn         get_wss_attribute;
+    otai_get_wss_stats_fn             get_wss_stats;
+    otai_get_wss_stats_ext_fn         get_wss_stats_ext;
+    otai_clear_wss_stats_fn           clear_wss_stats;
+} otai_wss_api_t;
 
 /**
  * @}
  */
-#endif /** __LAIWSS_H_ */
+#endif /** __OTAIWSS_H_ */

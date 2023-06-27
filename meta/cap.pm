@@ -75,7 +75,7 @@ sub ProcessCapAttr
 {
     my $val = shift;
 
-    return $val if $val =~ /^LAI_[0-9A-Z_]+_ATTR_[0-9A-Z_]+$/;
+    return $val if $val =~ /^OTAI_[0-9A-Z_]+_ATTR_[0-9A-Z_]+$/;
 
     LogError "wrong attr name: $val";
 
@@ -125,7 +125,7 @@ sub ProcessCapEnumCapability
 
     for my $cap (@cap)
     {
-        if (not $cap =~ /^LAI_[0-9A-Z_]+$/)
+        if (not $cap =~ /^OTAI_[0-9A-Z_]+$/)
         {
             LogError "invalid enum capability tag value '$val' ($cap)";
             return undef;

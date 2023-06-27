@@ -13,17 +13,17 @@
  *    See the Apache Version 2.0 License for specific language governing
  *    permissions and limitations under the License.
  *
- * @file    laiosc.h
- * @brief   This module defines the OSC for the LAI
+ * @file    otaiosc.h
+ * @brief   This module defines the OSC for the OTAI
  */
 
-#if !defined (__LAIOSC_H_)
-#define __LAIOSC_H_
+#if !defined (__OTAIOSC_H_)
+#define __OTAIOSC_H_
 
-#include <laitypes.h>
+#include <otaitypes.h>
 
 /**
- * @defgroup LAIOSC LAI - OSC specific API definitions
+ * @defgroup OTAIOSC OTAI - OSC specific API definitions
  *
  * @{
  */
@@ -31,20 +31,20 @@
 /**
  * @brief OSC attribute IDs
  */
-typedef enum _lai_osc_attr_t
+typedef enum _otai_osc_attr_t
 {
     /**
      * @brief Start of attributes
      */
-    LAI_OSC_ATTR_START,
+    OTAI_OSC_ATTR_START,
 
     /**
      * @brief ID
      *
-     * @type lai_uint32_t
+     * @type otai_uint32_t
      * @flags MANDATORY_ON_CREATE | CREATE_ONLY
      */
-    LAI_OSC_ATTR_ID = LAI_OSC_ATTR_START,
+    OTAI_OSC_ATTR_ID = OTAI_OSC_ATTR_START,
 
     /**
      * @brief Removable
@@ -52,7 +52,7 @@ typedef enum _lai_osc_attr_t
      * @type bool
      * @flags READ_ONLY
      */
-    LAI_OSC_ATTR_REMOVABLE,
+    OTAI_OSC_ATTR_REMOVABLE,
 
     /**
      * @brief Serial no
@@ -60,7 +60,7 @@ typedef enum _lai_osc_attr_t
      * @type char
      * @flags READ_ONLY
      */
-    LAI_OSC_ATTR_SERIAL_NO,
+    OTAI_OSC_ATTR_SERIAL_NO,
 
     /**
      * @brief Equipment failure
@@ -68,7 +68,7 @@ typedef enum _lai_osc_attr_t
      * @type bool
      * @flags READ_ONLY
      */
-    LAI_OSC_ATTR_EQUIPMENT_FAILURE,
+    OTAI_OSC_ATTR_EQUIPMENT_FAILURE,
 
     /**
      * @brief Equipment mismatch
@@ -76,7 +76,7 @@ typedef enum _lai_osc_attr_t
      * @type bool
      * @flags READ_ONLY
      */
-    LAI_OSC_ATTR_EQUIPMENT_MISMATCH,
+    OTAI_OSC_ATTR_EQUIPMENT_MISMATCH,
 
     /**
      * @brief Location
@@ -84,7 +84,7 @@ typedef enum _lai_osc_attr_t
      * @type char
      * @flags READ_ONLY
      */
-    LAI_OSC_ATTR_LOCATION,
+    OTAI_OSC_ATTR_LOCATION,
 
     /**
      * @brief Hardware version
@@ -92,23 +92,23 @@ typedef enum _lai_osc_attr_t
      * @type char
      * @flags READ_ONLY
      */
-    LAI_OSC_ATTR_HARDWARE_VERSION,
+    OTAI_OSC_ATTR_HARDWARE_VERSION,
 
     /**
      * @brief Admin state
      *
-     * @type lai_admin_state_t
+     * @type otai_admin_state_t
      * @flags READ_ONLY
      */
-    LAI_OSC_ATTR_ADMIN_STATE,
+    OTAI_OSC_ATTR_ADMIN_STATE,
 
     /**
      * @brief Operational status
      *
-     * @type lai_oper_status_t
+     * @type otai_oper_status_t
      * @flags READ_ONLY
      */
-    LAI_OSC_ATTR_OPER_STATUS,
+    OTAI_OSC_ATTR_OPER_STATUS,
 
     /**
      * @brief Part no
@@ -116,7 +116,7 @@ typedef enum _lai_osc_attr_t
      * @type char
      * @flags READ_ONLY
      */
-    LAI_OSC_ATTR_PART_NO,
+    OTAI_OSC_ATTR_PART_NO,
 
     /**
      * @brief Mfg name
@@ -124,7 +124,7 @@ typedef enum _lai_osc_attr_t
      * @type char
      * @flags READ_ONLY
      */
-    LAI_OSC_ATTR_MFG_NAME,
+    OTAI_OSC_ATTR_MFG_NAME,
 
     /**
      * @brief Manufacture date
@@ -132,7 +132,7 @@ typedef enum _lai_osc_attr_t
      * @type char
      * @flags READ_ONLY
      */
-    LAI_OSC_ATTR_MFG_DATE,
+    OTAI_OSC_ATTR_MFG_DATE,
 
     /**
      * @brief Empty
@@ -140,7 +140,7 @@ typedef enum _lai_osc_attr_t
      * @type bool
      * @flags READ_ONLY
      */
-    LAI_OSC_ATTR_EMPTY,
+    OTAI_OSC_ATTR_EMPTY,
 
     /**
      * @brief Software version
@@ -148,7 +148,7 @@ typedef enum _lai_osc_attr_t
      * @type char
      * @flags READ_ONLY
      */
-    LAI_OSC_ATTR_SOFTWARE_VERSION,
+    OTAI_OSC_ATTR_SOFTWARE_VERSION,
 
     /**
      * @brief Firmware version
@@ -156,15 +156,15 @@ typedef enum _lai_osc_attr_t
      * @type char
      * @flags READ_ONLY
      */
-    LAI_OSC_ATTR_FIRMWARE_VERSION,
+    OTAI_OSC_ATTR_FIRMWARE_VERSION,
 
     /**
      * @brief Output frequency
      *
-     * @type lai_uint64_t
+     * @type otai_uint64_t
      * @flags READ_ONLY
      */
-    LAI_OSC_ATTR_OUTPUT_FREQUENCY,
+    OTAI_OSC_ATTR_OUTPUT_FREQUENCY,
 
     /**
      * @brief Enabled
@@ -172,177 +172,177 @@ typedef enum _lai_osc_attr_t
      * @type bool
      * @flags CREATE_AND_SET
      */
-    LAI_OSC_ATTR_ENABLED,
+    OTAI_OSC_ATTR_ENABLED,
 
     /**
      * @brief Rx low threshold
      *
-     * @type lai_double_t
+     * @type otai_double_t
      * @flags CREATE_AND_SET
      */
-    LAI_OSC_ATTR_RX_LOW_THRESHOLD,
+    OTAI_OSC_ATTR_RX_LOW_THRESHOLD,
 
     /**
      * @brief Rx high threshold
      *
-     * @type lai_double_t
+     * @type otai_double_t
      * @flags CREATE_AND_SET
      */
-    LAI_OSC_ATTR_RX_HIGH_THRESHOLD,
+    OTAI_OSC_ATTR_RX_HIGH_THRESHOLD,
 
     /**
      * @brief Tx low threshold
      *
-     * @type lai_double_t
+     * @type otai_double_t
      * @flags CREATE_AND_SET
      */
-    LAI_OSC_ATTR_TX_LOW_THRESHOLD,
+    OTAI_OSC_ATTR_TX_LOW_THRESHOLD,
 
     /**
      * @brief End of attributes
      */
-    LAI_OSC_ATTR_END,
+    OTAI_OSC_ATTR_END,
 
     /** Custom range base value */
-    LAI_OSC_ATTR_CUSTOM_RANGE_START = 0x10000000,
+    OTAI_OSC_ATTR_CUSTOM_RANGE_START = 0x10000000,
 
     /** End of custom range base */
-    LAI_OSC_ATTR_CUSTOM_RANGE_END
+    OTAI_OSC_ATTR_CUSTOM_RANGE_END
 
-} lai_osc_attr_t;
+} otai_osc_attr_t;
 
 /**
  * @brief OSC stat IDs
  *
  * @flags Contains flags
  */
-typedef enum _lai_osc_stat_t
+typedef enum _otai_osc_stat_t
 {
     /**
      * @brief Start of statistics
      */
-    LAI_OSC_STAT_START,
+    OTAI_OSC_STAT_START,
 
     /**
      * @brief Input power
      *
-     * @type lai_double_t
+     * @type otai_double_t
      * @unit dBm
      * @precision precision2
      * @iscounter false
      */
-    LAI_OSC_STAT_INPUT_POWER = LAI_OSC_STAT_START,
+    OTAI_OSC_STAT_INPUT_POWER = OTAI_OSC_STAT_START,
 
     /**
      * @brief Temperature
      *
-     * @type lai_double_t
+     * @type otai_double_t
      * @precision precision1
      * @iscounter false
      */
-    LAI_OSC_STAT_TEMPERATURE,
+    OTAI_OSC_STAT_TEMPERATURE,
 
     /**
      * @brief Output power
      *
-     * @type lai_double_t
+     * @type otai_double_t
      * @unit dBm
      * @precision precision2
      * @iscounter false
      */
-    LAI_OSC_STAT_OUTPUT_POWER,
+    OTAI_OSC_STAT_OUTPUT_POWER,
 
     /**
      * @brief Input offset primary-line rx
      *
-     * @type lai_double_t
+     * @type otai_double_t
      * @precision precision2
      * @iscounter false
      */
-    LAI_OSC_STAT_INPUT_OFFSET_LINEP_RX,
+    OTAI_OSC_STAT_INPUT_OFFSET_LINEP_RX,
 
     /**
      * @brief Output offset primary-line tx
      *
-     * @type lai_double_t
+     * @type otai_double_t
      * @precision precision2
      * @iscounter false
      */
-    LAI_OSC_STAT_OUTPUT_OFFSET_LINEP_TX,
+    OTAI_OSC_STAT_OUTPUT_OFFSET_LINEP_TX,
 
     /**
      * @brief Input offset secondary-line rx
      *
-     * @type lai_double_t
+     * @type otai_double_t
      * @precision precision2
      * @iscounter false
      */
-    LAI_OSC_STAT_INPUT_OFFSET_LINES_RX,
+    OTAI_OSC_STAT_INPUT_OFFSET_LINES_RX,
 
     /**
      * @brief Output offset secondary-line tx
      *
-     * @type lai_double_t
+     * @type otai_double_t
      * @precision precision2
      * @iscounter false
      */
-    LAI_OSC_STAT_OUTPUT_OFFSET_LINES_TX,
+    OTAI_OSC_STAT_OUTPUT_OFFSET_LINES_TX,
 
     /**
      * @brief Laser bias current
      *
-     * @type lai_double_t
+     * @type otai_double_t
      * @precision precision2
      * @iscounter false
      */
-    LAI_OSC_STAT_LASER_BIAS_CURRENT,
+    OTAI_OSC_STAT_LASER_BIAS_CURRENT,
 
     /**
      * @brief Panel input power primary-line rx
      *
-     * @type lai_double_t
+     * @type otai_double_t
      * @unit dBm
      * @precision precision2
      * @iscounter false
      */
-    LAI_OSC_STAT_PANEL_INPUT_POWER_LINEP_RX,
+    OTAI_OSC_STAT_PANEL_INPUT_POWER_LINEP_RX,
 
     /**
      * @brief Panel output power primary-line tx
      *
-     * @type lai_double_t
+     * @type otai_double_t
      * @unit dBm
      * @precision precision2
      * @iscounter false
      */
-    LAI_OSC_STAT_PANEL_OUTPUT_POWER_LINEP_TX,
+    OTAI_OSC_STAT_PANEL_OUTPUT_POWER_LINEP_TX,
 
     /**
      * @brief Panel input power secondary-line rx
      *
-     * @type lai_double_t
+     * @type otai_double_t
      * @unit dBm
      * @precision precision2
      * @iscounter false
      */
-    LAI_OSC_STAT_PANEL_INPUT_POWER_LINES_RX,
+    OTAI_OSC_STAT_PANEL_INPUT_POWER_LINES_RX,
 
     /**
      * @brief Panel output power secondary-line tx
      *
-     * @type lai_double_t
+     * @type otai_double_t
      * @unit dBm
      * @precision precision2
      * @iscounter false
      */
-    LAI_OSC_STAT_PANEL_OUTPUT_POWER_LINES_TX,
+    OTAI_OSC_STAT_PANEL_OUTPUT_POWER_LINES_TX,
 
     /**
      * @brief End of statistics
      */
-    LAI_OSC_STAT_END,
+    OTAI_OSC_STAT_END,
 
-} lai_osc_stat_t;
+} otai_osc_stat_t;
 
 /**
  * @brief Create OSC.
@@ -354,23 +354,23 @@ typedef enum _lai_osc_stat_t
  * @param[in] attr_count Number of attributes
  * @param[in] attr_list Array of attributes
  *
- * @return #LAI_STATUS_SUCCESS on success, failure status code on error
+ * @return #OTAI_STATUS_SUCCESS on success, failure status code on error
  */
-typedef lai_status_t (*lai_create_osc_fn)(
-        _Out_ lai_object_id_t *osc_id,
-        _In_ lai_object_id_t linecard_id,
+typedef otai_status_t (*otai_create_osc_fn)(
+        _Out_ otai_object_id_t *osc_id,
+        _In_ otai_object_id_t linecard_id,
         _In_ uint32_t attr_count,
-        _In_ const lai_attribute_t *attr_list);
+        _In_ const otai_attribute_t *attr_list);
 
 /**
  * @brief Remove OSC
  *
  * @param[in] osc_id OSC id
  *
- * @return #LAI_STATUS_SUCCESS on success, failure status code on error
+ * @return #OTAI_STATUS_SUCCESS on success, failure status code on error
  */
-typedef lai_status_t (*lai_remove_osc_fn)(
-        _In_ lai_object_id_t osc_id);
+typedef otai_status_t (*otai_remove_osc_fn)(
+        _In_ otai_object_id_t osc_id);
 
 /**
  * @brief Set OSC attribute
@@ -378,11 +378,11 @@ typedef lai_status_t (*lai_remove_osc_fn)(
  * @param[in] osc_id OSC id
  * @param[in] attr Attribute
  *
- * @return #LAI_STATUS_SUCCESS on success, failure status code on error
+ * @return #OTAI_STATUS_SUCCESS on success, failure status code on error
  */
-typedef lai_status_t (*lai_set_osc_attribute_fn)(
-        _In_ lai_object_id_t osc_id,
-        _In_ const lai_attribute_t *attr);
+typedef otai_status_t (*otai_set_osc_attribute_fn)(
+        _In_ otai_object_id_t osc_id,
+        _In_ const otai_attribute_t *attr);
 
 /**
  * @brief Get OSC attribute
@@ -391,12 +391,12 @@ typedef lai_status_t (*lai_set_osc_attribute_fn)(
  * @param[in] attr_count Number of attributes
  * @param[inout] attr_list Array of attributes
  *
- * @return #LAI_STATUS_SUCCESS on success, failure status code on error
+ * @return #OTAI_STATUS_SUCCESS on success, failure status code on error
  */
-typedef lai_status_t (*lai_get_osc_attribute_fn)(
-        _In_ lai_object_id_t osc_id,
+typedef otai_status_t (*otai_get_osc_attribute_fn)(
+        _In_ otai_object_id_t osc_id,
         _In_ uint32_t attr_count,
-        _Inout_ lai_attribute_t *attr_list);
+        _Inout_ otai_attribute_t *attr_list);
 
 /**
  * @brief Get OSC statistics.
@@ -406,13 +406,13 @@ typedef lai_status_t (*lai_get_osc_attribute_fn)(
  * @param[in] counter_ids Specifies the array of counter ids
  * @param[out] counters Array of resulting counter values.
  *
- * @return #LAI_STATUS_SUCCESS on success, failure status code on error
+ * @return #OTAI_STATUS_SUCCESS on success, failure status code on error
  */
-typedef lai_status_t (*lai_get_osc_stats_fn)(
-        _In_ lai_object_id_t osc_id,
+typedef otai_status_t (*otai_get_osc_stats_fn)(
+        _In_ otai_object_id_t osc_id,
         _In_ uint32_t number_of_counters,
-        _In_ const lai_stat_id_t *counter_ids,
-        _Out_ lai_stat_value_t *counters);
+        _In_ const otai_stat_id_t *counter_ids,
+        _Out_ otai_stat_value_t *counters);
 
 /**
  * @brief Get OSC statistics extended.
@@ -423,14 +423,14 @@ typedef lai_status_t (*lai_get_osc_stats_fn)(
  * @param[in] mode Statistics mode
  * @param[out] counters Array of resulting counter values.
  *
- * @return #LAI_STATUS_SUCCESS on success, failure status code on error
+ * @return #OTAI_STATUS_SUCCESS on success, failure status code on error
  */
-typedef lai_status_t (*lai_get_osc_stats_ext_fn)(
-        _In_ lai_object_id_t osc_id,
+typedef otai_status_t (*otai_get_osc_stats_ext_fn)(
+        _In_ otai_object_id_t osc_id,
         _In_ uint32_t number_of_counters,
-        _In_ const lai_stat_id_t *counter_ids,
-        _In_ lai_stats_mode_t mode,
-        _Out_ lai_stat_value_t *counters);
+        _In_ const otai_stat_id_t *counter_ids,
+        _In_ otai_stats_mode_t mode,
+        _Out_ otai_stat_value_t *counters);
 
 /**
  * @brief Clear OSC statistics counters.
@@ -439,28 +439,28 @@ typedef lai_status_t (*lai_get_osc_stats_ext_fn)(
  * @param[in] number_of_counters Number of counters in the array
  * @param[in] counter_ids Specifies the array of counter ids
  *
- * @return #LAI_STATUS_SUCCESS on success, failure status code on error
+ * @return #OTAI_STATUS_SUCCESS on success, failure status code on error
  */
-typedef lai_status_t (*lai_clear_osc_stats_fn)(
-        _In_ lai_object_id_t osc_id,
+typedef otai_status_t (*otai_clear_osc_stats_fn)(
+        _In_ otai_object_id_t osc_id,
         _In_ uint32_t number_of_counters,
-        _In_ const lai_stat_id_t *counter_ids);
+        _In_ const otai_stat_id_t *counter_ids);
 
 /**
- * @brief Routing interface methods table retrieved with lai_api_query()
+ * @brief Routing interface methods table retrieved with otai_api_query()
  */
-typedef struct _lai_osc_api_t
+typedef struct _otai_osc_api_t
 {
-    lai_create_osc_fn                create_osc;
-    lai_remove_osc_fn                remove_osc;
-    lai_set_osc_attribute_fn         set_osc_attribute;
-    lai_get_osc_attribute_fn         get_osc_attribute;
-    lai_get_osc_stats_fn             get_osc_stats;
-    lai_get_osc_stats_ext_fn         get_osc_stats_ext;
-    lai_clear_osc_stats_fn           clear_osc_stats;
-} lai_osc_api_t;
+    otai_create_osc_fn                create_osc;
+    otai_remove_osc_fn                remove_osc;
+    otai_set_osc_attribute_fn         set_osc_attribute;
+    otai_get_osc_attribute_fn         get_osc_attribute;
+    otai_get_osc_stats_fn             get_osc_stats;
+    otai_get_osc_stats_ext_fn         get_osc_stats_ext;
+    otai_clear_osc_stats_fn           clear_osc_stats;
+} otai_osc_api_t;
 
 /**
  * @}
  */
-#endif /** __LAIOSC_H_ */
+#endif /** __OTAIOSC_H_ */

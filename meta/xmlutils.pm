@@ -20,7 +20,7 @@
 #
 # @file    xmlutils.pm
 #
-# @brief   This module defines LAI Metadata Xml Utils Parser
+# @brief   This module defines OTAI Metadata Xml Utils Parser
 #
 
 package xmlutils;
@@ -227,7 +227,7 @@ sub GetLaiXmlFiles
 
     my @files = GetXmlFiles($dir);
 
-    return grep { /^lai\w*_8h\.xml$/ } @files;
+    return grep { /^otai\w*_8h\.xml$/ } @files;
 }
 
 sub GetXmlUnionFiles
@@ -279,7 +279,7 @@ sub ProcessStructObjects
 
     for my $ot (@objectTypes)
     {
-        if (not $ot =~ /^LAI_OBJECT_TYPE_\w+$/)
+        if (not $ot =~ /^OTAI_OBJECT_TYPE_\w+$/)
         {
             LogError "invalid object type tag value ($ot) in $structName $tagValue";
             return undef;
@@ -309,9 +309,9 @@ sub ProcessStructValidOnly
     {
         # it can be single value (struct member or param) or param pointer
 
-        if (not $cond =~ /^(\w+|\w+->\w+|lai_metadata_\w+\(\w+\)) == (true|false|LAI_\w+|$NUMBER_REGEX)$/)
+        if (not $cond =~ /^(\w+|\w+->\w+|otai_metadata_\w+\(\w+\)) == (true|false|OTAI_\w+|$NUMBER_REGEX)$/)
         {
-            LogError "invalid condition tag value '$tagValue' ($cond), expected (\\w+|\\w+->\\w+) == true|false|LAI_ENUM|number";
+            LogError "invalid condition tag value '$tagValue' ($cond), expected (\\w+|\\w+->\\w+) == true|false|OTAI_ENUM|number";
             return undef;
         }
     }
@@ -475,7 +475,7 @@ sub ExtractStructInfoEx
     my @StructMembers = ();
     my @keys = ();
 
-    $Struct{count}->{list} = "count" if $structName =~ /^lai_(\w+)_list_t$/;
+    $Struct{count}->{list} = "count" if $structName =~ /^otai_(\w+)_list_t$/;
 
     for my $member (@members)
     {
@@ -492,7 +492,7 @@ sub ExtractStructInfoEx
 
         $args = "" if ref $args eq "HASH";
 
-        $type = $1 if $type =~ /^(.+) _lai_\w+_t::(?:\w+|::)+(.*)$/;
+        $type = $1 if $type =~ /^(.+) _otai_\w+_t::(?:\w+|::)+(.*)$/;
 
         my $typeSuffix = $2;
 
@@ -528,13 +528,13 @@ sub ExtractStructInfoEx
         push @StructMembers, \%M;
         push @keys, $name;
 
-        $Struct{ismetadatastruct} = 1 if $file =~ m!meta/lai\w+.h$|laimeta\w+!;
-        $Struct{containsfnpointer} = 1 if $type =~ /^lai_\w+_fn$/;
+        $Struct{ismetadatastruct} = 1 if $file =~ m!meta/otai\w+.h$|otaimeta\w+!;
+        $Struct{containsfnpointer} = 1 if $type =~ /^otai_\w+_fn$/;
     }
 
     $Struct{members} = \@StructMembers;
     $Struct{keys} = \@keys;
-    $Struct{baseName} = ($structName =~ /^lai_(\w+)_t$/) ? $1 : $structName;
+    $Struct{baseName} = ($structName =~ /^otai_(\w+)_t$/) ? $1 : $structName;
     $Struct{baseName} =~ s/^_//;
     $Struct{union} = 1 if $ref->{compounddef}[0]->{kind} eq "union";
 

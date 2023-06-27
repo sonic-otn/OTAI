@@ -13,9 +13,9 @@
  *    See the Apache Version 2.0 License for specific language governing
  *    permissions and limitations under the License.
  *
- * @file    laiserialize.c
+ * @file    otaiserialize.c
  *
- * @brief   This file implements basic serialization functions for LAI attributes
+ * @brief   This file implements basic serialization functions for OTAI attributes
  */
 
 #include <arpa/inet.h>
@@ -27,16 +27,16 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <lai.h>
-#include "laimetadatautils.h"
-#include "laimetadatalogger.h"
-#include "laimetadata.h"
-#include "laiserialize.h"
+#include <otai.h>
+#include "otaimetadatautils.h"
+#include "otaimetadatalogger.h"
+#include "otaimetadata.h"
+#include "otaiserialize.h"
 
 #define PRIMITIVE_BUFFER_SIZE 128
 #define MAX_CHARS_PRINT 25
 
-bool lai_serialize_is_char_allowed(
+bool otai_serialize_is_char_allowed(
         _In_ char c)
 {
     /*
@@ -53,32 +53,32 @@ bool lai_serialize_is_char_allowed(
     return c == 0 || c == '"' || c == ',' || c == ']' || c == '}';
 }
 
-int lai_serialize_bool(
+int otai_serialize_bool(
         _Out_ char *buffer,
         _In_ bool flag)
 {
     return sprintf(buffer, "%s", flag ? "true" : "false");
 }
 
-#define LAI_TRUE_LENGTH 4
-#define LAI_FALSE_LENGTH 5
+#define OTAI_TRUE_LENGTH 4
+#define OTAI_FALSE_LENGTH 5
 
-int lai_deserialize_bool(
+int otai_deserialize_bool(
         _In_ const char *buffer,
         _Out_ bool *flag)
 {
-    if (strncmp(buffer, "true", LAI_TRUE_LENGTH) == 0 &&
-            lai_serialize_is_char_allowed(buffer[LAI_TRUE_LENGTH]))
+    if (strncmp(buffer, "true", OTAI_TRUE_LENGTH) == 0 &&
+            otai_serialize_is_char_allowed(buffer[OTAI_TRUE_LENGTH]))
     {
         *flag = true;
-        return LAI_TRUE_LENGTH;
+        return OTAI_TRUE_LENGTH;
     }
 
-    if (strncmp(buffer, "false", LAI_FALSE_LENGTH) == 0 &&
-            lai_serialize_is_char_allowed(buffer[LAI_FALSE_LENGTH]))
+    if (strncmp(buffer, "false", OTAI_FALSE_LENGTH) == 0 &&
+            otai_serialize_is_char_allowed(buffer[OTAI_FALSE_LENGTH]))
     {
         *flag = false;
-        return LAI_FALSE_LENGTH;
+        return OTAI_FALSE_LENGTH;
     }
 
     /*
@@ -86,20 +86,20 @@ int lai_deserialize_bool(
      * after "false" string.
      */
 
-    LAI_META_LOG_WARN("failed to deserialize '%.*s' as bool",
-            LAI_FALSE_LENGTH + 1,
+    OTAI_META_LOG_WARN("failed to deserialize '%.*s' as bool",
+            OTAI_FALSE_LENGTH + 1,
             buffer);
 
-    return LAI_SERIALIZE_ERROR;
+    return OTAI_SERIALIZE_ERROR;
 }
 
-int lai_serialize_chardata(
+int otai_serialize_chardata(
         _Out_ char *buffer,
-        _In_ const char data[LAI_CHARDATA_LENGTH])
+        _In_ const char data[OTAI_CHARDATA_LENGTH])
 {
     int idx;
 
-    for (idx = 0; idx < LAI_CHARDATA_LENGTH; ++idx)
+    for (idx = 0; idx < OTAI_CHARDATA_LENGTH; ++idx)
     {
         char c = data[idx];
 
@@ -114,8 +114,8 @@ int lai_serialize_chardata(
             continue;
         }
 
-        LAI_META_LOG_WARN("invalid character 0x%x in chardata", c);
-        return LAI_SERIALIZE_ERROR;
+        OTAI_META_LOG_WARN("invalid character 0x%x in chardata", c);
+        return OTAI_SERIALIZE_ERROR;
     }
 
     buffer[idx] = 0;
@@ -123,15 +123,15 @@ int lai_serialize_chardata(
     return idx;
 }
 
-int lai_deserialize_chardata(
+int otai_deserialize_chardata(
         _In_ const char *buffer,
-        _Out_ char data[LAI_CHARDATA_LENGTH])
+        _Out_ char data[OTAI_CHARDATA_LENGTH])
 {
     int idx;
 
-    memset(data, 0, LAI_CHARDATA_LENGTH);
+    memset(data, 0, OTAI_CHARDATA_LENGTH);
 
-    for (idx = 0; idx < LAI_CHARDATA_LENGTH; ++idx)
+    for (idx = 0; idx < OTAI_CHARDATA_LENGTH; ++idx)
     {
         char c = buffer[idx];
 
@@ -156,33 +156,33 @@ int lai_deserialize_chardata(
             break;
         }
 
-        LAI_META_LOG_WARN("invalid character 0x%x in chardata", c);
-        return LAI_SERIALIZE_ERROR;
+        OTAI_META_LOG_WARN("invalid character 0x%x in chardata", c);
+        return OTAI_SERIALIZE_ERROR;
     }
 
-    if (lai_serialize_is_char_allowed(buffer[idx]))
+    if (otai_serialize_is_char_allowed(buffer[idx]))
     {
         return idx;
     }
 
-    LAI_META_LOG_WARN("invalid character 0x%x in chardata", buffer[idx]);
-    return LAI_SERIALIZE_ERROR;
+    OTAI_META_LOG_WARN("invalid character 0x%x in chardata", buffer[idx]);
+    return OTAI_SERIALIZE_ERROR;
 }
 
-int lai_serialize_uint8(
+int otai_serialize_uint8(
         _Out_ char *buffer,
         _In_ uint8_t u8)
 {
     return sprintf(buffer, "%u", u8);
 }
 
-int lai_deserialize_uint8(
+int otai_deserialize_uint8(
         _In_ const char *buffer,
         _Out_ uint8_t *u8)
 {
     uint64_t u64;
 
-    int res = lai_deserialize_uint64(buffer, &u64);
+    int res = otai_deserialize_uint64(buffer, &u64);
 
     if (res > 0 && u64 <= UCHAR_MAX)
     {
@@ -190,24 +190,24 @@ int lai_deserialize_uint8(
         return res;
     }
 
-    LAI_META_LOG_WARN("failed to deserialize '%.*s' as uint8", MAX_CHARS_PRINT, buffer);
-    return LAI_SERIALIZE_ERROR;
+    OTAI_META_LOG_WARN("failed to deserialize '%.*s' as uint8", MAX_CHARS_PRINT, buffer);
+    return OTAI_SERIALIZE_ERROR;
 }
 
-int lai_serialize_int8(
+int otai_serialize_int8(
         _Out_ char *buffer,
         _In_ int8_t u8)
 {
     return sprintf(buffer, "%d", u8);
 }
 
-int lai_deserialize_int8(
+int otai_deserialize_int8(
         _In_ const char *buffer,
         _Out_ int8_t *s8)
 {
     int64_t s64;
 
-    int res = lai_deserialize_int64(buffer, &s64);
+    int res = otai_deserialize_int64(buffer, &s64);
 
     if (res > 0 && s64 >= CHAR_MIN && s64 <= CHAR_MAX)
     {
@@ -215,24 +215,24 @@ int lai_deserialize_int8(
         return res;
     }
 
-    LAI_META_LOG_WARN("failed to deserialize '%.*s' as int8", MAX_CHARS_PRINT, buffer);
-    return LAI_SERIALIZE_ERROR;
+    OTAI_META_LOG_WARN("failed to deserialize '%.*s' as int8", MAX_CHARS_PRINT, buffer);
+    return OTAI_SERIALIZE_ERROR;
 }
 
-int lai_serialize_uint16(
+int otai_serialize_uint16(
         _Out_ char *buffer,
         _In_ uint16_t u16)
 {
     return sprintf(buffer, "%u", u16);
 }
 
-int lai_deserialize_uint16(
+int otai_deserialize_uint16(
         _In_ const char *buffer,
         _Out_ uint16_t *u16)
 {
     uint64_t u64;
 
-    int res = lai_deserialize_uint64(buffer, &u64);
+    int res = otai_deserialize_uint64(buffer, &u64);
 
     if (res > 0 && u64 <= USHRT_MAX)
     {
@@ -240,24 +240,24 @@ int lai_deserialize_uint16(
         return res;
     }
 
-    LAI_META_LOG_WARN("failed to deserialize '%.*s' as uint16", MAX_CHARS_PRINT, buffer);
-    return LAI_SERIALIZE_ERROR;
+    OTAI_META_LOG_WARN("failed to deserialize '%.*s' as uint16", MAX_CHARS_PRINT, buffer);
+    return OTAI_SERIALIZE_ERROR;
 }
 
-int lai_serialize_int16(
+int otai_serialize_int16(
         _Out_ char *buffer,
         _In_ int16_t s16)
 {
     return sprintf(buffer, "%d", s16);
 }
 
-int lai_deserialize_int16(
+int otai_deserialize_int16(
         _In_ const char *buffer,
         _Out_ int16_t *s16)
 {
     int64_t s64;
 
-    int res = lai_deserialize_int64(buffer, &s64);
+    int res = otai_deserialize_int64(buffer, &s64);
 
     if (res > 0 && s64 >= SHRT_MIN && s64 <= SHRT_MAX)
     {
@@ -265,24 +265,24 @@ int lai_deserialize_int16(
         return res;
     }
 
-    LAI_META_LOG_WARN("failed to deserialize '%.*s' as int16", MAX_CHARS_PRINT, buffer);
-    return LAI_SERIALIZE_ERROR;
+    OTAI_META_LOG_WARN("failed to deserialize '%.*s' as int16", MAX_CHARS_PRINT, buffer);
+    return OTAI_SERIALIZE_ERROR;
 }
 
-int lai_serialize_uint32(
+int otai_serialize_uint32(
         _Out_ char *buffer,
         _In_ uint32_t u32)
 {
     return sprintf(buffer, "%u", u32);
 }
 
-int lai_deserialize_uint32(
+int otai_deserialize_uint32(
         _In_ const char *buffer,
         _Out_ uint32_t *u32)
 {
     uint64_t u64;
 
-    int res = lai_deserialize_uint64(buffer, &u64);
+    int res = otai_deserialize_uint64(buffer, &u64);
 
     if (res > 0 && u64 <= UINT_MAX)
     {
@@ -290,24 +290,24 @@ int lai_deserialize_uint32(
         return res;
     }
 
-    LAI_META_LOG_WARN("failed to deserialize '%.*s' as uint32", MAX_CHARS_PRINT, buffer);
-    return LAI_SERIALIZE_ERROR;
+    OTAI_META_LOG_WARN("failed to deserialize '%.*s' as uint32", MAX_CHARS_PRINT, buffer);
+    return OTAI_SERIALIZE_ERROR;
 }
 
-int lai_serialize_int32(
+int otai_serialize_int32(
         _Out_ char *buffer,
         _In_ int32_t s32)
 {
     return sprintf(buffer, "%d", s32);
 }
 
-int lai_deserialize_int32(
+int otai_deserialize_int32(
         _In_ const char *buffer,
         _Out_ int32_t *s32)
 {
     int64_t s64;
 
-    int res = lai_deserialize_int64(buffer, &s64);
+    int res = otai_deserialize_int64(buffer, &s64);
 
     if (res > 0 && s64 >= INT_MIN && s64 <= INT_MAX)
     {
@@ -315,20 +315,20 @@ int lai_deserialize_int32(
         return res;
     }
 
-    LAI_META_LOG_WARN("failed to deserialize '%.*s' as int32", MAX_CHARS_PRINT, buffer);
-    return LAI_SERIALIZE_ERROR;
+    OTAI_META_LOG_WARN("failed to deserialize '%.*s' as int32", MAX_CHARS_PRINT, buffer);
+    return OTAI_SERIALIZE_ERROR;
 }
 
-int lai_serialize_uint64(
+int otai_serialize_uint64(
         _Out_ char *buffer,
         _In_ uint64_t u64)
 {
     return sprintf(buffer, "%" PRIu64, u64);
 }
 
-#define LAI_BASE_10 10
+#define OTAI_BASE_10 10
 
-int lai_deserialize_uint64(
+int otai_deserialize_uint64(
         _In_ const char *buffer,
         _Out_ uint64_t *u64)
 {
@@ -344,8 +344,8 @@ int lai_deserialize_uint64(
          * then next multiplication with 10 will cause overflow.
          */
 
-        if (result > (ULONG_MAX/LAI_BASE_10) ||
-            ((result == ULONG_MAX/LAI_BASE_10) && (c > (char)(ULONG_MAX % LAI_BASE_10))))
+        if (result > (ULONG_MAX/OTAI_BASE_10) ||
+            ((result == ULONG_MAX/OTAI_BASE_10) && (c > (char)(ULONG_MAX % OTAI_BASE_10))))
         {
             idx = 0;
             break;
@@ -356,24 +356,24 @@ int lai_deserialize_uint64(
         idx++;
     }
 
-    if (idx > 0 && lai_serialize_is_char_allowed(buffer[idx]))
+    if (idx > 0 && otai_serialize_is_char_allowed(buffer[idx]))
     {
         *u64 = result;
         return idx;
     }
 
-    LAI_META_LOG_WARN("failed to deserialize '%.*s...' as uint64", MAX_CHARS_PRINT, buffer);
-    return LAI_SERIALIZE_ERROR;
+    OTAI_META_LOG_WARN("failed to deserialize '%.*s...' as uint64", MAX_CHARS_PRINT, buffer);
+    return OTAI_SERIALIZE_ERROR;
 }
 
-int lai_serialize_int64(
+int otai_serialize_int64(
         _Out_ char *buffer,
         _In_ int64_t s64)
 {
     return sprintf(buffer, "%" PRId64, s64);
 }
 
-int lai_deserialize_int64(
+int otai_deserialize_int64(
         _In_ const char *buffer,
         _Out_ int64_t *s64)
 {
@@ -386,7 +386,7 @@ int lai_deserialize_int64(
         negative = true;
     }
 
-    int res = lai_deserialize_uint64(buffer, &result);
+    int res = otai_deserialize_uint64(buffer, &result);
 
     if (res > 0)
     {
@@ -408,135 +408,135 @@ int lai_deserialize_int64(
         }
     }
 
-    LAI_META_LOG_WARN("failed to deserialize '%.*s' as int64", MAX_CHARS_PRINT, buffer);
-    return LAI_SERIALIZE_ERROR;
+    OTAI_META_LOG_WARN("failed to deserialize '%.*s' as int64", MAX_CHARS_PRINT, buffer);
+    return OTAI_SERIALIZE_ERROR;
 }
 
-int lai_deserialize_u32range(
+int otai_deserialize_u32range(
         _In_ const char *buffer,
-        _Out_ lai_u32_range_t *value)
+        _Out_ otai_u32_range_t *value)
 {
-    int ret = lai_deserialize_uint32(buffer, &value->min), ret2;
+    int ret = otai_deserialize_uint32(buffer, &value->min), ret2;
     if ( ret < 0 ) {
         return ret;
     }
     if ( buffer[ret++] != ',' ) {
         return -1;
     }
-    ret2 = lai_deserialize_uint32(buffer+ret, &value->max);
+    ret2 = otai_deserialize_uint32(buffer+ret, &value->max);
     return ret + ret2;
 }
 
-int lai_deserialize_s32range(
+int otai_deserialize_s32range(
         _In_ const char *buffer,
-        _Out_ lai_s32_range_t *value)
+        _Out_ otai_s32_range_t *value)
 {
-    int ret = lai_deserialize_int32(buffer, &value->min), ret2;
+    int ret = otai_deserialize_int32(buffer, &value->min), ret2;
     if ( ret < 0 ) {
         return ret;
     }
     if ( buffer[ret++] != ',' ) {
         return -1;
     }
-    ret2 = lai_deserialize_int32(buffer+ret, &value->max);
+    ret2 = otai_deserialize_int32(buffer+ret, &value->max);
     return ret + ret2;
 }
 
-int lai_serialize_size(
+int otai_serialize_size(
         _Out_ char *buffer,
-        _In_ lai_size_t size)
+        _In_ otai_size_t size)
 {
     return sprintf(buffer, "%zu", size);
 }
 
-int lai_deserialize_size(
+int otai_deserialize_size(
         _In_ const char *buffer,
-        _Out_ lai_size_t *size)
+        _Out_ otai_size_t *size)
 {
     uint64_t u64;
 
-    int res = lai_deserialize_uint64(buffer, &u64);
+    int res = otai_deserialize_uint64(buffer, &u64);
 
     if (res > 0)
     {
-        *size = (lai_size_t)u64;
+        *size = (otai_size_t)u64;
         return res;
     }
 
-    LAI_META_LOG_WARN("failed to deserialize '%.*s...' as lai_size_t", MAX_CHARS_PRINT, buffer);
-    return LAI_SERIALIZE_ERROR;
+    OTAI_META_LOG_WARN("failed to deserialize '%.*s...' as otai_size_t", MAX_CHARS_PRINT, buffer);
+    return OTAI_SERIALIZE_ERROR;
 }
 
-int lai_serialize_object_id(
+int otai_serialize_object_id(
         _Out_ char *buffer,
-        _In_ lai_object_id_t oid)
+        _In_ otai_object_id_t oid)
 {
     return sprintf(buffer, "oid:0x%" PRIx64, oid);
 }
 
-int lai_serialize_double(
+int otai_serialize_double(
         _Out_ char *buffer,
-        _In_ lai_double_t d64)
+        _In_ otai_double_t d64)
 {
     return sprintf(buffer, "%.2lf", d64);
 }
 
-int lai_deserialize_double(
+int otai_deserialize_double(
         _In_ const char *buffer,
-        _Out_ lai_double_t *d64)
+        _Out_ otai_double_t *d64)
 {
     return sscanf(buffer, "%lf", d64);
 }
 
-int lai_serialize_pointer(
+int otai_serialize_pointer(
         _Out_ char *buffer,
-        _In_ lai_pointer_t ptr)
+        _In_ otai_pointer_t ptr)
 {
     return sprintf(buffer, "%p", ptr);
 }
 
-int lai_deserialize_pointer(
+int otai_deserialize_pointer(
         _In_ const char *buffer,
-        _Out_ lai_pointer_t *pointer)
+        _Out_ otai_pointer_t *pointer)
 {
     int read;
 
     int n = sscanf(buffer, "ptr:%p%n", pointer, &read);
 
-    if (n == 1 && lai_serialize_is_char_allowed(buffer[read]))
+    if (n == 1 && otai_serialize_is_char_allowed(buffer[read]))
     {
         return read;
     }
 
-    LAI_META_LOG_WARN("failed to deserialize '%.*s' as pointer", MAX_CHARS_PRINT, buffer);
-    return LAI_SERIALIZE_ERROR;
+    OTAI_META_LOG_WARN("failed to deserialize '%.*s' as pointer", MAX_CHARS_PRINT, buffer);
+    return OTAI_SERIALIZE_ERROR;
 }
 
-int lai_deserialize_object_id(
+int otai_deserialize_object_id(
         _In_ const char *buffer,
-        _Out_ lai_object_id_t *oid)
+        _Out_ otai_object_id_t *oid)
 {
     int read;
 
     int n = sscanf(buffer, "oid:0x%16" PRIx64 "%n", oid, &read);
 
-    if (n == 1 && lai_serialize_is_char_allowed(buffer[read]))
+    if (n == 1 && otai_serialize_is_char_allowed(buffer[read]))
     {
         return read;
     }
 
-    LAI_META_LOG_WARN("failed to deserialize '%.*s' as oid", MAX_CHARS_PRINT, buffer);
-    return LAI_SERIALIZE_ERROR;
+    OTAI_META_LOG_WARN("failed to deserialize '%.*s' as oid", MAX_CHARS_PRINT, buffer);
+    return OTAI_SERIALIZE_ERROR;
 }
 
-int lai_serialize_enum(
+int otai_serialize_enum(
         _Out_ char *buffer,
-        _In_ const lai_enum_metadata_t* meta,
+        _In_ const otai_enum_metadata_t* meta,
         _In_ int32_t value)
 {
     if (meta == NULL)
     {
-        return lai_serialize_int32(buffer, value);
+        return otai_serialize_int32(buffer, value);
     }
 
     size_t i = 0;
@@ -549,19 +549,19 @@ int lai_serialize_enum(
         }
     }
 
-    LAI_META_LOG_WARN("enum value %d not found in enum %s", value, meta->name);
+    OTAI_META_LOG_WARN("enum value %d not found in enum %s", value, meta->name);
 
-    return lai_serialize_int32(buffer, value);
+    return otai_serialize_int32(buffer, value);
 }
 
-int lai_deserialize_enum(
+int otai_deserialize_enum(
         _In_ const char *buffer,
-        _In_ const lai_enum_metadata_t* meta,
+        _In_ const otai_enum_metadata_t* meta,
         _Out_ int32_t *value)
 {
     if (meta == NULL)
     {
-        return lai_deserialize_int32(buffer, value);
+        return otai_deserialize_int32(buffer, value);
     }
 
     size_t idx = 0;
@@ -571,41 +571,41 @@ int lai_deserialize_enum(
         size_t len = strlen(meta->valuesnames[idx]);
 
         if (strncmp(meta->valuesnames[idx], buffer, len) == 0 &&
-            lai_serialize_is_char_allowed(buffer[len]))
+            otai_serialize_is_char_allowed(buffer[len]))
         {
             *value = meta->values[idx];
             return (int)len;
         }
     }
 
-    LAI_META_LOG_WARN("enum value '%.*s' not found in enum %s", MAX_CHARS_PRINT, buffer, meta->name);
+    OTAI_META_LOG_WARN("enum value '%.*s' not found in enum %s", MAX_CHARS_PRINT, buffer, meta->name);
 
-    return lai_deserialize_int32(buffer, value);
+    return otai_deserialize_int32(buffer, value);
 }
 
 
-int lai_serialize_attr_id(
+int otai_serialize_attr_id(
         _Out_ char *buf,
-        _In_ const lai_attr_metadata_t *meta,
-        _In_ lai_attr_id_t attr_id)
+        _In_ const otai_attr_metadata_t *meta,
+        _In_ otai_attr_id_t attr_id)
 {
     strcpy(buf, meta->attridname);
 
     return (int)strlen(buf);
 }
 
-int lai_deserialize_attr_id(
+int otai_deserialize_attr_id(
         _In_ const char *buffer,
-        _Out_ lai_attr_id_t *attr_id)
+        _Out_ otai_attr_id_t *attr_id)
 {
-    LAI_META_LOG_WARN("not implemented");
-    return LAI_SERIALIZE_ERROR;
+    OTAI_META_LOG_WARN("not implemented");
+    return OTAI_SERIALIZE_ERROR;
 }
 
-int lai_serialize_attribute(
+int otai_serialize_attribute(
         _Out_ char *buf,
-        _In_ const lai_attr_metadata_t *meta,
-        _In_ const lai_attribute_t *attribute)
+        _In_ const otai_attr_metadata_t *meta,
+        _In_ const otai_attribute_t *attribute)
 {
     char *begin_buf = buf;
     int ret;
@@ -618,12 +618,12 @@ int lai_serialize_attribute(
 
     buf += sprintf(buf, "\"");
 
-    ret = lai_serialize_attr_id(buf, meta, attribute->id);
+    ret = otai_serialize_attr_id(buf, meta, attribute->id);
 
     if (ret < 0)
     {
-        LAI_META_LOG_WARN("failed to serialize attr id");
-        return LAI_SERIALIZE_ERROR;
+        OTAI_META_LOG_WARN("failed to serialize attr id");
+        return OTAI_SERIALIZE_ERROR;
     }
 
     buf += ret;
@@ -632,12 +632,12 @@ int lai_serialize_attribute(
 
     buf += sprintf(buf, "\"value\":");
 
-    ret = lai_serialize_attribute_value(buf, meta, &attribute->value);
+    ret = otai_serialize_attribute_value(buf, meta, &attribute->value);
 
     if (ret < 0)
     {
-        LAI_META_LOG_WARN("failed to serialize attribute value");
-        return LAI_SERIALIZE_ERROR;
+        OTAI_META_LOG_WARN("failed to serialize attribute value");
+        return OTAI_SERIALIZE_ERROR;
     }
 
     buf += ret;
@@ -647,11 +647,11 @@ int lai_serialize_attribute(
     return (int)(buf - begin_buf);
 }
 
-int lai_deserialize_attribute(
+int otai_deserialize_attribute(
         _In_ const char *buffer,
-        _Out_ lai_attribute_t *attribute)
+        _Out_ otai_attribute_t *attribute)
 {
-    LAI_META_LOG_WARN("not implemented");
-    return LAI_SERIALIZE_ERROR;
+    OTAI_META_LOG_WARN("not implemented");
+    return OTAI_SERIALIZE_ERROR;
 }
 

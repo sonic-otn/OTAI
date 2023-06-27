@@ -13,16 +13,16 @@
  *    See the Apache Version 2.0 License for specific language governing
  *    permissions and limitations under the License.
  *
- * @file    laimetadatalogger.h
+ * @file    otaimetadatalogger.h
  *
- * @brief   This module defines LAI Metadata Logger
+ * @brief   This module defines OTAI Metadata Logger
  */
 
-#ifndef __LAIMETADATALOGGER_H_
-#define __LAIMETADATALOGGER_H_
+#ifndef __OTAIMETADATALOGGER_H_
+#define __OTAIMETADATALOGGER_H_
 
 /**
- * @defgroup LAIMETADATALOGGER LAI - Metadata Logger Definitions
+ * @defgroup OTAIMETADATALOGGER OTAI - Metadata Logger Definitions
  *
  * @{
  */
@@ -31,7 +31,7 @@
  * @brief Log level function definition.
  *
  * User can specify his own function that will be called when message log level
- * will be greater or equal to #lai_metadata_log_level.
+ * will be greater or equal to #otai_metadata_log_level.
  *
  * @param[in] log_level Log level
  * @param[in] file Source file
@@ -40,8 +40,8 @@
  * @param[in] format Format of logging
  * @param[in] ... Variable parameters
  */
-typedef void (*lai_metadata_log_fn)(
-        _In_ lai_log_level_t log_level,
+typedef void (*otai_metadata_log_fn)(
+        _In_ otai_log_level_t log_level,
         _In_ const char *file,
         _In_ int line,
         _In_ const char *function,
@@ -53,16 +53,16 @@ typedef void (*lai_metadata_log_fn)(
  *
  * TODO: add a set function to update this?
  */
-extern volatile lai_metadata_log_fn lai_metadata_log;
+extern volatile otai_metadata_log_fn otai_metadata_log;
 
 /**
- * @brief Log level for LAI metadata macros.
+ * @brief Log level for OTAI metadata macros.
  *
  * Log level can be changed by user at any time.
  *
  * TODO: add a set function to update this?
  */
-extern volatile lai_log_level_t lai_metadata_log_level;
+extern volatile otai_log_level_t otai_metadata_log_level;
 
 /**
  * @brief Helper log macro definition
@@ -70,29 +70,29 @@ extern volatile lai_log_level_t lai_metadata_log_level;
  * If logger function is NULL, stderr is used to print messages. Also, fprintf
  * function will validate parameters at compilation time.
  */
-#define LAI_META_LOG(loglevel,format,...)\
-    if (loglevel >= lai_metadata_log_level)\
+#define OTAI_META_LOG(loglevel,format,...)\
+    if (loglevel >= otai_metadata_log_level)\
 {\
-    if (lai_metadata_log == NULL) /* or syslog? */ \
+    if (otai_metadata_log == NULL) /* or syslog? */ \
         fprintf(stderr, "%s:%d %s: " format "\n", __FILE__, __LINE__, __func__, ##__VA_ARGS__);\
     else\
-        lai_metadata_log(loglevel, __FILE__, __LINE__, __func__, format, ##__VA_ARGS__);\
+        otai_metadata_log(loglevel, __FILE__, __LINE__, __func__, format, ##__VA_ARGS__);\
 }
 
 /*
  * Helper macros.
  */
 
-#define LAI_META_LOG_ENTER()                LAI_META_LOG(LAI_LOG_LEVEL_DEBUG, ":> enter");
-#define LAI_META_LOG_DEBUG(format,...)      LAI_META_LOG(LAI_LOG_LEVEL_DEBUG, ":- " format, ##__VA_ARGS__)
-#define LAI_META_LOG_INFO(format,...)       LAI_META_LOG(LAI_LOG_LEVEL_INFO, ":- " format, ##__VA_ARGS__)
-#define LAI_META_LOG_NOTICE(format,...)     LAI_META_LOG(LAI_LOG_LEVEL_NOTICE, ":- " format, ##__VA_ARGS__)
-#define LAI_META_LOG_WARN(format,...)       LAI_META_LOG(LAI_LOG_LEVEL_WARN, ":- " format, ##__VA_ARGS__)
-#define LAI_META_LOG_ERROR(format,...)      LAI_META_LOG(LAI_LOG_LEVEL_ERROR, ":- " format, ##__VA_ARGS__)
-#define LAI_META_LOG_CRITICAL(format,...)   LAI_META_LOG(LAI_LOG_LEVEL_CRITICAL, ":- " format, ##__VA_ARGS__)
-#define LAI_META_LOG_EXIT()                 LAI_META_LOG(LAI_LOG_LEVEL_DEBUG, ":< exit");
+#define OTAI_META_LOG_ENTER()                OTAI_META_LOG(OTAI_LOG_LEVEL_DEBUG, ":> enter");
+#define OTAI_META_LOG_DEBUG(format,...)      OTAI_META_LOG(OTAI_LOG_LEVEL_DEBUG, ":- " format, ##__VA_ARGS__)
+#define OTAI_META_LOG_INFO(format,...)       OTAI_META_LOG(OTAI_LOG_LEVEL_INFO, ":- " format, ##__VA_ARGS__)
+#define OTAI_META_LOG_NOTICE(format,...)     OTAI_META_LOG(OTAI_LOG_LEVEL_NOTICE, ":- " format, ##__VA_ARGS__)
+#define OTAI_META_LOG_WARN(format,...)       OTAI_META_LOG(OTAI_LOG_LEVEL_WARN, ":- " format, ##__VA_ARGS__)
+#define OTAI_META_LOG_ERROR(format,...)      OTAI_META_LOG(OTAI_LOG_LEVEL_ERROR, ":- " format, ##__VA_ARGS__)
+#define OTAI_META_LOG_CRITICAL(format,...)   OTAI_META_LOG(OTAI_LOG_LEVEL_CRITICAL, ":- " format, ##__VA_ARGS__)
+#define OTAI_META_LOG_EXIT()                 OTAI_META_LOG(OTAI_LOG_LEVEL_DEBUG, ":< exit");
 
 /**
  * @}
  */
-#endif /** __LAIMETADATALOGGER_H_ */
+#endif /** __OTAIMETADATALOGGER_H_ */

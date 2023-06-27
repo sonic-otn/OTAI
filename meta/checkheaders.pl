@@ -3,7 +3,7 @@
 # Copyright (c) 2014 Microsoft Open Technologies, Inc.
 #
 #    Licensed under the Apache License, Version 2.0 (the "License"); you may
-#    not use this file except in compliance with the License. You may oblain
+#    not use this file except in compliance with the License. You may obotain
 #    a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
 #
 #    THIS CODE IS PROVIDED ON AN *AS IS* BASIS, WITHOUT WARRANTIES OR
@@ -38,7 +38,7 @@ sub CheckArguments
 {
     if (scalar @ARGV != 2)
     {
-        print "expected 2 arguments which are LAI/inc directories: dirA dirB\n";
+        print "expected 2 arguments which are OTAI/inc directories: dirA dirB\n";
         exit 1;
     }
 }
@@ -70,7 +70,7 @@ sub FilterEnums
     {
         $nr++;
 
-        next if not $line =~ /^\s*(LAI_\w+)/;
+        next if not $line =~ /^\s*(OTAI_\w+)/;
 
         my $key = $1;
 
@@ -116,7 +116,7 @@ sub ConstructSource
 
     my $source = "#include <stdio.h>\n";
 
-    $source .= "#include \"$dir/lai.h\"\n";
+    $source .= "#include \"$dir/otai.h\"\n";
     $source .="int main() { ";
 
     for my $en (sort keys %enums)

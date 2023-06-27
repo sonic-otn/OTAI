@@ -20,7 +20,7 @@
 #
 # @file    serialize.pm
 #
-# @brief   This module defines LAI Metadata Serialize Parser
+# @brief   This module defines OTAI Metadata Serialize Parser
 #
 
 package serialize;
@@ -38,13 +38,13 @@ sub CreateSerializeForEnums
 {
     WriteSectionComment "Enum serialize methods";
 
-    for my $key (sort keys %main::LAI_ENUMS)
+    for my $key (sort keys %main::OTAI_ENUMS)
     {
         next if $key =~ /_attr_t$/;
 
         next if $key =~ /_stat_t$/;
 
-        if (not $key =~ /^lai_(\w+)_t$/)
+        if (not $key =~ /^otai_(\w+)_t$/)
         {
             LogWarning "wrong enum name '$key'";
             next;
@@ -52,15 +52,15 @@ sub CreateSerializeForEnums
 
         my $suffix = $1;
 
-        WriteHeader "extern int lai_serialize_$suffix(";
+        WriteHeader "extern int otai_serialize_$suffix(";
         WriteHeader "_Out_ char *buffer,";
         WriteHeader "_In_ $key $suffix);\n";
 
-        WriteSource "int lai_serialize_$suffix(";
+        WriteSource "int otai_serialize_$suffix(";
         WriteSource "_Out_ char *buffer,";
         WriteSource "_In_ $key $suffix)";
         WriteSource "{";
-        WriteSource "return lai_serialize_enum(buffer, &lai_metadata_enum_$key, $suffix);";
+        WriteSource "return otai_serialize_enum(buffer, &otai_metadata_enum_$key, $suffix);";
         WriteSource "}";
     }
 }
@@ -69,7 +69,7 @@ sub CreateSerializeForEnums
 # we are using sprintf here, but in all cases it's const string passed, so
 # compiler will optimize this to strcpy, and no snprintf function will be
 # actually called, actual functions called will be those written by user in
-# laiserialize.c and optimization should focus on those functions
+# otaiserialize.c and optimization should focus on those functions
 #
 # TODO we need version with like snprintf to write only N characters since
 # right how we don't know how long output will be, for long arrays it can be
@@ -100,7 +100,7 @@ sub IsMetadataStruct
 
     my $key = $refStructInfoEx->{keys}[0];
 
-    return 1 if $refStructInfoEx->{membersHash}{$key}->{file} =~ m!(meta/lai\w+.h|^lai(meta\w+.h))$!;
+    return 1 if $refStructInfoEx->{membersHash}{$key}->{file} =~ m!(meta/otai\w+.h|^otai(meta\w+.h))$!;
 
     return 0;
 }
@@ -108,7 +108,7 @@ sub IsMetadataStruct
 # TODO for lists we need countOnly param, as separate version
 # @param[in] only_count Flag specifies whether on *_list_t only
 # list count should be serialized, this is handy when serializing
-# attributes when API returned #LAI_STATUS_BUFFER_OVERFLOW.
+# attributes when API returned #OTAI_STATUS_BUFFER_OVERFLOW.
 
 # TODO on s32/s32_list in struct we could declare enum type
 
@@ -124,10 +124,10 @@ sub EmitSerializeFunctionHeader
 
     my @keys = @{ $structInfoEx{keys} };
 
-    WriteHeader "extern int lai_serialize_$structBase(";
+    WriteHeader "extern int otai_serialize_$structBase(";
     WriteHeader "_Out_ char *buf,";
 
-    WriteSource "int lai_serialize_$structBase(";
+    WriteSource "int otai_serialize_$structBase(";
     WriteSource "_Out_ char *buf,";
 
     if (defined $structInfoEx{union} and not defined $structInfoEx{extraparam})
@@ -206,7 +206,7 @@ sub GetTypeInfoForSerialize
 
     $type = $1 if $type =~ /^const\s+(.+)$/;
 
-    if ($type =~ /^(lai_\w+_t)\[(\d+)\]$/)
+    if ($type =~ /^(otai_\w+_t)\[(\d+)\]$/)
     {
         $type = $1;
         $TypeInfo{constCount} = $2;
@@ -222,9 +222,9 @@ sub GetTypeInfoForSerialize
         $TypeInfo{noptrtype} = $type;
     }
 
-    $TypeInfo{suffix} = ($type =~ /lai_(\w+)_t/) ? $1 : $type;
+    $TypeInfo{suffix} = ($type =~ /otai_(\w+)_t/) ? $1 : $type;
 
-    if ($type =~ /^(bool|lai_size_t)$/)
+    if ($type =~ /^(bool|otai_size_t)$/)
     {
         # ok
         $TypeInfo{deamp} = "&";
@@ -236,49 +236,49 @@ sub GetTypeInfoForSerialize
         $TypeInfo{suffix} = "uint8";
         $TypeInfo{castName} = "(const uint8_t*)";
     }
-    elsif ($type =~ /^lai_(label_id)_t$/)
+    elsif ($type =~ /^otai_(label_id)_t$/)
     {
         $TypeInfo{suffix} = "uint32";
         $TypeInfo{deamp} = "&";
     }
-    elsif ($type =~ /^lai_(stat_id)_t$/)
+    elsif ($type =~ /^otai_(stat_id)_t$/)
     {
         $TypeInfo{suffix} = "uint32";
         $TypeInfo{deamp} = "&";
     }
-    elsif ($type =~ /^lai_(cos|queue_index)_t$/)
+    elsif ($type =~ /^otai_(cos|queue_index)_t$/)
     {
         $TypeInfo{suffix} = "uint8";
         $TypeInfo{deamp} = "&";
     }
-    elsif ($type =~ /^(?:lai_)?(u?int\d+)_t$/)
+    elsif ($type =~ /^(?:otai_)?(u?int\d+)_t$/)
     {
         # enums!
         $TypeInfo{suffix} = $1;
         $TypeInfo{deamp} = "&";
     }
-    elsif ($type =~ m/^lai_attr_id_t$/)
+    elsif ($type =~ m/^otai_attr_id_t$/)
     {
         $TypeInfo{needQuote} = 1;
     }
-    elsif ($type =~ m/^lai_object_id_t$/)
+    elsif ($type =~ m/^otai_object_id_t$/)
     {
         $TypeInfo{needQuote} = 1;
         $TypeInfo{deamp} = "&";
     }
-    elsif ($type =~ m/^lai_double_t$/)
+    elsif ($type =~ m/^otai_double_t$/)
     {
         $TypeInfo{suffix} = "double";
         $TypeInfo{deamp} = "&";
     }
-    elsif ($type =~ /^lai_pointer_t$/)
+    elsif ($type =~ /^otai_pointer_t$/)
     {
         # need quote since "ptr:" is added on serialize
 
         $TypeInfo{needQuote} = 1;
         $TypeInfo{deamp} = "&";
     }
-    elsif ($type =~ /^lai_attribute_t$/)
+    elsif ($type =~ /^otai_attribute_t$/)
     {
         $TypeInfo{amp} = "&";
         $TypeInfo{deamp} = "&";
@@ -306,19 +306,19 @@ sub GetTypeInfoForSerialize
             return undef;
         }
     }
-    elsif (defined $main::ALL_STRUCTS{$type} and $type =~ /^lai_(\w+)_t$/)
+    elsif (defined $main::ALL_STRUCTS{$type} and $type =~ /^otai_(\w+)_t$/)
     {
         $TypeInfo{amp} = "&";
         $TypeInfo{deamp} = "&";
 
-        # lai_s32_list_t enum !
+        # otai_s32_list_t enum !
     }
-    elsif (defined $main::LAI_ENUMS{$type} and $type =~ /^lai_(\w+)_t$/)
+    elsif (defined $main::OTAI_ENUMS{$type} and $type =~ /^otai_(\w+)_t$/)
     {
         $TypeInfo{needQuote} = 1;
         $TypeInfo{deamp} = "&";
     }
-    elsif (defined $main::LAI_UNIONS{$type} and $type =~ /^lai_(\w+)_t$/)
+    elsif (defined $main::OTAI_UNIONS{$type} and $type =~ /^otai_(\w+)_t$/)
     {
         $TypeInfo{union} = 1;
         $TypeInfo{amp} = "&";
@@ -387,7 +387,7 @@ sub GetCounterNameAndType
 
     $countMemberName = (defined $refStructInfoEx->{ismethod}) ? $countMemberName: "$structBase\->$countMemberName";
 
-    if (not $countType =~ /^(uint32_t|lai_size_t)$/)
+    if (not $countType =~ /^(uint32_t|otai_size_t)$/)
     {
         LogWarning "count '$count' on '$structName' has invalid type '$countType', expected uint32_t";
         return ("undef", "undef");
@@ -426,7 +426,7 @@ sub EmitSerializeFooter
 
         WriteSource "else";
         WriteSource "{";
-        WriteSource "LAI_META_LOG_WARN(\"nothing was serialized for '$name', bad condition?\");";
+        WriteSource "OTAI_META_LOG_WARN(\"nothing was serialized for '$name', bad condition?\");";
         WriteSource "}\n";
     }
 
@@ -487,7 +487,7 @@ sub EmitSerializePrimitive
 
     my $passParams = GetPassParamsForSerialize($refStructInfoEx, $refTypeInfo);
 
-    my $serializeCall = "lai_serialize_$suffix(buf, $passParams$refTypeInfo->{amp}$refTypeInfo->{memberName})";
+    my $serializeCall = "otai_serialize_$suffix(buf, $passParams$refTypeInfo->{amp}$refTypeInfo->{memberName})";
 
     WriteSource "$emitMacro($serializeCall, $suffix);";
 }
@@ -539,7 +539,7 @@ sub GetConditionForSerialize
 
     my $condition = shift @conditions;
 
-    if (not $condition =~ /^(\w+|\w+->\w+|lai_metadata_\w+\(\w+\)) == (\w+)$/)
+    if (not $condition =~ /^(\w+|\w+->\w+|otai_metadata_\w+\(\w+\)) == (\w+)$/)
     {
         LogWarning "invalid condition '$condition' on '$name' in '$structName'";
         return "";
@@ -613,15 +613,15 @@ sub EmitSerializeArray
 
     if ($refTypeInfo->{isattribute})
     {
-        WriteSource "const lai_attr_metadata_t *meta =";
-        WriteSource "    lai_metadata_get_attr_metadata($refTypeInfo->{objectType}, $refTypeInfo->{memberName}\[idx\].id);\n";
+        WriteSource "const otai_attr_metadata_t *meta =";
+        WriteSource "    otai_metadata_get_attr_metadata($refTypeInfo->{objectType}, $refTypeInfo->{memberName}\[idx\].id);\n";
 
         $passParams = "meta, $passParams";
     }
 
     my $suffix = $refTypeInfo->{suffix};
 
-    my $serializeCall = "lai_serialize_$suffix(buf, $passParams$refTypeInfo->{amp}$refTypeInfo->{memberName}\[idx\])";
+    my $serializeCall = "otai_serialize_$suffix(buf, $passParams$refTypeInfo->{amp}$refTypeInfo->{memberName}\[idx\])";
 
     my $emitMacro = GetEmitMacroName($refTypeInfo);
 
@@ -690,7 +690,7 @@ sub ProcessMembersForSerialize
 
     # TODO add tag "noserialize"
 
-    return if defined $structInfoEx{ismetadatastruct} and $structName ne "lai_object_meta_key_t";
+    return if defined $structInfoEx{ismetadatastruct} and $structName ne "otai_object_meta_key_t";
 
     LogDebug "Creating serialize for $structName";
 
@@ -743,7 +743,7 @@ sub CreateSerializeStructs
     {
         # user defined serialization
 
-        next if $struct eq "lai_attribute_t";
+        next if $struct eq "otai_attribute_t";
 
         my %structInfoEx = ExtractStructInfoEx($struct, "struct_");
 
@@ -757,9 +757,9 @@ sub CreateSerializeUnions
 {
     WriteSectionComment "Serialize unions";
 
-    for my $unionTypeName (sort keys %main::LAI_UNIONS)
+    for my $unionTypeName (sort keys %main::OTAI_UNIONS)
     {
-        next if $unionTypeName eq "lai_stat_value_t";
+        next if $unionTypeName eq "otai_stat_value_t";
 
         my %unionInfoEx = ExtractStructInfoEx($unionTypeName, "union_");
 
@@ -788,8 +788,8 @@ sub CreateSerializeEmitMacros
     WriteSource "#define EMIT_CHECK(expr, suffix) {                                 \\";
     WriteSource "    ret = (expr);                                                  \\";
     WriteSource "    if (ret < 0) {                                                 \\";
-    WriteSource "        LAI_META_LOG_WARN(\"failed to serialize \" #suffix \"\");      \\";
-    WriteSource "        return LAI_SERIALIZE_ERROR; }                              \\";
+    WriteSource "        OTAI_META_LOG_WARN(\"failed to serialize \" #suffix \"\");      \\";
+    WriteSource "        return OTAI_SERIALIZE_ERROR; }                              \\";
     WriteSource "    buf += ret; } ";
     WriteSource "#define EMIT_QUOTE_CHECK(expr, suffix) {\\";
     WriteSource "    EMIT_QUOTE; EMIT_CHECK(expr, suffix); EMIT_QUOTE; }";
@@ -811,16 +811,16 @@ sub CreateDeserializeEmitMacros
     WriteSource "#define EXPECT(x) { \\";
     WriteSource "    if (strncmp(buf, x, sizeof(x) - 1) == 0) { buf += sizeof(x) - 1; } \\";
     WriteSource "    else { \\";
-    WriteSource "        LAI_META_LOG_WARN(\"expected '%s' but got '%.*s...'\", x, (int)sizeof(x), buf); \\";
-    WriteSource "        return LAI_SERIALIZE_ERROR; } }";
+    WriteSource "        OTAI_META_LOG_WARN(\"expected '%s' but got '%.*s...'\", x, (int)sizeof(x), buf); \\";
+    WriteSource "        return OTAI_SERIALIZE_ERROR; } }";
     WriteSource "#define EXPECT_QUOTE     EXPECT(\"\\\"\")";
     WriteSource "#define EXPECT_KEY(k)    EXPECT(\"\\\"\" k \"\\\":\")";
     WriteSource "#define EXPECT_NEXT_KEY(k) { EXPECT(\",\"); EXPECT_KEY(k); }";
     WriteSource "#define EXPECT_CHECK(expr, suffix) {                                 \\";
     WriteSource "    ret = (expr);                                                  \\";
     WriteSource "    if (ret < 0) {                                                 \\";
-    WriteSource "        LAI_META_LOG_WARN(\"failed to deserialize \" #suffix \"\");      \\";
-    WriteSource "        return LAI_SERIALIZE_ERROR; }                              \\";
+    WriteSource "        OTAI_META_LOG_WARN(\"failed to deserialize \" #suffix \"\");      \\";
+    WriteSource "        return OTAI_SERIALIZE_ERROR; }                              \\";
     WriteSource "    buf += ret; } ";
     WriteSource "#define EXPECT_QUOTE_CHECK(expr, suffix) {\\";
     WriteSource "    EXPECT_QUOTE; EXPECT_CHECK(expr, suffix); EXPECT_QUOTE; }";
@@ -838,10 +838,10 @@ sub EmitDeserializeFunctionHeader
 
     my @keys = @{ $structInfoEx{keys} };
 
-    WriteHeader "extern int lai_deserialize_$structBase(";
+    WriteHeader "extern int otai_deserialize_$structBase(";
     WriteHeader "_In_ const char *buf,";
 
-    WriteSource "int lai_deserialize_$structBase(";
+    WriteSource "int otai_deserialize_$structBase(";
     WriteSource "_In_ const char *buf,";
 
     if (defined $structInfoEx{union} and not defined $structInfoEx{extraparam})
@@ -1005,7 +1005,7 @@ sub EmitDeserializePrimitive
 
     my $amp = $refTypeInfo->{deamp};
 
-    my $serializeCall = "lai_deserialize_$suffix(buf, $passParams$amp$refTypeInfo->{memberName})";
+    my $serializeCall = "otai_deserialize_$suffix(buf, $passParams$amp$refTypeInfo->{memberName})";
 
     WriteSource "$emitMacro($serializeCall, $suffix);";
 }
@@ -1023,7 +1023,7 @@ sub EmitDeserializeFooter
 
         WriteSource "else";
         WriteSource "{";
-        WriteSource "LAI_META_LOG_WARN(\"nothing was deserialized for '$name', bad condition?\");";
+        WriteSource "OTAI_META_LOG_WARN(\"nothing was deserialized for '$name', bad condition?\");";
         WriteSource "}\n";
     }
 
@@ -1080,8 +1080,8 @@ sub EmitDeserializeArray
         # NOTE: deserialize attribute not require metadata since we have user
         # provided deserialize, and serialized attr id points to exact metadata
         #
-        # WriteSource "const lai_attr_metadata_t *meta =";
-        # WriteSource "    lai_metadata_get_attr_metadata($refTypeInfo->{objectType}, $refTypeInfo->{memberName}\[idx\].id);\n";
+        # WriteSource "const otai_attr_metadata_t *meta =";
+        # WriteSource "    otai_metadata_get_attr_metadata($refTypeInfo->{objectType}, $refTypeInfo->{memberName}\[idx\].id);\n";
         # $passParams = "meta, $passParams";
     }
 
@@ -1089,7 +1089,7 @@ sub EmitDeserializeArray
 
     my $suffix = $refTypeInfo->{suffix};
 
-    my $serializeCall = "lai_deserialize_$suffix(buf, $passParams$amp$refTypeInfo->{memberName}\[idx\])";
+    my $serializeCall = "otai_deserialize_$suffix(buf, $passParams$amp$refTypeInfo->{memberName}\[idx\])";
 
     my $emitMacro = GetExpectMacroName($refTypeInfo);
 
@@ -1116,7 +1116,7 @@ sub ProcessMembersForDeserialize
 
     # TODO add tag "noserialize"
 
-    return if defined $structInfoEx{ismetadatastruct} and $structName ne "lai_object_meta_key_t";
+    return if defined $structInfoEx{ismetadatastruct} and $structName ne "otai_object_meta_key_t";
 
     LogDebug "Creating deserialize for $structName";
 
@@ -1169,7 +1169,7 @@ sub CreateDeserializeStructs
     {
         # user defined deserialization
 
-        next if $struct eq "lai_attribute_t";
+        next if $struct eq "otai_attribute_t";
 
         my %structInfoEx = ExtractStructInfoEx($struct, "struct_");
 
@@ -1183,13 +1183,13 @@ sub CreateDeserializeForEnums
 {
     WriteSectionComment "Enum deserialize methods";
 
-    for my $key (sort keys %main::LAI_ENUMS)
+    for my $key (sort keys %main::OTAI_ENUMS)
     {
         next if $key =~ /_attr_t$/;
 
         next if $key =~ /_stat_t$/;
 
-        if (not $key =~ /^lai_(\w+)_t$/)
+        if (not $key =~ /^otai_(\w+)_t$/)
         {
             LogWarning "wrong enum name '$key'";
             next;
@@ -1197,15 +1197,15 @@ sub CreateDeserializeForEnums
 
         my $suffix = $1;
 
-        WriteHeader "extern int lai_deserialize_$suffix(";
+        WriteHeader "extern int otai_deserialize_$suffix(";
         WriteHeader "_In_ const char *buffer,";
         WriteHeader "_Out_ $key *$suffix);\n";
 
-        WriteSource "int lai_deserialize_$suffix(";
+        WriteSource "int otai_deserialize_$suffix(";
         WriteSource "_In_ const char *buffer,";
         WriteSource "_Out_ $key *$suffix)";
         WriteSource "{";
-        WriteSource "return lai_deserialize_enum(buffer, &lai_metadata_enum_$key, (int*)$suffix);";
+        WriteSource "return otai_deserialize_enum(buffer, &otai_metadata_enum_$key, (int*)$suffix);";
         WriteSource "}";
     }
 }
@@ -1214,9 +1214,9 @@ sub CreateDeserializeUnions
 {
     WriteSectionComment "Deserialize unions";
 
-    for my $unionTypeName (sort keys %main::LAI_UNIONS)
+    for my $unionTypeName (sort keys %main::OTAI_UNIONS)
     {
-        next if $unionTypeName eq "lai_stat_value_t";
+        next if $unionTypeName eq "otai_stat_value_t";
 
         my %unionInfoEx = ExtractStructInfoEx($unionTypeName, "union_");
 
@@ -1276,7 +1276,7 @@ BEGIN
 # TODO generate deserialize
 #
 # TODO generate validate - object types and enums, also objecttype in union
-# passed from params must be forced to add, in lai_list32_oid - any add special
+# passed from params must be forced to add, in otai_list32_oid - any add special
 # case
 #
 # TODO generate transfer methods
@@ -1293,4 +1293,4 @@ BEGIN
 # TODO validate if count is not pointer when serializing counts
 #
 # TODO we could generate serialize methods for all api functions since we have
-# metadata now and final step would be to generate RPC client/server for LAI
+# metadata now and final step would be to generate RPC client/server for OTAI

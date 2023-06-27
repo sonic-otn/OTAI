@@ -13,17 +13,17 @@
  *    See the Apache Version 2.0 License for specific language governing
  *    permissions and limitations under the License.
  *
- * @file    laioch.h
- * @brief   This module defines the optical channel for the LAI
+ * @file    otaioch.h
+ * @brief   This module defines the optical channel for the OTAI
  */
 
-#if !defined (__LAIOCH_H_)
-#define __LAIOCH_H_
+#if !defined (__OTAIOCH_H_)
+#define __OTAIOCH_H_
 
-#include <laitypes.h>
+#include <otaitypes.h>
 
 /**
- * @defgroup LAIOCH LAI - Optical channel specific API definitions
+ * @defgroup OTAIOCH OTAI - Optical channel specific API definitions
  *
  * @{
  */
@@ -31,45 +31,45 @@
 /**
  * @brief Optical channel attribute IDs
  */
-typedef enum _lai_och_attr_t
+typedef enum _otai_och_attr_t
 {
     /**
      * @brief Start of attributes
      */
-    LAI_OCH_ATTR_START,
+    OTAI_OCH_ATTR_START,
 
     /**
      * @brief Client port or line port.
      *
-     * @type lai_port_type_t
+     * @type otai_port_type_t
      * @flags MANDATORY_ON_CREATE | CREATE_ONLY
      */
-    LAI_OCH_ATTR_PORT_TYPE = LAI_OCH_ATTR_START,
+    OTAI_OCH_ATTR_PORT_TYPE = OTAI_OCH_ATTR_START,
 
     /**
      * @brief Port ID.
      *
-     * @type lai_uint32_t
+     * @type otai_uint32_t
      * @flags MANDATORY_ON_CREATE | CREATE_ONLY
      */
-    LAI_OCH_ATTR_PORT_ID,
+    OTAI_OCH_ATTR_PORT_ID,
 
     /**
      * @brief Type for optical spectrum frequency values
      *
-     * @type lai_uint64_t
+     * @type otai_uint64_t
      * @flags CREATE_AND_SET
      */
-    LAI_OCH_ATTR_FREQUENCY,
+    OTAI_OCH_ATTR_FREQUENCY,
 
     /**
      * @brief Target output optical power level of the optical channel,
      * expressed in increments of 0.01 dBm
      *
-     * @type lai_double_t
+     * @type otai_double_t
      * @flags CREATE_AND_SET
      */
-    LAI_OCH_ATTR_TARGET_OUTPUT_POWER,
+    OTAI_OCH_ATTR_TARGET_OUTPUT_POWER,
 
     /**
      * @brief Vendor-specific mode identifier -- sets the operational
@@ -80,202 +80,202 @@ typedef enum _lai_och_attr_t
      * @type char
      * @flags CREATE_AND_SET
      */
-    LAI_OCH_ATTR_OPERATIONAL_MODE,
+    OTAI_OCH_ATTR_OPERATIONAL_MODE,
 
     /**
      * @brief The operational state of the och
      *
-     * @type lai_oper_status_t
+     * @type otai_oper_status_t
      * @flags READ_ONLY
      */
-    LAI_OCH_ATTR_OPER_STATUS,
+    OTAI_OCH_ATTR_OPER_STATUS,
 
     /**
      * @brief End of attributes
      */
-    LAI_OCH_ATTR_END,
+    OTAI_OCH_ATTR_END,
 
     /** Custom range base value */
-    LAI_OCH_ATTR_CUSTOM_RANGE_START = 0x10000000,
+    OTAI_OCH_ATTR_CUSTOM_RANGE_START = 0x10000000,
 
     /** End of custom range base */
-    LAI_OCH_ATTR_CUSTOM_RANGE_END
+    OTAI_OCH_ATTR_CUSTOM_RANGE_END
 
-} lai_och_attr_t;
+} otai_och_attr_t;
 
 /**
- * @brief Optical channel counter IDs in lai_get_och_stats() call
+ * @brief Optical channel counter IDs in otai_get_och_stats() call
  *
  * @flags Contains flags
  */
-typedef enum _lai_och_stat_t
+typedef enum _otai_och_stat_t
 {
     /**
      * @brief Start of statistics
      */
-    LAI_OCH_STAT_START,
+    OTAI_OCH_STAT_START,
 
     /**
      * @brief Group delay
      *
-     * @type lai_double_t
+     * @type otai_double_t
      * @precision precision2
      * @iscounter false
      */
-    LAI_OCH_STAT_GROUP_DELAY = LAI_OCH_STAT_START,
+    OTAI_OCH_STAT_GROUP_DELAY = OTAI_OCH_STAT_START,
 
     /**
      * @brief Input power
      *
-     * @type lai_double_t
+     * @type otai_double_t
      * @unit dBm
      * @precision precision2
      * @iscounter false
      */
-    LAI_OCH_STAT_INPUT_POWER,
+    OTAI_OCH_STAT_INPUT_POWER,
 
     /**
      * @brief Chromatic dispersion
      *
-     * @type lai_double_t
+     * @type otai_double_t
      * @precision precision2
      * @iscounter false
      */
-    LAI_OCH_STAT_CHROMATIC_DISPERSION,
+    OTAI_OCH_STAT_CHROMATIC_DISPERSION,
 
     /**
      * @brief Output power
      *
-     * @type lai_double_t
+     * @type otai_double_t
      * @precision precision2
      * @unit dBm
      * @iscounter false
      */
-    LAI_OCH_STAT_OUTPUT_POWER,
+    OTAI_OCH_STAT_OUTPUT_POWER,
 
     /**
      * @brief Laser bias current
      *
-     * @type lai_double_t
+     * @type otai_double_t
      * @precision precision2
      * @iscounter false
      */
-    LAI_OCH_STAT_LASER_BIAS_CURRENT,
+    OTAI_OCH_STAT_LASER_BIAS_CURRENT,
 
     /**
      * @brief Second ORDER polarization mode dispersion
      *
-     * @type lai_double_t
+     * @type otai_double_t
      * @precision precision2
      * @iscounter false
      */
-    LAI_OCH_STAT_SECOND_ORDER_POLARIZATION_MODE_DISPERSION,
+    OTAI_OCH_STAT_SECOND_ORDER_POLARIZATION_MODE_DISPERSION,
 
     /**
      * @brief Polarization mode dispersion
      *
-     * @type lai_double_t
+     * @type otai_double_t
      * @precision precision2
      * @iscounter false
      */
-    LAI_OCH_STAT_POLARIZATION_MODE_DISPERSION,
+    OTAI_OCH_STAT_POLARIZATION_MODE_DISPERSION,
 
     /**
      * @brief OSNR
      *
-     * @type lai_double_t
+     * @type otai_double_t
      * @unit dB
      * @precision precision2
      * @iscounter false
      */
-    LAI_OCH_STAT_OSNR,
+    OTAI_OCH_STAT_OSNR,
 
     /**
      * @brief SOP Vector S1
      *
-     * @type lai_double_t
+     * @type otai_double_t
      * @precision precision2
      * @iscounter false
      */
-    LAI_OCH_STAT_SOP_VECTOR_S1,
+    OTAI_OCH_STAT_SOP_VECTOR_S1,
 
     /**
      * @brief SOP Vector S2
      *
-     * @type lai_double_t
+     * @type otai_double_t
      * @precision precision2
      * @iscounter false
      */
-    LAI_OCH_STAT_SOP_VECTOR_S2,
+    OTAI_OCH_STAT_SOP_VECTOR_S2,
 
     /**
      * @brief SOP Vector S3
      *
-     * @type lai_double_t
+     * @type otai_double_t
      * @precision precision2
      * @iscounter false
      */
-    LAI_OCH_STAT_SOP_VECTOR_S3,
+    OTAI_OCH_STAT_SOP_VECTOR_S3,
 
     /**
      * @brief SOP change rate
      *
-     * @type lai_uint32_t
+     * @type otai_uint32_t
      * @iscounter false
      */
-    LAI_OCH_STAT_SOP_CHANGE_RATE,
+    OTAI_OCH_STAT_SOP_CHANGE_RATE,
 
     /**
      * @brief Tx laser age
      *
-     * @type lai_uint32_t
+     * @type otai_uint32_t
      * @iscounter false
      */
-    LAI_OCH_STAT_TX_LASER_AGE,
+    OTAI_OCH_STAT_TX_LASER_AGE,
 
     /**
      * @brief Polarization dependent loss
      *
-     * @type lai_double_t
+     * @type otai_double_t
      * @unit dB
      * @precision precision2
      * @iscounter false
      */
-    LAI_OCH_STAT_POLARIZATION_DEPENDENT_LOSS,
+    OTAI_OCH_STAT_POLARIZATION_DEPENDENT_LOSS,
 
     /**
      * @brief Input signal power
      *
-     * @type lai_double_t
+     * @type otai_double_t
      * @unit dBm
      * @precision precision2
      * @iscounter false
      */
-    LAI_OCH_STAT_INPUT_SIGNAL_POWER,
+    OTAI_OCH_STAT_INPUT_SIGNAL_POWER,
 
     /**
      * @brief EDFA bias current
      *
-     * @type lai_double_t
+     * @type otai_double_t
      * @precision precision2
      * @iscounter false
      */
-    LAI_OCH_STAT_EDFA_BIAS_CURRENT,
+    OTAI_OCH_STAT_EDFA_BIAS_CURRENT,
 
     /**
      * @brief Actual received frequency offset. unit: MHz
      *
-     * @type lai_int32_t
+     * @type otai_int32_t
      * @iscounter false
      */
-    LAI_OCH_STAT_ACTUAL_FREQUENCY_OFFSET,
+    OTAI_OCH_STAT_ACTUAL_FREQUENCY_OFFSET,
 
     /**
      * @brief End of statistics
      */
-    LAI_OCH_STAT_END,
+    OTAI_OCH_STAT_END,
 
-} lai_och_stat_t;
+} otai_och_stat_t;
 
 /**
  * @brief Create optical channel.
@@ -287,23 +287,23 @@ typedef enum _lai_och_stat_t
  * @param[in] attr_count Number of attributes
  * @param[in] attr_list Array of attributes
  *
- * @return #LAI_STATUS_SUCCESS on success, failure status code on error
+ * @return #OTAI_STATUS_SUCCESS on success, failure status code on error
  */
-typedef lai_status_t (*lai_create_och_fn)(
-        _Out_ lai_object_id_t *och_id,
-        _In_ lai_object_id_t linecard_id,
+typedef otai_status_t (*otai_create_och_fn)(
+        _Out_ otai_object_id_t *och_id,
+        _In_ otai_object_id_t linecard_id,
         _In_ uint32_t attr_count,
-        _In_ const lai_attribute_t *attr_list);
+        _In_ const otai_attribute_t *attr_list);
 
 /**
  * @brief Remove optical channel
  *
  * @param[in] och_id Optical channel id
  *
- * @return #LAI_STATUS_SUCCESS on success, failure status code on error
+ * @return #OTAI_STATUS_SUCCESS on success, failure status code on error
  */
-typedef lai_status_t (*lai_remove_och_fn)(
-        _In_ lai_object_id_t och_id);
+typedef otai_status_t (*otai_remove_och_fn)(
+        _In_ otai_object_id_t och_id);
 
 /**
  * @brief Set optical channel attribute
@@ -311,11 +311,11 @@ typedef lai_status_t (*lai_remove_och_fn)(
  * @param[in] och_id Optical channel id
  * @param[in] attr Attribute
  *
- * @return #LAI_STATUS_SUCCESS on success, failure status code on error
+ * @return #OTAI_STATUS_SUCCESS on success, failure status code on error
  */
-typedef lai_status_t (*lai_set_och_attribute_fn)(
-        _In_ lai_object_id_t och_id,
-        _In_ const lai_attribute_t *attr);
+typedef otai_status_t (*otai_set_och_attribute_fn)(
+        _In_ otai_object_id_t och_id,
+        _In_ const otai_attribute_t *attr);
 
 /**
  * @brief Get optical channel attribute
@@ -324,12 +324,12 @@ typedef lai_status_t (*lai_set_och_attribute_fn)(
  * @param[in] attr_count Number of attributes
  * @param[inout] attr_list Array of attributes
  *
- * @return #LAI_STATUS_SUCCESS on success, failure status code on error
+ * @return #OTAI_STATUS_SUCCESS on success, failure status code on error
  */
-typedef lai_status_t (*lai_get_och_attribute_fn)(
-        _In_ lai_object_id_t och_id,
+typedef otai_status_t (*otai_get_och_attribute_fn)(
+        _In_ otai_object_id_t och_id,
         _In_ uint32_t attr_count,
-        _Inout_ lai_attribute_t *attr_list);
+        _Inout_ otai_attribute_t *attr_list);
 
 /**
  * @brief Get optical channel counters. Deprecated for backward compatibility.
@@ -339,13 +339,13 @@ typedef lai_status_t (*lai_get_och_attribute_fn)(
  * @param[in] counter_ids Specifies the array of counter ids
  * @param[out] counters Array of resulting counter values.
  *
- * @return #LAI_STATUS_SUCCESS on success, failure status code on error
+ * @return #OTAI_STATUS_SUCCESS on success, failure status code on error
  */
-typedef lai_status_t (*lai_get_och_stats_fn)(
-        _In_ lai_object_id_t och_id,
+typedef otai_status_t (*otai_get_och_stats_fn)(
+        _In_ otai_object_id_t och_id,
         _In_ uint32_t number_of_counters,
-        _In_ const lai_stat_id_t *counter_ids,
-        _Out_ lai_stat_value_t *counters);
+        _In_ const otai_stat_id_t *counter_ids,
+        _Out_ otai_stat_value_t *counters);
 
 /**
  * @brief Get optical channel statistics counters extended.
@@ -356,14 +356,14 @@ typedef lai_status_t (*lai_get_och_stats_fn)(
  * @param[in] mode Statistics mode
  * @param[out] counters Array of resulting counter values.
  *
- * @return #LAI_STATUS_SUCCESS on success, failure status code on error
+ * @return #OTAI_STATUS_SUCCESS on success, failure status code on error
  */
-typedef lai_status_t (*lai_get_och_stats_ext_fn)(
-        _In_ lai_object_id_t och_id,
+typedef otai_status_t (*otai_get_och_stats_ext_fn)(
+        _In_ otai_object_id_t och_id,
         _In_ uint32_t number_of_counters,
-        _In_ const lai_stat_id_t *counter_ids,
-        _In_ lai_stats_mode_t mode,
-        _Out_ lai_stat_value_t *counters);
+        _In_ const otai_stat_id_t *counter_ids,
+        _In_ otai_stats_mode_t mode,
+        _Out_ otai_stat_value_t *counters);
 
 /**
  * @brief Clear optical channel statistics counters.
@@ -372,28 +372,28 @@ typedef lai_status_t (*lai_get_och_stats_ext_fn)(
  * @param[in] number_of_counters Number of counters in the array
  * @param[in] counter_ids Specifies the array of counter ids
  *
- * @return #LAI_STATUS_SUCCESS on success, failure status code on error
+ * @return #OTAI_STATUS_SUCCESS on success, failure status code on error
  */
-typedef lai_status_t (*lai_clear_och_stats_fn)(
-        _In_ lai_object_id_t och_id,
+typedef otai_status_t (*otai_clear_och_stats_fn)(
+        _In_ otai_object_id_t och_id,
         _In_ uint32_t number_of_counters,
-        _In_ const lai_stat_id_t *counter_ids);
+        _In_ const otai_stat_id_t *counter_ids);
 
 /**
- * @brief Routing interface methods table retrieved with lai_api_query()
+ * @brief Routing interface methods table retrieved with otai_api_query()
  */
-typedef struct _lai_och_api_t
+typedef struct _otai_och_api_t
 {
-    lai_create_och_fn              create_och;
-    lai_remove_och_fn              remove_och;
-    lai_set_och_attribute_fn       set_och_attribute;
-    lai_get_och_attribute_fn       get_och_attribute;
-    lai_get_och_stats_fn           get_och_stats;
-    lai_get_och_stats_ext_fn       get_och_stats_ext;
-    lai_clear_och_stats_fn         clear_och_stats;
-} lai_och_api_t;
+    otai_create_och_fn              create_och;
+    otai_remove_och_fn              remove_och;
+    otai_set_och_attribute_fn       set_och_attribute;
+    otai_get_och_attribute_fn       get_och_attribute;
+    otai_get_och_stats_fn           get_och_stats;
+    otai_get_och_stats_ext_fn       get_och_stats_ext;
+    otai_clear_och_stats_fn         clear_och_stats;
+} otai_och_api_t;
 
 /**
  * @}
  */
-#endif /** __LAIOCH_H_ */
+#endif /** __OTAIOCH_H_ */

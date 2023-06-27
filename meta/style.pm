@@ -20,7 +20,7 @@
 #
 # @file    style.pm
 #
-# @brief   This module defines LAI Metadata Style Parser
+# @brief   This module defines OTAI Metadata Style Parser
 #
 
 package style;
@@ -112,7 +112,7 @@ sub CheckDoxygenStyle
 
     if ($mark eq "file" and not $line =~ /\@file\s+($header)/)
     {
-        LogWarning "\@file should match format: lai\\w+.h: $header $n:$line";
+        LogWarning "\@file should match format: otai\\w+.h: $header $n:$line";
         return;
     }
 
@@ -122,7 +122,7 @@ sub CheckDoxygenStyle
         return;
     }
 
-    if ($mark eq "return" and not $line =~ /\@return\s+(#LAI_|[A-Z][a-z])/)
+    if ($mark eq "return" and not $line =~ /\@return\s+(#OTAI_|[A-Z][a-z])/)
     {
         LogWarning "\@return should start with #: $header $n:$line";
         return;
@@ -134,9 +134,9 @@ sub CheckDoxygenStyle
         return;
     }
 
-    if ($mark eq "defgroup" and not $line =~ /\@defgroup LAI\w* LAI - \w+/)
+    if ($mark eq "defgroup" and not $line =~ /\@defgroup OTAI\w* OTAI - \w+/)
     {
-        LogWarning "\@defgroup should be in format \@defgroup LAI\\w* LAI - \\w+: $header $n:$line";
+        LogWarning "\@defgroup should be in format \@defgroup OTAI\\w* OTAI - \\w+: $header $n:$line";
         return;
     }
 }
@@ -199,9 +199,9 @@ sub CheckStatsFunction
 {
     my ($fname,$fn,$fnparams) = @_;
 
-    if (not $fname =~ /^lai_((get|clear)_(\w+)_stats|get_\w+_stats_ext)_fn$/)
+    if (not $fname =~ /^otai_((get|clear)_(\w+)_stats|get_\w+_stats_ext)_fn$/)
     {
-        LogWarning "wrong stat function name: $fname, expected: lai_(get|clear)_\\w+_stats(_ext)?_fn";
+        LogWarning "wrong stat function name: $fname, expected: otai_(get|clear)_\\w+_stats(_ext)?_fn";
     }
 
     if (not $fnparams =~ /^\w+_id number_of_counters counter_ids( (mode )?counters)?$/)
@@ -212,7 +212,7 @@ sub CheckStatsFunction
     my @paramtypes = $fn =~ /_(?:In|Out|Inout)_\s*(.+?)\s*(?:\w+?)\s*[,\)]/gis;
     my $ptypes = "@paramtypes";
 
-    if (not $ptypes =~ /^lai_object_id_t uint32_t const lai_stat_id_t \*( (lai_stats_mode_t )?lai_stat_value_t \*)?$/)
+    if (not $ptypes =~ /^otai_object_id_t uint32_t const otai_stat_id_t \*( (otai_stats_mode_t )?otai_stat_value_t \*)?$/)
     {
         LogWarning "invalid stat function $fname param types: $ptypes";
     }
@@ -222,9 +222,9 @@ sub CheckGaugesFunction
 {
     my ($fname,$fn,$fnparams) = @_;
 
-    if (not $fname =~ /^lai_(get|clear)_(\w+)_gauges_fn$/)
+    if (not $fname =~ /^otai_(get|clear)_(\w+)_gauges_fn$/)
     {
-        LogWarning "wrong gauge function name: $fname, expected: lai_(get|clear)_\\w+_gauges_fn";
+        LogWarning "wrong gauge function name: $fname, expected: otai_(get|clear)_\\w+_gauges_fn";
     }
 
     if (not $fnparams =~ /^\w+_id number_of_gauges gauge_ids( gauges)?$/)
@@ -235,7 +235,7 @@ sub CheckGaugesFunction
     my @paramtypes = $fn =~ /_(?:In|Out|Inout)_\s*(.+?)\s*(?:\w+?)\s*[,\)]/gis;
     my $ptypes = "@paramtypes";
 
-    if (not $ptypes =~ /^lai_object_id_t uint32_t const lai_gauge_id_t \*( lai_float_t \*)?$/)
+    if (not $ptypes =~ /^otai_object_id_t uint32_t const otai_gauge_id_t \*( otai_float_t \*)?$/)
     {
         LogWarning "invalid gauge function $fname param types: $ptypes";
     }
@@ -251,7 +251,7 @@ sub CheckFunctionsParams
 
     my $doxygenCommentPattern = '/\*\*((?:(?!\*/).)*?)\*/';
     my $fnTypeDefinition = 'typedef\s*\w+[^;]+?(\w+_fn)\s*\)([^;]+?);';
-    my $globalFunction = 'lai_\w+\s*(lai_\w+)[^;]*?\(([^;]+?);';
+    my $globalFunction = 'otai_\w+\s*(otai_\w+)[^;]*?\(([^;]+?);';
 
     while ($data =~ m/$doxygenCommentPattern\s*(?:$fnTypeDefinition|$globalFunction)/gis)
     {
@@ -267,7 +267,7 @@ sub CheckFunctionsParams
 
         for my $p (@params)
         {
-            LogWarning "param $p in $fname should not be prefixed lai_" if $p =~ /lai_/;
+            LogWarning "param $p in $fname should not be prefixed otai_" if $p =~ /otai_/;
         }
 
         my $params = "@params";
@@ -295,13 +295,13 @@ sub CheckFunctionsParams
         next if not $fname =~ /_fn$/; # below don't apply for global functions
 
         if (not $fnparams =~ /^(\w+)(| attr| attr_count attr_list| linecard_id attr_count attr_list)$/ and
-            not $fname =~ /_(stats|stats_ext|gauges|notification|event|handler|switch_info|report_result)_fn$|^lai_(send|allocate|free|recv|bulk)_|^lai_meta/)
+            not $fname =~ /_(stats|stats_ext|gauges|notification|event|handler|switch_info|report_result)_fn$|^otai_(send|allocate|free|recv|bulk)_|^otai_meta/)
         {
             LogWarning "wrong param names: $fnparams: $fname";
             LogWarning " expected: $params[0](| attr| attr_count attr_list| linecard_id attr_count attr_list)";
         }
 
-        if ($fname =~ /^lai_(get|set|create|remove)_(\w+?)(_attribute)?(_gauges|_stats|_stats_ext)?_fn/)
+        if ($fname =~ /^otai_(get|set|create|remove)_(\w+?)(_attribute)?(_gauges|_stats|_stats_ext)?_fn/)
         {
             my $pattern = $2;
             my $first = $params[0];
@@ -321,12 +321,12 @@ sub CheckFunctionsParams
             }
         }
 
-        if ($fname =~ /^lai_\w+_stats_/)
+        if ($fname =~ /^otai_\w+_stats_/)
         {
             CheckStatsFunction($fname,$fn,$fnparams);
         }
 
-        if ($fname =~ /^lai_\w+_gauges_/)
+        if ($fname =~ /^otai_\w+_gauges_/)
         {
             CheckGaugesFunction($fname,$fn,$fnparams);
         }
@@ -435,7 +435,7 @@ sub IsObjectName
 {
     my $ot = shift;
 
-    return 1 if defined $main::OBJTOAPIMAP{$ot} or defined $main::OBJTOAPIMAP{uc("LAI_OBJECT_TYPE_".$ot)};
+    return 1 if defined $main::OBJTOAPIMAP{$ot} or defined $main::OBJTOAPIMAP{uc("OTAI_OBJECT_TYPE_".$ot)};
 
     return 0;
 }
@@ -444,7 +444,7 @@ sub CheckFunctionNaming
 {
     my ($header, $n, $line) = @_;
 
-    return if not $line =~ /^\s*lai_(\w+)_fn\s+(\w+)\s*;/;
+    return if not $line =~ /^\s*otai_(\w+)_fn\s+(\w+)\s*;/;
 
     my $typename = $1;
     my $name = $2;
@@ -493,11 +493,11 @@ sub CheckQuadApi
 {
     my ($data, $file) = @_;
 
-    return if not $data =~ m!(lai_\w+_api_t)(.+?)\1;!igs;
+    return if not $data =~ m!(otai_\w+_api_t)(.+?)\1;!igs;
 
     my $apis = $2;
 
-    my @fns = $apis =~ /lai_(\w+)_fn/g;
+    my @fns = $apis =~ /otai_(\w+)_fn/g;
 
     my $fn = join" ",@fns;
 
@@ -518,7 +518,7 @@ sub CheckStructAlignment
 {
     my ($data, $file) = @_;
 
-    while ($data =~ m!typedef\s+(?:struct|union)\s+_(lai_\w+)(.+?)}\s*(\w+);!igs)
+    while ($data =~ m!typedef\s+(?:struct|union)\s+_(otai_\w+)(.+?)}\s*(\w+);!igs)
     {
         my $struct = $1;
         my $inner = $2;
@@ -591,9 +591,9 @@ sub CheckMetadataSourceFiles
     {
         # skip auto generated headers
 
-        next if $file eq "laimetadata.h";
-        next if $file eq "laimetadata.c";
-        next if $file eq "laimetadatatest.c";
+        next if $file eq "otaimetadata.h";
+        next if $file eq "otaimetadata.c";
+        next if $file eq "otaimetadatatest.c";
 
         my $data = ReadHeaderFile($file);
 
@@ -624,8 +624,8 @@ sub CheckInOutParams
     my ($header, $n, $line) = @_;
 
     return if not $line =~ /  _(In|Out|Inout)_ /;
-    return if $header eq "laiserialize.h";
-    return if $header eq "laimetadatalogger.h";
+    return if $header eq "otaiserialize.h";
+    return if $header eq "otaimetadatalogger.h";
 
     if (not $line =~ /  _(In|Out|Inout)_ (const )?(\w+)( \*| \*\*| )(\w+)[\),]/)
     {
@@ -639,12 +639,12 @@ sub CheckInOutParams
     my $ptr = $4;
     my $param = $5;
 
-    if ($type eq "lai_object_id_t" and not $line =~ /_In_ lai_object_id_t \w+|_In_ const lai_object_id_t \*\w+|_Out_ lai_object_id_t \*\w+/)
+    if ($type eq "otai_object_id_t" and not $line =~ /_In_ otai_object_id_t \w+|_In_ const otai_object_id_t \*\w+|_Out_ otai_object_id_t \*\w+/)
     {
         LogError "wrong in/out param mix: $header:$n:$line";
     }
 
-    if ($type eq "lai_attribute_t" and not $line =~ /_In_ const lai_attribute_t \*\*?\w+|_Inout_ lai_attribute_t \*\*?\w+/)
+    if ($type eq "otai_attribute_t" and not $line =~ /_In_ const otai_attribute_t \*\*?\w+|_Inout_ otai_attribute_t \*\*?\w+/)
     {
         LogError "wrong in/out param mix: $header:$n:$line";
     }
@@ -658,7 +658,7 @@ sub CheckInOutParams
 
     return if $line =~ /_Out_ const char \*\*\w+/;
     return if $line =~ /_Out_ void \*\*\w+/;
-    return if $line =~ /_Inout_ lai_attribute_t \*\*\w+/;
+    return if $line =~ /_Inout_ otai_attribute_t \*\*\w+/;
 
     LogWarning "Not supported param prefixes, FIXME: $header:$n $line";
 }
@@ -754,7 +754,7 @@ sub CheckHeadersStyle
 
     for my $header (@headers)
     {
-        next if $header eq "laimetadata.h"; # skip auto generated header
+        next if $header eq "otaimetadata.h"; # skip auto generated header
 
         my $data = ReadHeaderFile($header);
 
@@ -842,13 +842,13 @@ sub CheckHeadersStyle
                 LogWarning "coment is ending without space $header $n:$line";
             }
 
-            if ($line =~ /^\s*lai_(\w+)_fn\s+(\w+);/)
+            if ($line =~ /^\s*otai_(\w+)_fn\s+(\w+);/)
             {
                 # make struct function members to follow convention
 
                 LogWarning "$2 should be equal to $1" if (($1 ne $2) and not($1 =~ /^bulk/))
             }
-            if ($line =~ /_(?:In|Out)\w+\s+(?:lai_)?uint32_t\s*\*?(\w+)/)
+            if ($line =~ /_(?:In|Out)\w+\s+(?:otai_)?uint32_t\s*\*?(\w+)/)
             {
                 my $param = $1;
 
@@ -900,28 +900,28 @@ sub CheckHeadersStyle
                 LogWarning "doxygen comment should start with capital letter: $header:$n:$line";
             }
 
-            if ($line =~ /lai_\w+_statistics_fn/)
+            if ($line =~ /otai_\w+_statistics_fn/)
             {
                 LogWarning "statistics should use 'stats' to follow convention $header:$n:$line";
             }
 
-            if ($line =~ /^\s*LAI_\w+\s*=\s*+0x(\w+)(,|$)/ and length($1) != 8)
+            if ($line =~ /^\s*OTAI_\w+\s*=\s*+0x(\w+)(,|$)/ and length($1) != 8)
             {
                 LogWarning "enum number '0x$1' should have 8 digits $header:$n:$line";
             }
 
-            if ($line =~ /^\s*LAI_\w+(\s*)=(\s*)/ and ($1 eq "" or $2 eq ""))
+            if ($line =~ /^\s*OTAI_\w+(\s*)=(\s*)/ and ($1 eq "" or $2 eq ""))
             {
                 LogWarning "space is required before and after '=' $header:$n:$line";
             }
 
-            if ($line =~ /#define\s*(\w+)/ and $header ne "laitypes.h")
+            if ($line =~ /#define\s*(\w+)/ and $header ne "otaitypes.h")
             {
                 my $defname = $1;
 
-                if (not $defname =~ /^(LAI_|__LAI)/)
+                if (not $defname =~ /^(OTAI_|__OTAI)/)
                 {
-                    LogWarning "define should start with LAI_ or __LAI: $header:$n:$line";
+                    LogWarning "define should start with OTAI_ or __OTAI: $header:$n:$line";
                 }
             }
 
@@ -939,9 +939,9 @@ sub CheckHeadersStyle
             {
                 my $fname = $1;
 
-                if (not $fname =~ /^(lai_\w+_fn)$/)
+                if (not $fname =~ /^(otai_\w+_fn)$/)
                 {
-                    LogWarning "all function declarations should be in format lai_\\w+_fn $header $n: $line";
+                    LogWarning "all function declarations should be in format otai_\\w+_fn $header $n: $line";
                 }
             }
 
@@ -952,7 +952,7 @@ sub CheckHeadersStyle
                 LogWarning "missing empty line before $header $n: $line";
             }
 
-            if ($line =~ /==|LAI_\w+/ and $prev =~ /\@(validonly|condition)/)
+            if ($line =~ /==|OTAI_\w+/ and $prev =~ /\@(validonly|condition)/)
             {
                 LogWarning "merge with previous line: $header $n: $line";
             }
@@ -962,9 +962,9 @@ sub CheckHeadersStyle
                 LogWarning "missing empty line before: $header $n: $line";
             }
 
-            if ($line =~ /\*.*LAI_.+(==|!=)/ and not $line =~ /\@(condition|validonly)/)
+            if ($line =~ /\*.*OTAI_.+(==|!=)/ and not $line =~ /\@(condition|validonly)/)
             {
-                if (not $line =~ /(condition|validonly|valid when|only when)\s+LAI_/i)
+                if (not $line =~ /(condition|validonly|valid when|only when)\s+OTAI_/i)
                 {
                     LogWarning "condition should be preceded by 'valid when' or 'only when': $header $n: $line";
                 }
@@ -1016,7 +1016,7 @@ sub CheckHeadersStyle
                     # look into good and bad words hash to speed things up
 
                     next if defined $exceptions{$word};
-                    next if $word =~ /^lai\w+/i;
+                    next if $word =~ /^otai\w+/i;
                     next if $word =~ /0x\S+L/;
                     next if "$pre$word" =~ /802.\d+\w+/;
 
@@ -1043,17 +1043,17 @@ sub CheckHeadersStyle
             next if $line =~ /^ \*($|[ \/])/;       # doxygen comment
             next if $line =~ /^$/;                  # empty line
             next if $line =~ /^typedef /;           # type definition
-            next if $line =~ /^lai_status_t lai_\w+\(/;     # return codes
-            next if $line =~ /^lai_object\w+_t lai_\w+\(/;  # return codes
-            next if $line =~ /^int lai_\w+\($/;             # methods returning int
+            next if $line =~ /^otai_status_t otai_\w+\(/;     # return codes
+            next if $line =~ /^otai_object\w+_t otai_\w+\(/;  # return codes
+            next if $line =~ /^int otai_\w+\($/;             # methods returning int
             next if $line =~ /^extern /;            # extern in metadata
             next if $line =~ /^[{}#\/]/;            # start end of struct, define, start of comment
             next if $line =~ /^ {8}(_In|_Out|\.\.\.)/;      # function arguments
-            next if $line =~ /^ {4}(lai_)/i;        # lai struct entry or LAI enum
+            next if $line =~ /^ {4}(otai_)/i;        # otai struct entry or OTAI enum
             next if $line =~ /^ {4}\/\*/;           # doxygen start
             next if $line =~ /^ {8}\/\*/;           # doxygen start
             next if $line =~ /^ {5}\*/;             # doxygen comment continue
-            next if $line =~ /^ {8}lai_/;           # union entry
+            next if $line =~ /^ {8}otai_/;           # union entry
             next if $line =~ /^ {4}union/;          # union
             next if $line =~ /^ {4}[{}]/;           # start or end of union
             next if $line =~ /^ {4}(u?int)/;        # union entries
@@ -1066,7 +1066,7 @@ sub CheckHeadersStyle
             next if $line =~ /^(void|bool) /;       # function return
             next if $line =~ m![^\\]\\$!;           # macro multiline
             next if $line =~ /^ {4}(\w+);$/;        # union entries
-            next if $line =~ /^union _lai_\w+ \{/;  # union entries
+            next if $line =~ /^union _otai_\w+ \{/;  # union entries
 
             LogWarning "C++ comment in ANSI C header: $header $n:$line" if $line =~ /\/\//;
 

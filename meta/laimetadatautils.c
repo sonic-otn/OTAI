@@ -13,21 +13,21 @@
  *    See the Apache Version 2.0 License for specific language governing
  *    permissions and limitations under the License.
  *
- * @file    laimetadatautils.c
+ * @file    otaimetadatautils.c
  *
- * @brief   This module implements LAI Metadata Utilities
+ * @brief   This module implements OTAI Metadata Utilities
  */
 
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <lai.h>
-#include "laimetadatautils.h"
-#include "laimetadata.h"
+#include <otai.h>
+#include "otaimetadatautils.h"
+#include "otaimetadata.h"
 
-bool lai_metadata_is_allowed_object_type(
-        _In_ const lai_attr_metadata_t* metadata,
-        _In_ lai_object_type_t object_type)
+bool otai_metadata_is_allowed_object_type(
+        _In_ const otai_attr_metadata_t* metadata,
+        _In_ otai_object_type_t object_type)
 {
     if (metadata == NULL || metadata->allowedobjecttypes == NULL)
     {
@@ -47,8 +47,8 @@ bool lai_metadata_is_allowed_object_type(
     return false;
 }
 
-bool lai_metadata_is_allowed_enum_value(
-        _In_ const lai_attr_metadata_t* metadata,
+bool otai_metadata_is_allowed_enum_value(
+        _In_ const otai_attr_metadata_t* metadata,
         _In_ int value)
 {
     if (metadata == NULL || metadata->enummetadata == NULL)
@@ -58,7 +58,7 @@ bool lai_metadata_is_allowed_enum_value(
 
     size_t i = 0;
 
-    const lai_enum_metadata_t *emd = metadata->enummetadata;
+    const otai_enum_metadata_t *emd = metadata->enummetadata;
 
     for (; i < emd->valuescount; ++i)
     {
@@ -71,15 +71,15 @@ bool lai_metadata_is_allowed_enum_value(
     return false;
 }
 
-const lai_stat_metadata_t* lai_metadata_get_stat_metadata(
-        _In_ lai_object_type_t objecttype,
-        _In_ lai_stat_id_t statid)
+const otai_stat_metadata_t* otai_metadata_get_stat_metadata(
+        _In_ otai_object_type_t objecttype,
+        _In_ otai_stat_id_t statid)
 {
-    if (lai_metadata_is_object_type_valid(objecttype))
+    if (otai_metadata_is_object_type_valid(objecttype))
     {
-        const lai_stat_metadata_t* const* const md = lai_metadata_stat_by_object_type[objecttype];
+        const otai_stat_metadata_t* const* const md = otai_metadata_stat_by_object_type[objecttype];
 
-        const lai_object_type_info_t* oi = lai_metadata_all_object_type_infos[objecttype];
+        const otai_object_type_info_t* oi = otai_metadata_all_object_type_infos[objecttype];
         if (statid < oi->statenum->valuescount)
         {
             return md[statid];
@@ -89,20 +89,20 @@ const lai_stat_metadata_t* lai_metadata_get_stat_metadata(
     return NULL;
 }
 
-const lai_attr_metadata_t* lai_metadata_get_attr_metadata(
-        _In_ lai_object_type_t objecttype,
-        _In_ lai_attr_id_t attrid)
+const otai_attr_metadata_t* otai_metadata_get_attr_metadata(
+        _In_ otai_object_type_t objecttype,
+        _In_ otai_attr_id_t attrid)
 {
-    if (lai_metadata_is_object_type_valid(objecttype))
+    if (otai_metadata_is_object_type_valid(objecttype))
     {
-        const lai_attr_metadata_t* const* const md = lai_metadata_attr_by_object_type[objecttype];
+        const otai_attr_metadata_t* const* const md = otai_metadata_attr_by_object_type[objecttype];
 
         /*
          * Most obejct attributes are not flags, so we can use direct index to
          * find attribute metadata, this should speed up search.
          */
 
-        const lai_object_type_info_t* oi = lai_metadata_all_object_type_infos[objecttype];
+        const otai_object_type_info_t* oi = otai_metadata_all_object_type_infos[objecttype];
 
         if (!oi->enummetadata->containsflags && attrid < oi->enummetadata->valuescount)
         {
@@ -125,7 +125,7 @@ const lai_attr_metadata_t* lai_metadata_get_attr_metadata(
     return NULL;
 }
 
-const lai_attr_metadata_t* lai_metadata_get_attr_metadata_by_attr_id_name(
+const otai_attr_metadata_t* otai_metadata_get_attr_metadata_by_attr_id_name(
         _In_ const char *attr_id_name)
 {
     if (attr_id_name == NULL)
@@ -136,13 +136,13 @@ const lai_attr_metadata_t* lai_metadata_get_attr_metadata_by_attr_id_name(
     /* use binary search */
 
     ssize_t first = 0;
-    ssize_t last = (ssize_t)(lai_metadata_attr_sorted_by_id_name_count - 1);
+    ssize_t last = (ssize_t)(otai_metadata_attr_sorted_by_id_name_count - 1);
 
     while (first <= last)
     {
         ssize_t middle = (first + last) / 2;
 
-        int res = strcmp(attr_id_name, lai_metadata_attr_sorted_by_id_name[middle]->attridname);
+        int res = strcmp(attr_id_name, otai_metadata_attr_sorted_by_id_name[middle]->attridname);
 
         if (res > 0)
         {
@@ -156,7 +156,7 @@ const lai_attr_metadata_t* lai_metadata_get_attr_metadata_by_attr_id_name(
         {
             /* found */
 
-            return lai_metadata_attr_sorted_by_id_name[middle];
+            return otai_metadata_attr_sorted_by_id_name[middle];
         }
     }
 
@@ -165,7 +165,7 @@ const lai_attr_metadata_t* lai_metadata_get_attr_metadata_by_attr_id_name(
     return NULL;
 }
 
-const lai_stat_metadata_t* lai_metadata_get_stat_metadata_by_stat_id_name(
+const otai_stat_metadata_t* otai_metadata_get_stat_metadata_by_stat_id_name(
         _In_ const char *stat_id_name)
 {
     if (stat_id_name == NULL)
@@ -176,13 +176,13 @@ const lai_stat_metadata_t* lai_metadata_get_stat_metadata_by_stat_id_name(
     /* use binary search */
 
     ssize_t first = 0;
-    ssize_t last = (ssize_t)(lai_metadata_stat_sorted_by_id_name_count - 1);
+    ssize_t last = (ssize_t)(otai_metadata_stat_sorted_by_id_name_count - 1);
 
     while (first <= last)
     {
         ssize_t middle = (first + last) / 2;
 
-        int res = strcmp(stat_id_name, lai_metadata_stat_sorted_by_id_name[middle]->statidname);
+        int res = strcmp(stat_id_name, otai_metadata_stat_sorted_by_id_name[middle]->statidname);
 
         if (res > 0)
         {
@@ -196,7 +196,7 @@ const lai_stat_metadata_t* lai_metadata_get_stat_metadata_by_stat_id_name(
         {
             /* found */
 
-            return lai_metadata_stat_sorted_by_id_name[middle];
+            return otai_metadata_stat_sorted_by_id_name[middle];
         }
     }
 
@@ -205,8 +205,8 @@ const lai_stat_metadata_t* lai_metadata_get_stat_metadata_by_stat_id_name(
     return NULL;
 }
 
-const char* lai_metadata_get_enum_value_name(
-        _In_ const lai_enum_metadata_t* metadata,
+const char* otai_metadata_get_enum_value_name(
+        _In_ const otai_enum_metadata_t* metadata,
         _In_ int value)
 {
     if (metadata == NULL)
@@ -227,10 +227,10 @@ const char* lai_metadata_get_enum_value_name(
     return NULL;
 }
 
-const lai_attribute_t* lai_metadata_get_attr_by_id(
-        _In_ lai_attr_id_t id,
+const otai_attribute_t* otai_metadata_get_attr_by_id(
+        _In_ otai_attr_id_t id,
         _In_ uint32_t attr_count,
-        _In_ const lai_attribute_t *attr_list)
+        _In_ const otai_attribute_t *attr_list)
 {
     if (attr_list == NULL)
     {
@@ -250,21 +250,21 @@ const lai_attribute_t* lai_metadata_get_attr_by_id(
     return NULL;
 }
 
-const lai_object_type_info_t* lai_metadata_get_object_type_info(
-        _In_ lai_object_type_t object_type)
+const otai_object_type_info_t* otai_metadata_get_object_type_info(
+        _In_ otai_object_type_t object_type)
 {
-    if (lai_metadata_is_object_type_valid(object_type))
+    if (otai_metadata_is_object_type_valid(object_type))
     {
-        return lai_metadata_all_object_type_infos[object_type];
+        return otai_metadata_all_object_type_infos[object_type];
     }
 
     return NULL;
 }
 
-bool lai_metadata_is_object_type_oid(
-        _In_ lai_object_type_t object_type)
+bool otai_metadata_is_object_type_oid(
+        _In_ otai_object_type_t object_type)
 {
-    const lai_object_type_info_t* oti = lai_metadata_get_object_type_info(object_type);
+    const otai_object_type_info_t* oti = otai_metadata_get_object_type_info(object_type);
 
     if (oti != NULL)
     {
@@ -274,16 +274,16 @@ bool lai_metadata_is_object_type_oid(
     return false;
 }
 
-bool lai_metadata_is_object_type_valid(
-        _In_ lai_object_type_t object_type)
+bool otai_metadata_is_object_type_valid(
+        _In_ otai_object_type_t object_type)
 {
-    return object_type > LAI_OBJECT_TYPE_NULL && object_type < LAI_OBJECT_TYPE_MAX;
+    return object_type > OTAI_OBJECT_TYPE_NULL && object_type < OTAI_OBJECT_TYPE_MAX;
 }
 
-bool lai_metadata_is_condition_met(
-        _In_ const lai_attr_metadata_t *metadata,
+bool otai_metadata_is_condition_met(
+        _In_ const otai_attr_metadata_t *metadata,
         _In_ uint32_t attr_count,
-        _In_ const lai_attribute_t *attr_list)
+        _In_ const otai_attribute_t *attr_list)
 {
     if (metadata == NULL || !metadata->isconditional || attr_list == NULL)
     {
@@ -292,11 +292,11 @@ bool lai_metadata_is_condition_met(
 
     size_t idx = 0;
 
-    bool met = (metadata->conditiontype == LAI_ATTR_CONDITION_TYPE_AND);
+    bool met = (metadata->conditiontype == OTAI_ATTR_CONDITION_TYPE_AND);
 
     for (; idx < metadata->conditionslength; ++idx)
     {
-        const lai_attr_condition_t *condition = metadata->conditions[idx];
+        const otai_attr_condition_t *condition = metadata->conditions[idx];
 
         /*
          * Conditons may only be on the same object type.
@@ -305,11 +305,11 @@ bool lai_metadata_is_condition_met(
          * MANDATORY_ON_CREATE.
          */
 
-        const lai_attr_metadata_t *cmd = lai_metadata_get_attr_metadata(metadata->objecttype, condition->attrid);
+        const otai_attr_metadata_t *cmd = otai_metadata_get_attr_metadata(metadata->objecttype, condition->attrid);
 
-        const lai_attribute_t *cattr = lai_metadata_get_attr_by_id(condition->attrid, attr_count, attr_list);
+        const otai_attribute_t *cattr = otai_metadata_get_attr_by_id(condition->attrid, attr_count, attr_list);
 
-        const lai_attribute_value_t* cvalue = NULL;
+        const otai_attribute_value_t* cvalue = NULL;
 
         if (cattr == NULL)
         {
@@ -331,7 +331,7 @@ bool lai_metadata_is_condition_met(
              * There is no default value and user didn't passed attribute.
              */
 
-            if (metadata->conditiontype == LAI_ATTR_CONDITION_TYPE_AND)
+            if (metadata->conditiontype == OTAI_ATTR_CONDITION_TYPE_AND)
             {
                 return false;
             }
@@ -343,31 +343,31 @@ bool lai_metadata_is_condition_met(
 
         switch (cmd->attrvaluetype)
         {
-            case LAI_ATTR_VALUE_TYPE_BOOL:
+            case OTAI_ATTR_VALUE_TYPE_BOOL:
                 current = (condition->condition.booldata == cvalue->booldata);
                 break;
-            case LAI_ATTR_VALUE_TYPE_INT8:
+            case OTAI_ATTR_VALUE_TYPE_INT8:
                 current = (condition->condition.s8 == cvalue->s8);
                 break;
-            case LAI_ATTR_VALUE_TYPE_INT16:
+            case OTAI_ATTR_VALUE_TYPE_INT16:
                 current = (condition->condition.s16 == cvalue->s16);
                 break;
-            case LAI_ATTR_VALUE_TYPE_INT32:
+            case OTAI_ATTR_VALUE_TYPE_INT32:
                 current = (condition->condition.s32 == cvalue->s32);
                 break;
-            case LAI_ATTR_VALUE_TYPE_INT64:
+            case OTAI_ATTR_VALUE_TYPE_INT64:
                 current = (condition->condition.s64 == cvalue->s64);
                 break;
-            case LAI_ATTR_VALUE_TYPE_UINT8:
+            case OTAI_ATTR_VALUE_TYPE_UINT8:
                 current = (condition->condition.u8 == cvalue->u8);
                 break;
-            case LAI_ATTR_VALUE_TYPE_UINT16:
+            case OTAI_ATTR_VALUE_TYPE_UINT16:
                 current = (condition->condition.u16 == cvalue->u16);
                 break;
-            case LAI_ATTR_VALUE_TYPE_UINT32:
+            case OTAI_ATTR_VALUE_TYPE_UINT32:
                 current = (condition->condition.u32 == cvalue->u32);
                 break;
-            case LAI_ATTR_VALUE_TYPE_UINT64:
+            case OTAI_ATTR_VALUE_TYPE_UINT64:
                 current = (condition->condition.u64 == cvalue->u64);
                 break;
 
@@ -378,12 +378,12 @@ bool lai_metadata_is_condition_met(
                  * attributes and all conditions.
                  */
 
-                LAI_META_LOG_ERROR("condition value type %d is not supported, FIXME", cmd->attrvaluetype);
+                OTAI_META_LOG_ERROR("condition value type %d is not supported, FIXME", cmd->attrvaluetype);
 
                 return false;
         }
 
-        if (metadata->conditiontype == LAI_ATTR_CONDITION_TYPE_AND)
+        if (metadata->conditiontype == OTAI_ATTR_CONDITION_TYPE_AND)
         {
             met &= current;
         }

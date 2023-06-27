@@ -20,7 +20,7 @@
 #
 # @file    checksymbols.pl
 #
-# @brief   This module defines LAI Check Symbols Parser
+# @brief   This module defines OTAI Check Symbols Parser
 #
 
 use strict;
@@ -38,13 +38,13 @@ for my $line (<STDIN>)
     my $type = $1;
     my $name = $2;
 
-    next if $name =~ /^(lai_(metadata|(de)?serialize)_\w+|__func__)/ and $type =~ /[rRBTtD]/;
+    next if $name =~ /^(otai_(metadata|(de)?serialize)_\w+|__func__)/ and $type =~ /[rRBTtD]/;
 
     # metadata log level is exception since it can be changed
 
-    next if $1 eq "lai_metadata_log_level";
+    next if $1 eq "otai_metadata_log_level";
 
-    print STDERR "ERROR: symbol '$line' is not prefixed 'lai_metadata_' or not in read-only section\n";
+    print STDERR "ERROR: symbol '$line' is not prefixed 'otai_metadata_' or not in read-only section\n";
 
     $exitcode = 1;
 }

@@ -13,18 +13,18 @@
  *    See the Apache Version 2.0 License for specific language governing
  *    permissions and limitations under the License.
  *
- * @file    laimetadatautils.h
+ * @file    otaimetadatautils.h
  *
- * @brief   This module defines LAI Metadata Utilities
+ * @brief   This module defines OTAI Metadata Utilities
  */
 
-#ifndef __LAIMETADATAUTILS_H_
-#define __LAIMETADATAUTILS_H_
+#ifndef __OTAIMETADATAUTILS_H_
+#define __OTAIMETADATAUTILS_H_
 
-#include "laimetadatatypes.h"
+#include "otaimetadatatypes.h"
 
 /**
- * @defgroup LAIMETADATAUTILS LAI - Metadata Utilities Definitions
+ * @defgroup OTAIMETADATAUTILS OTAI - Metadata Utilities Definitions
  *
  * @{
  */
@@ -37,9 +37,9 @@
  *
  * @return True if object is allowed on this attribute, false otherwise
  */
-extern bool lai_metadata_is_allowed_object_type(
-        _In_ const lai_attr_metadata_t *metadata,
-        _In_ lai_object_type_t object_type);
+extern bool otai_metadata_is_allowed_object_type(
+        _In_ const otai_attr_metadata_t *metadata,
+        _In_ otai_object_type_t object_type);
 
 /**
  * @brief Is allowed enum value
@@ -49,8 +49,8 @@ extern bool lai_metadata_is_allowed_object_type(
  *
  * @return True if enum value is allowed on this attribute, false otherwise
  */
-extern bool lai_metadata_is_allowed_enum_value(
-        _In_ const lai_attr_metadata_t *metadata,
+extern bool otai_metadata_is_allowed_enum_value(
+        _In_ const otai_attr_metadata_t *metadata,
         _In_ int value);
 
 /**
@@ -61,9 +61,9 @@ extern bool lai_metadata_is_allowed_enum_value(
  *
  * @return Pointer to object metadata or NULL in case of failure
  */
-extern const lai_stat_metadata_t* lai_metadata_get_stat_metadata(
-        _In_ lai_object_type_t object_type,
-        _In_ lai_stat_id_t stat_id);
+extern const otai_stat_metadata_t* otai_metadata_get_stat_metadata(
+        _In_ otai_object_type_t object_type,
+        _In_ otai_stat_id_t stat_id);
 
 /**
  * @brief Gets attribute metadata based on object type and attribute id
@@ -73,9 +73,9 @@ extern const lai_stat_metadata_t* lai_metadata_get_stat_metadata(
  *
  * @return Pointer to object metadata or NULL in case of failure
  */
-extern const lai_attr_metadata_t* lai_metadata_get_attr_metadata(
-        _In_ lai_object_type_t object_type,
-        _In_ lai_attr_id_t attr_id);
+extern const otai_attr_metadata_t* otai_metadata_get_attr_metadata(
+        _In_ otai_object_type_t object_type,
+        _In_ otai_attr_id_t attr_id);
 
 /**
  * @brief Gets attribute metadata based on attribute id name
@@ -84,7 +84,7 @@ extern const lai_attr_metadata_t* lai_metadata_get_attr_metadata(
  *
  * @return Pointer to object metadata or NULL in case of failure
  */
-extern const lai_attr_metadata_t* lai_metadata_get_attr_metadata_by_attr_id_name(
+extern const otai_attr_metadata_t* otai_metadata_get_attr_metadata_by_attr_id_name(
         _In_ const char *attr_id_name);
 
 /**
@@ -94,7 +94,7 @@ extern const lai_attr_metadata_t* lai_metadata_get_attr_metadata_by_attr_id_name
  *
  * @return Pointer to object metadata or NULL in case of failure
  */
-extern const lai_stat_metadata_t* lai_metadata_get_stat_metadata_by_stat_id_name(
+extern const otai_stat_metadata_t* otai_metadata_get_stat_metadata_by_stat_id_name(
         _In_ const char *stat_id_name);
 
 /**
@@ -105,8 +105,8 @@ extern const lai_stat_metadata_t* lai_metadata_get_stat_metadata_by_stat_id_name
  *
  * @return String representation of enum value or NULL if value was not found
  */
-extern const char* lai_metadata_get_enum_value_name(
-        _In_ const lai_enum_metadata_t *metadata,
+extern const char* otai_metadata_get_enum_value_name(
+        _In_ const otai_enum_metadata_t *metadata,
         _In_ int value);
 
 /**
@@ -120,10 +120,10 @@ extern const char* lai_metadata_get_enum_value_name(
  * When multiple attributes with the same id are passed, only first
  * attribute is returned.
  */
-extern const lai_attribute_t* lai_metadata_get_attr_by_id(
-        _In_ lai_attr_id_t id,
+extern const otai_attribute_t* otai_metadata_get_attr_by_id(
+        _In_ otai_attr_id_t id,
         _In_ uint32_t attr_count,
-        _In_ const lai_attribute_t *attr_list);
+        _In_ const otai_attribute_t *attr_list);
 
 /**
  * @brief Gets object type info
@@ -132,8 +132,8 @@ extern const lai_attribute_t* lai_metadata_get_attr_by_id(
  *
  * @return Object type info structure or NULL if not found
  */
-extern const lai_object_type_info_t* lai_metadata_get_object_type_info(
-        _In_ lai_object_type_t object_type);
+extern const otai_object_type_info_t* otai_metadata_get_object_type_info(
+        _In_ otai_object_type_t object_type);
 
 /**
  * @brief Checks if object type is valid
@@ -142,8 +142,8 @@ extern const lai_object_type_info_t* lai_metadata_get_object_type_info(
  *
  * @return True if object type is valid, false otherwise
  */
-extern bool lai_metadata_is_object_type_valid(
-        _In_ lai_object_type_t object_type);
+extern bool otai_metadata_is_object_type_valid(
+        _In_ otai_object_type_t object_type);
 
 /**
  * @brief Checks whether object type is OID object type.
@@ -152,8 +152,8 @@ extern bool lai_metadata_is_object_type_valid(
  *
  * @return True if object type is OID type, false otherwise.
  */
-extern bool lai_metadata_is_object_type_oid(
-        _In_ lai_object_type_t object_type);
+extern bool otai_metadata_is_object_type_oid(
+        _In_ otai_object_type_t object_type);
 
 /**
  * @brief Check if condition met.
@@ -164,7 +164,7 @@ extern bool lai_metadata_is_object_type_oid(
  * examined.
  *
  * NOTE: When multiple attributes with the same ID are passed,
- * lai_metadata_get_attr_by_id will select only first one.
+ * otai_metadata_get_attr_by_id will select only first one.
  * Function will not be able to handle multiple attributes
  *
  * @param[in] metadata Metadata of attribute that we need to check.
@@ -175,28 +175,28 @@ extern bool lai_metadata_is_object_type_oid(
  * @return True if condition is in force, false otherwise. False will be also
  * returned if any of input pointers is NULL or attribute is not conditional.
  */
-extern bool lai_metadata_is_condition_met(
-        _In_ const lai_attr_metadata_t *metadata,
+extern bool otai_metadata_is_condition_met(
+        _In_ const otai_attr_metadata_t *metadata,
         _In_ uint32_t attr_count,
-        _In_ const lai_attribute_t *attr_list);
+        _In_ const otai_attribute_t *attr_list);
 
 /**
  * @brief Allocation info
  *
  * hint for the allocation
  */
-typedef struct _lai_alloc_info_t
+typedef struct _otai_alloc_info_t
 {
     uint32_t list_size;
 
     /**
      * @brief Reference attribute for size information
      */
-    const lai_attribute_t *reference;
-} lai_alloc_info_t;
+    const otai_attribute_t *reference;
+} otai_alloc_info_t;
 
 /**
- * @brief Allocate lai_attribute_t value
+ * @brief Allocate otai_attribute_t value
  *
  * By passing info == NULL, it will use default list size for the list value
  * allocation
@@ -205,75 +205,75 @@ typedef struct _lai_alloc_info_t
  * @param[in] attr Attribute to allocate
  * @param[in] info Allocation information
  *
- * @return #LAI_STATUS_SUCCESS on success,
- * #LAI_STATUS_INVALID_PARAMETER/#LAI_STATUS_NO_MEMORY on failure
+ * @return #OTAI_STATUS_SUCCESS on success,
+ * #OTAI_STATUS_INVALID_PARAMETER/#OTAI_STATUS_NO_MEMORY on failure
  */
-extern lai_status_t lai_metadata_alloc_attr_value(
-        _In_ const lai_attr_metadata_t *metadata,
-        _In_ const lai_attribute_t *attr,
-        _In_ const lai_alloc_info_t *info);
+extern otai_status_t otai_metadata_alloc_attr_value(
+        _In_ const otai_attr_metadata_t *metadata,
+        _In_ const otai_attribute_t *attr,
+        _In_ const otai_alloc_info_t *info);
 
 /**
- * @brief Free lai_attribute_t value
+ * @brief Free otai_attribute_t value
  *
  * @param[in] metadata Attribute metadata
  * @param[in] attr Attribute to free
  * @param[in] info Allocation information
  *
- * @return #LAI_STATUS_SUCCESS on success,
- * #LAI_STATUS_INVALID_PARAMETER on failure
+ * @return #OTAI_STATUS_SUCCESS on success,
+ * #OTAI_STATUS_INVALID_PARAMETER on failure
  */
-extern lai_status_t lai_metadata_free_attr_value(
-        _In_ const lai_attr_metadata_t *metadata,
-        _In_ const lai_attribute_t *attr,
-        _In_ const lai_alloc_info_t *info);
+extern otai_status_t otai_metadata_free_attr_value(
+        _In_ const otai_attr_metadata_t *metadata,
+        _In_ const otai_attribute_t *attr,
+        _In_ const otai_alloc_info_t *info);
 
 /**
- * @brief Clear lai_attribute_t value
+ * @brief Clear otai_attribute_t value
  *
  * @param[in] metadata Attribute metadata
  * @param[in] attr Attribute to clear
  *
- * @return #LAI_STATUS_SUCCESS on success,
- * #LAI_STATUS_INVALID_PARAMETER on failure
+ * @return #OTAI_STATUS_SUCCESS on success,
+ * #OTAI_STATUS_INVALID_PARAMETER on failure
  */
-extern lai_status_t lai_metadata_clear_attr_value(
-        _In_ const lai_attr_metadata_t *metadata,
-        _In_ const lai_attribute_t *attr);
+extern otai_status_t otai_metadata_clear_attr_value(
+        _In_ const otai_attr_metadata_t *metadata,
+        _In_ const otai_attribute_t *attr);
 
 /**
- * @brief Deep copy lai_attribute_t value
+ * @brief Deep copy otai_attribute_t value
  *
  * @param[in] metadata Attribute metadata
  * @param[in] src Original attribute for the copy
  * @param[inout] dest Destination for the copy
  *
- * @return #LAI_STATUS_SUCCESS on success,
- * #LAI_STATUS_INVALID_PARAMETER on failure
+ * @return #OTAI_STATUS_SUCCESS on success,
+ * #OTAI_STATUS_INVALID_PARAMETER on failure
  */
-extern lai_status_t lai_metadata_deepcopy_attr_value(
-        _In_ const lai_attr_metadata_t *metadata,
-        _In_ const lai_attribute_t *src,
-        _Inout_ lai_attribute_t *dest);
+extern otai_status_t otai_metadata_deepcopy_attr_value(
+        _In_ const otai_attr_metadata_t *metadata,
+        _In_ const otai_attribute_t *src,
+        _Inout_ otai_attribute_t *dest);
 
 /**
- * @brief Deep equal lai_attribute_t value
+ * @brief Deep equal otai_attribute_t value
  *
  * @param[in] metadata Attribute metadata
  * @param[in] lhs Left
  * @param[in] rhs Right
  * @param[out] result Result
  *
- * @return #LAI_STATUS_SUCCESS on success,
- * #LAI_STATUS_INVALID_PARAMETER on failure
+ * @return #OTAI_STATUS_SUCCESS on success,
+ * #OTAI_STATUS_INVALID_PARAMETER on failure
  */
-extern lai_status_t lai_metadata_deepequal_attr_value(
-        _In_ const lai_attr_metadata_t *metadata,
-        _In_ const lai_attribute_t *lhs,
-        _In_ const lai_attribute_t *rhs,
+extern otai_status_t otai_metadata_deepequal_attr_value(
+        _In_ const otai_attr_metadata_t *metadata,
+        _In_ const otai_attribute_t *lhs,
+        _In_ const otai_attribute_t *rhs,
         _Out_ bool *result);
 
 /**
  * @}
  */
-#endif /** __LAIMETADATAUTILS_H_ */
+#endif /** __OTAIMETADATAUTILS_H_ */
