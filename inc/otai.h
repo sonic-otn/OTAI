@@ -21,27 +21,11 @@
 #if !defined (__OTAI_H_)
 #define __OTAI_H_
 
-#include "otaiobject.h"
-#include "otailinecard.h"
-#include "otaiport.h"
-#include "otaitransceiver.h"
-#include "otailogicalchannel.h"
-#include "otaiotn.h"
-#include "otaiethernet.h"
-#include "otaiphysicalchannel.h"
-#include "otaioch.h"
-#include "otailldp.h"
-#include "otaiassignment.h"
 #include "otaistatus.h"
 #include "otaitypes.h"
-#include "otaiaps.h"
-#include "otaiapsport.h"
 #include "otaiattenuator.h"
-#include "otaiinterface.h"
 #include "otaioa.h"
 #include "otaiosc.h"
-#include "otaiwss.h"
-#include "otaimediachannel.h"
 #include "otaiocm.h"
 #include "otaiotdr.h"
 
@@ -61,27 +45,12 @@
 typedef enum _otai_api_t
 {
     OTAI_API_UNSPECIFIED      =  0, /**< unspecified API */
-    OTAI_API_LINECARD         =  1, /**< otai_linecard_api_t */
-    OTAI_API_PORT             =  2, /**< otai_port_api_t */
-    OTAI_API_TRANSCEIVER      =  3, /**< otai_transceiver_api_t */
-    OTAI_API_LOGICALCHANNEL   =  4, /**< otai_logicalchannel_api_t */
-    OTAI_API_OTN              =  5, /**< otai_otn_api_t */
-    OTAI_API_ETHERNET         =  6, /**< otai_ethernet_api_t */
-    OTAI_API_PHYSICALCHANNEL  =  7, /**< otai_physicalchannel_api_t */
-    OTAI_API_OCH              =  8, /**< otai_och_api_t */
-    OTAI_API_LLDP             =  9, /**< otai_lldp_api_t */
-    OTAI_API_ASSIGNMENT       =  10, /**< otai_assignment_api_t */
-    OTAI_API_INTERFACE        =  11, /**< otai_interface_api_t */
-    OTAI_API_OA               =  12, /**< otai_oa_api_t */
-    OTAI_API_OSC              =  13, /**< otai_osc_api_t */
-    OTAI_API_APS              =  14, /**< otai_aps_api_t */
-    OTAI_API_APSPORT          =  15, /**< otai_apsport_api_t */
-    OTAI_API_ATTENUATOR       =  16, /**< otai_attenuator_api_t */
-    OTAI_API_WSS              =  17, /**< otai_wss_api_t */
-    OTAI_API_MEDIACHANNEL     =  18, /**< otai_mediachannel_api_t */
-    OTAI_API_OCM              =  19, /**< otai_ocm_api_t */
-    OTAI_API_OTDR             =  20, /**< otai_otdr_api_t */
-    OTAI_API_MAX              =  21, /**< total number of APIs */
+    OTAI_API_OA               =  1, /**< otai_oa_api_t */
+    OTAI_API_OSC              =  2, /**< otai_osc_api_t */
+    OTAI_API_ATTENUATOR       =  3, /**< otai_attenuator_api_t */
+    OTAI_API_OCM              =  4, /**< otai_ocm_api_t */
+    OTAI_API_OTDR             =  5, /**< otai_otdr_api_t */
+    OTAI_API_MAX              =  6, /**< total number of APIs */
 } otai_api_t;
 
 /**
@@ -190,29 +159,6 @@ otai_status_t otai_log_set(
  */
 otai_object_type_t otai_object_type_query(
         _In_ otai_object_id_t object_id);
-
-/**
- * @brief Query OTAI linecard id.
- *
- * @param[in] object_id Object id
- *
- * @return #OTAI_NULL_OBJECT_ID when otai_object_id is not valid.
- * Otherwise, return a valid OTAI_OBJECT_TYPE_LINECARD object on which provided
- * object id belongs. If valid linecard id object is provided as input parameter
- * it should return itself.
- */
-otai_object_id_t otai_linecard_id_query(
-        _In_ otai_object_id_t object_id);
-
-/**
- * @brief Link check.
- *
- * @param[out] up Whether link is up or not.
- *
- * @return #OTAI_STATUS_SUCCESS on success, failure status code on error
- */
-otai_status_t otai_link_check(
-        _Out_ bool *up);
 
 /**
  * @brief Generate dump file. The dump file may include OTAI state information

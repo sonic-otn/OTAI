@@ -51,6 +51,7 @@ typedef enum _otai_otdr_attr_t
      *
      * @type otai_double_t
      * @flags CREATE_AND_SET
+     * @default 1.4679
      */
     OTAI_OTDR_ATTR_REFRACTIVE_INDEX,
 
@@ -59,6 +60,7 @@ typedef enum _otai_otdr_attr_t
      *
      * @type otai_double_t
      * @flags CREATE_AND_SET
+     * @default 1.4679
      */
     OTAI_OTDR_ATTR_BACKSCATTER_INDEX,
 
@@ -67,6 +69,7 @@ typedef enum _otai_otdr_attr_t
      *
      * @type otai_double_t
      * @flags CREATE_AND_SET
+     * @default -40.0
      */
     OTAI_OTDR_ATTR_REFLECTION_THRESHOLD,
 
@@ -75,6 +78,7 @@ typedef enum _otai_otdr_attr_t
      *
      * @type otai_double_t
      * @flags CREATE_AND_SET
+     * @default 2.5
      */
     OTAI_OTDR_ATTR_SPLICE_LOSS_THRESHOLD,
 
@@ -83,6 +87,7 @@ typedef enum _otai_otdr_attr_t
      *
      * @type otai_double_t
      * @flags CREATE_AND_SET
+     * @default -40.0
      */
     OTAI_OTDR_ATTR_END_OF_FIBER_THRESHOLD,
 
@@ -91,6 +96,7 @@ typedef enum _otai_otdr_attr_t
      *
      * @type otai_uint32_t
      * @flags CREATE_AND_SET
+     * @default 60
      */
     OTAI_OTDR_ATTR_DISTANCE_RANGE,
 
@@ -99,6 +105,7 @@ typedef enum _otai_otdr_attr_t
      *
      * @type otai_uint32_t
      * @flags CREATE_AND_SET
+     * @default 3000
      */
     OTAI_OTDR_ATTR_PULSE_WIDTH,
 
@@ -107,6 +114,7 @@ typedef enum _otai_otdr_attr_t
      *
      * @type otai_uint32_t
      * @flags CREATE_AND_SET
+     * @default 60
      */
     OTAI_OTDR_ATTR_AVERAGE_TIME,
 
@@ -115,6 +123,7 @@ typedef enum _otai_otdr_attr_t
      *
      * @type otai_uint64_t
      * @flags CREATE_AND_SET
+     * @default 193414489
      */
     OTAI_OTDR_ATTR_OUTPUT_FREQUENCY,
 
@@ -123,6 +132,7 @@ typedef enum _otai_otdr_attr_t
      *
      * @type bool
      * @flags CREATE_AND_SET
+     * @default true
      */
     OTAI_OTDR_ATTR_ENABLED,
 
@@ -132,6 +142,7 @@ typedef enum _otai_otdr_attr_t
      * @type bool
      * @flags SET_ONLY
      * @isrecoverable false
+     * @default true
      */
     OTAI_OTDR_ATTR_SCAN,
 
@@ -140,6 +151,7 @@ typedef enum _otai_otdr_attr_t
      *
      * @type char
      * @flags CREATE_AND_SET
+     * @default ""
      */
     OTAI_OTDR_ATTR_START_TIME,
 
@@ -148,6 +160,7 @@ typedef enum _otai_otdr_attr_t
      *
      * @type otai_uint32_t
      * @flags CREATE_AND_SET
+     * @default 0
      */
     OTAI_OTDR_ATTR_PERIOD,
 
@@ -198,86 +211,6 @@ typedef enum _otai_otdr_attr_t
      * @flags READ_ONLY
      */
     OTAI_OTDR_ATTR_SCANNING_STATUS,
-
-    /**
-     * @brief Serial No
-     *
-     * @type char
-     * @flags READ_ONLY
-     */
-    OTAI_OTDR_ATTR_SERIAL_NO,
-
-    /**
-     * @brief Part no
-     *
-     * @type char
-     * @flags READ_ONLY
-     */
-    OTAI_OTDR_ATTR_PART_NO,
-
-    /**
-     * @brief Manufacture name
-     *
-     * @type char
-     * @flags READ_ONLY
-     */
-    OTAI_OTDR_ATTR_MFG_NAME,
-
-    /**
-     * @brief Manufacture date
-     *
-     * @type char
-     * @flags READ_ONLY
-     */
-    OTAI_OTDR_ATTR_MFG_DATE,
-
-    /**
-     * @brief Hardware version
-     *
-     * @type char
-     * @flags READ_ONLY
-     */
-    OTAI_OTDR_ATTR_HARDWARE_VERSION,
-
-    /**
-     * @brief The operational state of the OTDR
-     *
-     * @type otai_oper_status_t
-     * @flags READ_ONLY
-     */
-    OTAI_OTDR_ATTR_OPER_STATUS,
-
-    /**
-     * @brief Whether the OTDR is present or not
-     *
-     * @type bool
-     * @flags READ_ONLY
-     */
-    OTAI_OTDR_ATTR_EMPTY,
-
-    /**
-     * @brief Whether the OTDR is removable
-     *
-     * @type bool
-     * @flags READ_ONLY
-     */
-    OTAI_OTDR_ATTR_REMOVABLE,
-
-    /**
-     * @brief Software version
-     *
-     * @type char
-     * @flags READ_ONLY
-     */
-    OTAI_OTDR_ATTR_SOFTWARE_VERSION,
-
-    /**
-     * @brief Firmware version
-     *
-     * @type char
-     * @flags READ_ONLY
-     */
-    OTAI_OTDR_ATTR_FIRMWARE_VERSION,
 
     /**
      * @brief End of attributes

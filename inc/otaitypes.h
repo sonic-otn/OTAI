@@ -117,27 +117,12 @@ typedef enum _otai_common_api_t
 typedef enum _otai_object_type_t
 {
     OTAI_OBJECT_TYPE_NULL                     =  0, /**< invalid object type */
-    OTAI_OBJECT_TYPE_LINECARD                 =  1,
-    OTAI_OBJECT_TYPE_PORT                     =  2,
-    OTAI_OBJECT_TYPE_TRANSCEIVER              =  3,
-    OTAI_OBJECT_TYPE_LOGICALCHANNEL           =  4,
-    OTAI_OBJECT_TYPE_OTN                      =  5,
-    OTAI_OBJECT_TYPE_ETHERNET                 =  6,
-    OTAI_OBJECT_TYPE_PHYSICALCHANNEL          =  7,
-    OTAI_OBJECT_TYPE_OCH                      =  8,
-    OTAI_OBJECT_TYPE_LLDP                     =  9,
-    OTAI_OBJECT_TYPE_ASSIGNMENT               =  10,
-    OTAI_OBJECT_TYPE_INTERFACE                =  11,
-    OTAI_OBJECT_TYPE_OA                       =  12,
-    OTAI_OBJECT_TYPE_OSC                      =  13,
-    OTAI_OBJECT_TYPE_APS                      =  14,
-    OTAI_OBJECT_TYPE_APSPORT                  =  15,
-    OTAI_OBJECT_TYPE_ATTENUATOR               =  16,
-    OTAI_OBJECT_TYPE_WSS                      =  17,
-    OTAI_OBJECT_TYPE_MEDIACHANNEL             =  18,
-    OTAI_OBJECT_TYPE_OCM                      =  19,
-    OTAI_OBJECT_TYPE_OTDR                     =  20,
-    OTAI_OBJECT_TYPE_MAX                      =  21,
+    OTAI_OBJECT_TYPE_OA                       =  1,
+    OTAI_OBJECT_TYPE_OSC                      =  2,
+    OTAI_OBJECT_TYPE_ATTENUATOR               =  3,
+    OTAI_OBJECT_TYPE_OCM                      =  4,
+    OTAI_OBJECT_TYPE_OTDR                     =  5,
+    OTAI_OBJECT_TYPE_MAX                      =  6,
 } otai_object_type_t;
 
 typedef struct _otai_u8_list_t

@@ -58,6 +58,7 @@ typedef enum _otai_attenuator_attr_t
      *
      * @type otai_attenuator_attenuation_mode_t
      * @flags CREATE_AND_SET
+     * @default OTAI_ATTENUATOR_ATTENUATION_MODE_CONSTANT_ATTENUATION
      */
     OTAI_ATTENUATOR_ATTR_ATTENUATION_MODE,
 
@@ -66,6 +67,7 @@ typedef enum _otai_attenuator_attr_t
      *
      * @type otai_double_t
      * @flags CREATE_AND_SET
+     * @default -60.0
      */
     OTAI_ATTENUATOR_ATTR_TARGET_OUTPUT_POWER,
 
@@ -74,6 +76,7 @@ typedef enum _otai_attenuator_attr_t
      *
      * @type otai_double_t
      * @flags CREATE_AND_SET
+     * @default -60.0
      */
     OTAI_ATTENUATOR_ATTR_ATTENUATION,
 
@@ -82,6 +85,7 @@ typedef enum _otai_attenuator_attr_t
      *
      * @type bool
      * @flags CREATE_AND_SET
+     * @default true
      */
     OTAI_ATTENUATOR_ATTR_ENABLED,
 

@@ -47,118 +47,6 @@ typedef enum _otai_osc_attr_t
     OTAI_OSC_ATTR_ID = OTAI_OSC_ATTR_START,
 
     /**
-     * @brief Removable
-     *
-     * @type bool
-     * @flags READ_ONLY
-     */
-    OTAI_OSC_ATTR_REMOVABLE,
-
-    /**
-     * @brief Serial no
-     *
-     * @type char
-     * @flags READ_ONLY
-     */
-    OTAI_OSC_ATTR_SERIAL_NO,
-
-    /**
-     * @brief Equipment failure
-     *
-     * @type bool
-     * @flags READ_ONLY
-     */
-    OTAI_OSC_ATTR_EQUIPMENT_FAILURE,
-
-    /**
-     * @brief Equipment mismatch
-     *
-     * @type bool
-     * @flags READ_ONLY
-     */
-    OTAI_OSC_ATTR_EQUIPMENT_MISMATCH,
-
-    /**
-     * @brief Location
-     *
-     * @type char
-     * @flags READ_ONLY
-     */
-    OTAI_OSC_ATTR_LOCATION,
-
-    /**
-     * @brief Hardware version
-     *
-     * @type char
-     * @flags READ_ONLY
-     */
-    OTAI_OSC_ATTR_HARDWARE_VERSION,
-
-    /**
-     * @brief Admin state
-     *
-     * @type otai_admin_state_t
-     * @flags READ_ONLY
-     */
-    OTAI_OSC_ATTR_ADMIN_STATE,
-
-    /**
-     * @brief Operational status
-     *
-     * @type otai_oper_status_t
-     * @flags READ_ONLY
-     */
-    OTAI_OSC_ATTR_OPER_STATUS,
-
-    /**
-     * @brief Part no
-     *
-     * @type char
-     * @flags READ_ONLY
-     */
-    OTAI_OSC_ATTR_PART_NO,
-
-    /**
-     * @brief Mfg name
-     *
-     * @type char
-     * @flags READ_ONLY
-     */
-    OTAI_OSC_ATTR_MFG_NAME,
-
-    /**
-     * @brief Manufacture date
-     *
-     * @type char
-     * @flags READ_ONLY
-     */
-    OTAI_OSC_ATTR_MFG_DATE,
-
-    /**
-     * @brief Empty
-     *
-     * @type bool
-     * @flags READ_ONLY
-     */
-    OTAI_OSC_ATTR_EMPTY,
-
-    /**
-     * @brief Software version
-     *
-     * @type char
-     * @flags READ_ONLY
-     */
-    OTAI_OSC_ATTR_SOFTWARE_VERSION,
-
-    /**
-     * @brief Firmware version
-     *
-     * @type char
-     * @flags READ_ONLY
-     */
-    OTAI_OSC_ATTR_FIRMWARE_VERSION,
-
-    /**
      * @brief Output frequency
      *
      * @type otai_uint64_t
@@ -171,6 +59,7 @@ typedef enum _otai_osc_attr_t
      *
      * @type bool
      * @flags CREATE_AND_SET
+     * @default true
      */
     OTAI_OSC_ATTR_ENABLED,
 
@@ -179,6 +68,7 @@ typedef enum _otai_osc_attr_t
      *
      * @type otai_double_t
      * @flags CREATE_AND_SET
+     * @default -30.0
      */
     OTAI_OSC_ATTR_RX_LOW_THRESHOLD,
 
@@ -187,6 +77,7 @@ typedef enum _otai_osc_attr_t
      *
      * @type otai_double_t
      * @flags CREATE_AND_SET
+     * @default -5.0
      */
     OTAI_OSC_ATTR_RX_HIGH_THRESHOLD,
 
@@ -195,6 +86,7 @@ typedef enum _otai_osc_attr_t
      *
      * @type otai_double_t
      * @flags CREATE_AND_SET
+     * @default -10.0
      */
     OTAI_OSC_ATTR_TX_LOW_THRESHOLD,
 

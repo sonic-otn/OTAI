@@ -52,6 +52,7 @@ typedef enum _otai_ocm_attr_t
      * @type bool
      * @flags SET_ONLY
      * @isrecoverable false
+     * @default true
      */
     OTAI_OCM_ATTR_SCAN,
 
@@ -60,96 +61,9 @@ typedef enum _otai_ocm_attr_t
      *
      * @type otai_uint64_t
      * @flags CREATE_AND_SET
+     * @default 50000
      */
     OTAI_OCM_ATTR_FREQUENCY_GRANULARITY,
-
-    /**
-     * @brief Serial No
-     *
-     * @type char
-     * @flags READ_ONLY
-     */
-    OTAI_OCM_ATTR_SERIAL_NO,
-
-    /**
-     * @brief Part no
-     *
-     * @type char
-     * @flags READ_ONLY
-     */
-    OTAI_OCM_ATTR_PART_NO,
-
-    /**
-     * @brief Manufacture name
-     *
-     * @type char
-     * @flags READ_ONLY
-     */
-    OTAI_OCM_ATTR_MFG_NAME,
-
-    /**
-     * @brief Manufacture date
-     *
-     * @type char
-     * @flags READ_ONLY
-     */
-    OTAI_OCM_ATTR_MFG_DATE,
-
-    /**
-     * @brief Hardware version
-     *
-     * @type char
-     * @flags READ_ONLY
-     */
-    OTAI_OCM_ATTR_HARDWARE_VERSION,
-
-    /**
-     * @brief The operational state of the OCM
-     *
-     * @type otai_oper_status_t
-     * @flags READ_ONLY
-     */
-    OTAI_OCM_ATTR_OPER_STATUS,
-
-    /**
-     * @brief Whether the OCM is present or not
-     *
-     * @type bool
-     * @flags READ_ONLY
-     */
-    OTAI_OCM_ATTR_EMPTY,
-
-    /**
-     * @brief Whether the OCM is removable
-     *
-     * @type bool
-     * @flags READ_ONLY
-     */
-    OTAI_OCM_ATTR_REMOVABLE,
-
-    /**
-     * @brief Software version
-     *
-     * @type char
-     * @flags READ_ONLY
-     */
-    OTAI_OCM_ATTR_SOFTWARE_VERSION,
-
-    /**
-     * @brief Firmware version
-     *
-     * @type char
-     * @flags READ_ONLY
-     */
-    OTAI_OCM_ATTR_FIRMWARE_VERSION,
-
-    /**
-     * @brief Insertion loss to panel port
-     *
-     * @type otai_double_t
-     * @flags READ_ONLY
-     */
-    OTAI_OCM_ATTR_INSERTION_LOSS_TO_PANEL_PORT,
 
     /**
      * @brief End of attributes

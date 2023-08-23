@@ -91,94 +91,6 @@ typedef enum _otai_oa_attr_t
     OTAI_OA_ATTR_ID = OTAI_OA_ATTR_START,
 
     /**
-     * @brief Empty
-     *
-     * @type bool
-     * @flags READ_ONLY
-     */
-    OTAI_OA_ATTR_EMPTY,
-
-    /**
-     * @brief Removable
-     *
-     * @type bool
-     * @flags READ_ONLY
-     */
-    OTAI_OA_ATTR_REMOVABLE,
-
-    /**
-     * @brief Serial no
-     *
-     * @type char
-     * @flags READ_ONLY
-     */
-    OTAI_OA_ATTR_SERIAL_NO,
-
-    /**
-     * @brief Equipment failure
-     *
-     * @type bool
-     * @flags READ_ONLY
-     */
-    OTAI_OA_ATTR_EQUIPMENT_FAILURE,
-
-    /**
-     * @brief Equipment mismatch
-     *
-     * @type bool
-     * @flags READ_ONLY
-     */
-    OTAI_OA_ATTR_EQUIPMENT_MISMATCH,
-
-    /**
-     * @brief Hardware version
-     *
-     * @type char
-     * @flags READ_ONLY
-     */
-    OTAI_OA_ATTR_HARDWARE_VERSION,
-
-    /**
-     * @brief Admin state
-     *
-     * @type otai_admin_state_t
-     * @flags READ_ONLY
-     */
-    OTAI_OA_ATTR_ADMIN_STATE,
-
-    /**
-     * @brief Operational status
-     *
-     * @type otai_oper_status_t
-     * @flags READ_ONLY
-     */
-    OTAI_OA_ATTR_OPER_STATUS,
-
-    /**
-     * @brief Part no
-     *
-     * @type char
-     * @flags READ_ONLY
-     */
-    OTAI_OA_ATTR_PART_NO,
-
-    /**
-     * @brief Mfg name
-     *
-     * @type char
-     * @flags READ_ONLY
-     */
-    OTAI_OA_ATTR_MFG_NAME,
-
-    /**
-     * @brief Manufacture date
-     *
-     * @type char
-     * @flags READ_ONLY
-     */
-    OTAI_OA_ATTR_MFG_DATE,
-
-    /**
      * @brief Type
      *
      * @type otai_oa_type_t
@@ -187,26 +99,11 @@ typedef enum _otai_oa_attr_t
     OTAI_OA_ATTR_TYPE,
 
     /**
-     * @brief Software version
-     *
-     * @type char
-     * @flags READ_ONLY
-     */
-    OTAI_OA_ATTR_SOFTWARE_VERSION,
-
-    /**
-     * @brief Firmware version
-     *
-     * @type char
-     * @flags READ_ONLY
-     */
-    OTAI_OA_ATTR_FIRMWARE_VERSION,
-
-    /**
      * @brief Target gain
      *
      * @type otai_double_t
      * @flags CREATE_AND_SET
+     * @default 15.0
      */
     OTAI_OA_ATTR_TARGET_GAIN,
 
@@ -231,6 +128,7 @@ typedef enum _otai_oa_attr_t
      *
      * @type otai_double_t
      * @flags CREATE_AND_SET
+     * @default 0
      */
     OTAI_OA_ATTR_TARGET_GAIN_TILT,
 
@@ -239,6 +137,7 @@ typedef enum _otai_oa_attr_t
      *
      * @type otai_oa_gain_range_t
      * @flags CREATE_AND_SET
+     * @default OTAI_OA_GAIN_RANGE_LOW_GAIN_RANGE
      */
     OTAI_OA_ATTR_GAIN_RANGE,
 
@@ -247,6 +146,7 @@ typedef enum _otai_oa_attr_t
      *
      * @type otai_oa_amp_mode_t
      * @flags CREATE_AND_SET
+     * @default OTAI_OA_AMP_MODE_CONSTANT_GAIN
      */
     OTAI_OA_ATTR_AMP_MODE,
 
@@ -255,6 +155,7 @@ typedef enum _otai_oa_attr_t
      *
      * @type otai_double_t
      * @flags CREATE_AND_SET
+     * @default 15.0
      */
     OTAI_OA_ATTR_TARGET_OUTPUT_POWER,
 
@@ -263,6 +164,7 @@ typedef enum _otai_oa_attr_t
      *
      * @type otai_double_t
      * @flags CREATE_AND_SET
+     * @default 25.0
      */
     OTAI_OA_ATTR_MAX_OUTPUT_POWER,
 
@@ -271,6 +173,7 @@ typedef enum _otai_oa_attr_t
      *
      * @type bool
      * @flags CREATE_AND_SET
+     * @default true
      */
     OTAI_OA_ATTR_ENABLED,
 
@@ -279,6 +182,7 @@ typedef enum _otai_oa_attr_t
      *
      * @type otai_oa_fiber_type_profile_t
      * @flags CREATE_AND_SET
+     * @default OTAI_OA_FIBER_TYPE_PROFILE_SSMF
      */
     OTAI_OA_ATTR_FIBER_TYPE_PROFILE,
 
@@ -303,6 +207,7 @@ typedef enum _otai_oa_attr_t
      *
      * @type otai_oa_working_state_t
      * @flags CREATE_AND_SET
+     * @default OTAI_OA_WORKING_STATE_LOS_A
      */
     OTAI_OA_ATTR_WORKING_STATE,
 
@@ -311,6 +216,7 @@ typedef enum _otai_oa_attr_t
      *
      * @type otai_double_t
      * @flags CREATE_AND_SET
+     * @default -30.0
      */
     OTAI_OA_ATTR_INPUT_LOS_THRESHOLD,
 
@@ -319,6 +225,7 @@ typedef enum _otai_oa_attr_t
      *
      * @type otai_double_t
      * @flags CREATE_AND_SET
+     * @default 3.0
      */
     OTAI_OA_ATTR_INPUT_LOS_HYSTERESIS,
 
@@ -327,6 +234,7 @@ typedef enum _otai_oa_attr_t
      *
      * @type otai_double_t
      * @flags CREATE_AND_SET
+     * @default -10.0
      */
     OTAI_OA_ATTR_OUTPUT_LOS_THRESHOLD,
 
@@ -335,6 +243,7 @@ typedef enum _otai_oa_attr_t
      *
      * @type otai_double_t
      * @flags CREATE_AND_SET
+     * @default 3.0
      */
     OTAI_OA_ATTR_OUTPUT_LOS_HYSTERESIS,
 
@@ -343,6 +252,7 @@ typedef enum _otai_oa_attr_t
      *
      * @type otai_double_t
      * @flags CREATE_AND_SET
+     * @default 5.0
      */
     OTAI_OA_ATTR_GAIN_LOW_THRESHOLD,
 
@@ -351,6 +261,7 @@ typedef enum _otai_oa_attr_t
      *
      * @type otai_double_t
      * @flags CREATE_AND_SET
+     * @default 1.0
      */
     OTAI_OA_ATTR_GAIN_LOW_HYSTERESIS,
 
@@ -359,6 +270,7 @@ typedef enum _otai_oa_attr_t
      *
      * @type otai_double_t
      * @flags CREATE_AND_SET
+     * @default -20.0
      */
     OTAI_OA_ATTR_INPUT_LOW_THRESHOLD,
 
@@ -367,54 +279,16 @@ typedef enum _otai_oa_attr_t
      *
      * @type otai_double_t
      * @flags CREATE_AND_SET
+     * @default 0
      */
     OTAI_OA_ATTR_OUTPUT_LOW_THRESHOLD,
-
-    /**
-     * @brief LOS ASE delay
-     *
-     * @type otai_int32_t
-     * @flags CREATE_AND_SET
-     */
-    OTAI_OA_ATTR_LOS_ASE_DELAY,
-
-    /**
-     * @brief Input offset primary-line rx
-     *
-     * @type otai_double_t
-     * @flags READ_ONLY
-     */
-    OTAI_OA_ATTR_INPUT_OFFSET_LINEP_RX,
-
-    /**
-     * @brief Output offset primary-line tx
-     *
-     * @type otai_double_t
-     * @flags READ_ONLY
-     */
-    OTAI_OA_ATTR_OUTPUT_OFFSET_LINEP_TX,
-
-    /**
-     * @brief Input offset secondary-line rx
-     *
-     * @type otai_double_t
-     * @flags READ_ONLY
-     */
-    OTAI_OA_ATTR_INPUT_OFFSET_LINES_RX,
-
-    /**
-     * @brief Output offset secondary-line tx
-     *
-     * @type otai_double_t
-     * @flags READ_ONLY
-     */
-    OTAI_OA_ATTR_OUTPUT_OFFSET_LINES_TX,
 
     /**
      * @brief Enable APR node
      *
      * @type bool
      * @flags CREATE_AND_SET
+     * @default true
      */
     OTAI_OA_ATTR_APR_NODE_ENABLE,
 
@@ -423,6 +297,7 @@ typedef enum _otai_oa_attr_t
      *
      * @type otai_double_t
      * @flags CREATE_AND_SET
+     * @default -20.0
      */
     OTAI_OA_ATTR_APR_NODE_REFLECTION_THRESHOLD,
 
@@ -431,17 +306,9 @@ typedef enum _otai_oa_attr_t
      *
      * @type bool
      * @flags CREATE_AND_SET
+     * @default true
      */
     OTAI_OA_ATTR_APR_LINE_ENABLE,
-
-    /**
-     * @brief APR line valid lldp
-     *
-     * @type bool
-     * @flags CREATE_AND_SET
-     * @isrecoverable false
-     */
-    OTAI_OA_ATTR_APR_LINE_VALID_LLDP,
 
     /**
      * @brief End of attributes
