@@ -753,10 +753,10 @@ WARN_LOGFILE           =
 # Note: If this tag is empty the current directory is searched.
 
 INPUT                  = ../inc/
-INPUT                  += laimetadatatypes.h
-INPUT                  += laimetadatautils.h
-INPUT                  += laimetadatalogger.h
-INPUT                  += laiserialize.h
+INPUT                  += otaimetadatatypes.h
+INPUT                  += otaimetadatautils.h
+INPUT                  += otaimetadatalogger.h
+INPUT                  += otaiserialize.h
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding. Doxygen uses

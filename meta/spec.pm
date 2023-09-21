@@ -36,7 +36,7 @@ use Excel::Writer::XLSX;
 
 require Exporter;
 
-sub GenLaiSpecFile
+sub GenOtaiSpecFile
 {
     my $spec_file = 'OTAI-' . $main::OTAI_VER . '-spec.xlsx';
     my $workbook = Excel::Writer::XLSX->new($spec_file);
@@ -142,7 +142,7 @@ BEGIN
 {
     our @ISA    = qw(Exporter);
     our @EXPORT = qw/
-    GenLaiSpecFile
+    GenOtaiSpecFile
     /;
 }
 
