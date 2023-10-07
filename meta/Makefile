@@ -80,8 +80,15 @@ all: $(SYMBOLS)
 
 CONSTHEADERS = otaimetadatatypes.h otaimetadatalogger.h otaimetadatautils.h otaiserialize.h
 
-xml: $(DEPS) Doxyfile $(CONSTHEADERS)
-	doxygen Doxyfile 2>&1 | perl -npe '$$e=1 if /warning/i; END{exit $$e}'
+DOXYGEN_VERSION_CHECK = $(shell printf "$$(doxygen -v)\n1.8.16" | sort -V | head -n1)
+ifeq (${DOXYGEN_VERSION_CHECK},1.8.16)
+	DOXYFILE = Doxyfile
+else
+	DOXYFILE = Doxyfile.compat
+endif
+
+xml: $(DEPS) Doxyfile Doxyfile.compat $(CONSTHEADERS)
+	doxygen ${DOXYFILE} 2>&1 | perl -npe '$$e=1 if /warning/i; END{exit $$e}'
 	touch xml
 
 EXTRA = acronyms.txt aspell.en.pws *.pm *.cap
