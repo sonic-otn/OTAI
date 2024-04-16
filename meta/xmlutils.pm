@@ -221,7 +221,7 @@ sub GetXmlFiles
     return sort @files;
 }
 
-sub GetLaiXmlFiles
+sub GetOtaiXmlFiles
 {
     my $dir = shift;
 
@@ -608,7 +608,7 @@ BEGIN
 {
     our @ISA    = qw(Exporter);
     our @EXPORT = qw/
-    ReadXml UnescapeXml GetLaiXmlFiles GetXmlUnionFiles
+    ReadXml UnescapeXml GetOtaiXmlFiles GetXmlUnionFiles
     ExtractDescription ExtractStructInfo ExtractStructInfoEx
     /;
 }

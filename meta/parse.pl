@@ -2245,7 +2245,7 @@ sub CreateMetadata
     }
 }
 
-sub ProcessLaiStatus
+sub ProcessOtaiStatus
 {
     my $filename = "../inc/otaistatus.h";
 
@@ -4049,7 +4049,7 @@ sub WriteHeaderFotter
 
 sub ProcessXmlFiles
 {
-    for my $file (GetLaiXmlFiles($XMLDIR))
+    for my $file (GetOtaiXmlFiles($XMLDIR))
     {
         LogInfo "Processing $file";
 
@@ -4275,7 +4275,7 @@ CreateObjectTypeMap();
 
 WriteHeaderHeader();
 
-ProcessLaiStatus();
+ProcessOtaiStatus();
 
 ProcessExtraRangeDefines();
 
@@ -4335,4 +4335,4 @@ WriteLoggerVariables();
 
 WriteMetaDataFiles();
 
-GenLaiSpecFile();
+GenOtaiSpecFile();
