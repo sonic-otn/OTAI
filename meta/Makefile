@@ -88,12 +88,12 @@ else
 endif
 
 xml: $(DEPS) Doxyfile Doxyfile.compat $(CONSTHEADERS)
-	doxygen ${DOXYFILE} 2>&1 | perl -npe '$$e=1 if /warning/i; END{exit $$e}'
+	doxygen -u ${DOXYFILE} 2>&1 | perl -npe '$$e=1 if /warning/i; END{exit $$e}'
 	touch xml
 
 EXTRA = acronyms.txt aspell.en.pws *.pm *.cap
 
-otaimetadata.c otaimetadata.h: install_excel_writer xml $(XMLDEPS) parse.pl $(CONSTHEADERS) $(EXTRA)
+otaimetadata.c otaimetadata.h: xml $(XMLDEPS) parse.pl $(CONSTHEADERS) $(EXTRA)
 	perl -I. parse.pl
 
 HEADERS = otaimetadata.h $(CONSTHEADERS)
@@ -107,13 +107,7 @@ HEADERS = otaimetadata.h $(CONSTHEADERS)
 %.o.symbols: %.o
 	nm $^ | ./checksymbols.pl
 
-install_excel_writer: excel-writer-xlsx-main.tar.gz
-	tar -xzf excel-writer-xlsx-main.tar.gz
-	cd excel-writer-xlsx-main && perl Makefile.PL
-	sudo make -C excel-writer-xlsx-main
-	sudo make -C excel-writer-xlsx-main install
-
-.PHONY: clean install_excel_writer
+.PHONY: clean
 
 clean:
 	rm -f *.o *~ .*~ *.tmp .*.swp .*.swo *.bak otai*.gv otai*.svg *.o.symbols
