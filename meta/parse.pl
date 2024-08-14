@@ -1,6 +1,7 @@
 #!/usr/bin/perl
 #
 # Copyright (c) 2014 Microsoft Open Technologies, Inc.
+# Copyright (c) 2021 Alibaba Group.
 #
 #    Licensed under the Apache License, Version 2.0 (the "License"); you may
 #    not use this file except in compliance with the License. You may obtain
@@ -36,8 +37,6 @@ use utils;
 use xmlutils;
 use style;
 use serialize;
-use spec;
-use cap;
 
 our $XMLDIR = "xml";
 our $INCLUDE_DIR = "../inc/";
@@ -105,8 +104,6 @@ $SIG{__DIE__} = sub
 
 my %VALUE_TYPES = ();
 my %VALUE_TYPES_TO_VT = ();
-
-my %CAPABILITIES = ();
 
 sub ProcessTagUnit
 {
@@ -1903,120 +1900,6 @@ sub ProcessIsPrimitive
     return "true";
 }
 
-sub ProcessCapability
-{
-    my ($attr, $type, $enummetadata) = @_;
-
-    return "NULL" if not defined $CAPABILITIES{$attr};
-
-    my %CAP = %{ $CAPABILITIES{$attr} };
-
-    my $count = 0;
-
-    my @values = ();
-
-    for my $vid (sort keys %CAP)
-    {
-        my $enumcount = 0;
-        my $enumvalues = "NULL";
-
-        if (defined $CAP{$vid}{enumcapability})
-        {
-            if (not $enummetadata =~ /otai_metadata_enum_((otai_\w+_)t)/)
-            {
-                LogError "enum capability defined on $attr, but attribute is not enum";
-                next;
-            }
-
-            my $enumtype = $1;
-            my $prefix = uc($2);
-
-            my @values = @{ $CAP{$vid}{enumcapability} };
-
-            $enumcount = scalar @values;
-
-            WriteSource "const int otai_metadata_enumcapability_${attr}_$vid\[\] = {";
-
-            my %vals = ();
-
-            for my $v (@values)
-            {
-                LogError "enumvalue $v on capability $attr($vid) is not of type $enumtype" if not $v =~ /^$prefix/;
-
-                LogError "enumvalue $v on capability $attr($vid) is already defined" if defined $vals{$v};
-
-                $vals{$v} = 1;
-
-                WriteSource "   $v,";
-            }
-
-            WriteSource "   -1,";
-            WriteSource "};";
-
-            $enumvalues = "otai_metadata_enumcapability_${attr}_$vid";
-        }
-
-        if (not defined $CAP{$vid}{capability})
-        {
-            LogError "capability for $attr is not defined";
-            next;
-        }
-
-        WriteSource "const otai_attr_capability_metadata_t otai_metadata_attr_capability_${attr}_$count = {";
-
-        my %cap = ();
-
-        for my $c (@{ $CAP{$vid}{capability} })
-        {
-            $cap{$c} = 1;
-        }
-
-        my $create = (defined $cap{"CREATE"}) ? "true" : "false";
-        my $get = (defined $cap{"GET"}) ? "true" : "false";
-        my $set = (defined $cap{"SET"}) ? "true" : "false";
-
-        WriteSource "    .vendorid = $vid,";
-        WriteSource "    .operationcapability = {";
-        WriteSource "       .create_implemented = $create,";
-        WriteSource "       .set_implemented = $set,";
-        WriteSource "       .get_implemented = $get,";
-        WriteSource "    },";
-
-        WriteSource "    .enumvaluescount = $enumcount,";
-        WriteSource "    .enumvalues = $enumvalues,";
-
-        WriteSource "};";
-
-        $count++;
-    }
-
-    WriteSource "const otai_attr_capability_metadata_t* const otai_metadata_attr_capability_${attr}\[\] = {";
-
-    $count = 0;
-
-    for my $vid (sort keys %CAP)
-    {
-        WriteSource "    &otai_metadata_attr_capability_${attr}_$count,";
-
-        $count++;
-    }
-
-    WriteSource "    NULL";
-
-    WriteSource "};";
-
-    return "otai_metadata_attr_capability_$attr";
-}
-
-sub ProcessCapabilityLen
-{
-    my ($attr, $type) = @_;
-
-    return 0 if not defined $CAPABILITIES{$attr};
-
-    return scalar(keys %{$CAPABILITIES{$attr}});
-}
-
 sub ProcessIsExtensionAttr
 {
     my ($attr, $type) = @_;
@@ -2120,8 +2003,6 @@ sub ProcessSingleObjectType
         my $isprimitive     = ProcessIsPrimitive($attr, $meta{type});
         my $ntftype         = ProcessNotificationType($attr, $meta{type});
         my $iscallback      = ProcessIsCallback($attr, $meta{type});
-        my $cap             = ProcessCapability($attr, $meta{type}, $enummetadata);
-        my $caplen          = ProcessCapabilityLen($attr, $meta{type});
         my $isextensionattr = ProcessIsExtensionAttr($attr, $meta{type});
         my $isresourcetype  = ProcessIsResourceType($attr, $meta{isresourcetype});
         my $isdeprecated    = ProcessIsDeprecatedType($attr, $meta{deprecated});
@@ -2177,8 +2058,6 @@ sub ProcessSingleObjectType
         WriteSource ".isprimitive                   = $isprimitive,";
         WriteSource ".notificationtype              = $ntftype,";
         WriteSource ".iscallback                    = $iscallback,";
-        WriteSource ".capability                    = $cap,";
-        WriteSource ".capabilitylength              = $caplen,";
         WriteSource ".isextensionattr               = $isextensionattr,";
         WriteSource ".isresourcetype                = $isresourcetype,";
         WriteSource ".isdeprecated                  = $isdeprecated,";
@@ -3380,18 +3259,6 @@ sub GetHashOfAllAttributes
     return %ATTRIBUTES;
 }
 
-sub CheckCapabilities
-{
-    my %ATTRIBUTES = GetHashOfAllAttributes();
-
-    for my $attr (keys %CAPABILITIES)
-    {
-        next if defined $ATTRIBUTES{$attr};
-
-        LogError "capability attribute $attr not found on all attributes list";
-    }
-}
-
 sub CreateListOfAllAttributes
 {
     # list will be used to find attribute metadata
@@ -4136,11 +4003,6 @@ sub ExtractUnionsInfo
     }
 }
 
-sub LoadCapabilities
-{
-    %CAPABILITIES = %{ GetCapabilities() };
-}
-
 sub MergeExtensionsEnums
 {
     for my $exenum (sort keys%EXTENSIONS_ENUMS)
@@ -4253,8 +4115,6 @@ sub CreateOtherStructs
 # MAIN
 #
 
-LoadCapabilities();
-
 ExtractApiToObjectMap();
 
 ExtractStatsFunctionMap();
@@ -4309,7 +4169,6 @@ CreateListOfAllAttributes();
 
 CreateListOfAllStatistics();
 
-CheckCapabilities();
 
 CheckApiStructNames();
 
@@ -4334,5 +4193,3 @@ WriteHeaderFotter();
 WriteLoggerVariables();
 
 WriteMetaDataFiles();
-
-GenOtaiSpecFile();

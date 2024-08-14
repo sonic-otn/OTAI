@@ -1,6 +1,7 @@
 #!/usr/bin/perl
 #
 # Copyright (c) 2014 Microsoft Open Technologies, Inc.
+# Copyright (c) 2021 Alibaba Group.
 #
 #    Licensed under the Apache License, Version 2.0 (the "License"); you may
 #    not use this file except in compliance with the License. You may obtain
@@ -593,7 +594,6 @@ sub CheckMetadataSourceFiles
 
         next if $file eq "otaimetadata.h";
         next if $file eq "otaimetadata.c";
-        next if $file eq "otaimetadatatest.c";
 
         my $data = ReadHeaderFile($file);
 

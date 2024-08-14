@@ -1,5 +1,6 @@
 #
 # Copyright (c) 2014 Microsoft Open Technologies, Inc.
+# Copyright (c) 2021 Alibaba Group.
 #
 #    Licensed under the Apache License, Version 2.0 (the "License"); you may
 #    not use this file except in compliance with the License. You may obtain
@@ -68,6 +69,9 @@ $(foreach bin,$(BINS),$(if $(shell which $(bin)),,$(error "Missing $(bin) in PAT
 
 CFLAGS += -I../inc $(WARNINGS)
 
+CC = $(CROSS_COMPILE)gcc
+CXX = $(CROSS_COMPILE)g++
+LD = $(CROSS_COMPILE)ld
 DEPS = $(wildcard ../inc/*.h)
 XMLDEPS = $(wildcard xml/*.xml)
 
@@ -91,32 +95,25 @@ xml: $(DEPS) Doxyfile Doxyfile.compat $(CONSTHEADERS)
 	doxygen ${DOXYFILE} 2>&1 | perl -npe '$$e=1 if /warning/i; END{exit $$e}'
 	touch xml
 
-EXTRA = acronyms.txt aspell.en.pws *.pm *.cap
+EXTRA = acronyms.txt aspell.en.pws *.pm
 
-otaimetadata.c otaimetadata.h: install_excel_writer xml $(XMLDEPS) parse.pl $(CONSTHEADERS) $(EXTRA)
+otaimetadata.c otaimetadata.h: xml $(XMLDEPS) parse.pl $(CONSTHEADERS) $(EXTRA)
 	perl -I. parse.pl
 
 HEADERS = otaimetadata.h $(CONSTHEADERS)
 
 %.o: %.c $(HEADERS)
-	gcc -c -o $@ $< $(CFLAGS)
+	$(CC) -c -o $@ $< $(CFLAGS)
 
 %.o: %.cpp $(HEADERS)
-	gcc -c -o $@ $< $(CFLAGS)
+	$(CC) -c -o $@ $< $(CFLAGS)
 
 %.o.symbols: %.o
 	nm $^ | ./checksymbols.pl
 
-install_excel_writer: excel-writer-xlsx-main.tar.gz
-	tar -xzf excel-writer-xlsx-main.tar.gz
-	cd excel-writer-xlsx-main && perl Makefile.PL
-	sudo make -C excel-writer-xlsx-main
-	sudo make -C excel-writer-xlsx-main install
-
-.PHONY: clean install_excel_writer
+.PHONY: clean
 
 clean:
 	rm -f *.o *~ .*~ *.tmp .*.swp .*.swo *.bak otai*.gv otai*.svg *.o.symbols
 	rm -f otaimetadata.h otaimetadata.c
 	rm -rf xml html dist
-	rm -rf excel-writer-xlsx-main

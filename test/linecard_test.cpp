@@ -110,7 +110,7 @@ const char* test_profile_get_value(
     UNREFERENCED_PARAMETER(profile_id);
     UNREFERENCED_PARAMETER(variable);
     // return default type on ot-vs platform
-    return "OTAI_VS_LINECARD_TYPE_P230C";
+    return "OTAI_VS_LINECARD_TYPE_OTN";
 }
 
 int test_profile_get_next_value(
@@ -187,7 +187,7 @@ void create_linecard() {
 
     attr.id = OTAI_LINECARD_ATTR_LINECARD_TYPE;
     memset(attr.value.chardata, 0, sizeof(attr.value.chardata));
-    strncpy(attr.value.chardata, "P230C", sizeof(attr.value.chardata) - 1);
+    strncpy(attr.value.chardata, "OTN", sizeof(attr.value.chardata) - 1);
     attrs.push_back(attr);
 
     memset(&attr, 0, sizeof(attr));

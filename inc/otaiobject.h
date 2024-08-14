@@ -58,59 +58,6 @@ typedef struct _otai_object_key_t
 } otai_object_key_t;
 
 /**
- * @brief Structure for attribute capabilities per operation
- */
-typedef struct _otai_attr_capability_t
-{
-    /**
-     * @brief Create is implemented
-     */
-    bool create_implemented;
-
-    /**
-     * @brief Set is implemented
-     */
-    bool set_implemented;
-
-    /**
-     * @brief Get is implemented
-     */
-    bool get_implemented;
-} otai_attr_capability_t;
-
-/**
- * @brief Query attribute capability
- *
- * @param[in] linecard_gid OTAI Linecard object id
- * @param[in] object_type OTAI object type
- * @param[in] attr_id OTAI attribute ID
- * @param[out] attr_capability Capability per operation
- *
- * @return #OTAI_STATUS_SUCCESS on success, failure status code on error
- */
-otai_status_t otai_query_attribute_capability(
-        _In_ otai_object_id_t linecard_gid,
-        _In_ otai_object_type_t object_type,
-        _In_ otai_attr_id_t attr_id,
-        _Out_ otai_attr_capability_t *attr_capability);
-
-/**
- * @brief Query an enum attribute (enum or enum list) list of implemented enum values
- *
- * @param[in] linecard_gid OTAI Linecard object id
- * @param[in] object_type OTAI object type
- * @param[in] attr_id OTAI attribute ID
- * @param[inout] enum_values_capability List of implemented enum values
- *
- * @return #OTAI_STATUS_SUCCESS on success, #OTAI_STATUS_BUFFER_OVERFLOW if list size insufficient, failure status code on error
- */
-otai_status_t otai_query_attribute_enum_values_capability(
-        _In_ otai_object_id_t linecard_gid,
-        _In_ otai_object_type_t object_type,
-        _In_ otai_attr_id_t attr_id,
-        _Inout_ otai_s32_list_t *enum_values_capability);
-
-/**
  * @}
  */
 #endif /** __OTAIOBJECT_H_ */
