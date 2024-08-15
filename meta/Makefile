@@ -92,7 +92,7 @@ else
 endif
 
 xml: $(DEPS) Doxyfile Doxyfile.compat $(CONSTHEADERS)
-	doxygen ${DOXYFILE} 2>&1 | perl -npe '$$e=1 if /warning/i; END{exit $$e}'
+	doxygen -u ${DOXYFILE} 2>&1 | perl -npe '$$e=1 if /warning/i; END{exit $$e}'
 	touch xml
 
 EXTRA = acronyms.txt aspell.en.pws *.pm
