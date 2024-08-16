@@ -553,41 +553,6 @@ typedef struct _otai_enum_metadata_t
 } otai_enum_metadata_t;
 
 /**
- * @brief Defines attribute capability metadata.
- */
-typedef struct _otai_attr_capability_metadata_t
-{
-    /**
-     * @brief Vendor ID.
-     *
-     * Used to distinguish different capabilities of
-     * the same attribute for different ASIC instances.
-     */
-    uint64_t                    vendorid;
-
-    /**
-     * @brief Operation capability.
-     *
-     * Defines which operation is supported on specific attribute.
-     */
-    otai_attr_capability_t       operationcapability;
-
-    /**
-     * @brief Enum values count.
-     *
-     * When attribute is and enum, this list defines
-     * enum values supported by vendor on that attribute.
-     */
-    const size_t                enumvaluescount;
-
-    /**
-     * @brief Enum values count.
-     */
-    const int* const            enumvalues;
-
-} otai_attr_capability_metadata_t;
-
-/**
  * @brief Defines statistics metadata.
  */
 typedef struct _otai_stat_metadata_t
@@ -958,25 +923,6 @@ typedef struct _otai_attr_metadata_t
      * Set to true if attribute is callback function but not notification.
      */
     bool                                        iscallback;
-
-    /**
-     * @brief Attribute capabilities.
-     *
-     * Represents attribute capability for each specific ASIC. Since each
-     * vendor may support different capabilities for each attribute, this field
-     * is optional. Also, since OTAI API supports multiple modules (module ids)
-     * at the same time, then modules may support different capabilities on
-     * different attributes. Vendor ID is provided inside capability struct for
-     * difference.
-     *
-     * This data is designed for vendor internal usage.
-     */
-    const otai_attr_capability_metadata_t* const* const capability;
-
-    /**
-     * @brief Length of attribute capabilities.
-     */
-    size_t                                      capabilitylength;
 
     /**
      * @brief Indicates whether attribute is extension attribute.

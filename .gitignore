@@ -1,0 +1,17 @@
+# metadata build artifacts
+meta/xml
+meta/html
+
+meta/*.o
+meta/*.lo
+meta/*.o.symbols
+meta/*.so
+
+meta/otaimetadata.c
+meta/otaimetadata.h
+
+**/.deps/
+**/.dirstamp
+**/.libs/
+
+

@@ -120,7 +120,6 @@ multicast
 mux
 netdev
 netdevs
-netlink
 nexthop
 nexthopgroup
 nm

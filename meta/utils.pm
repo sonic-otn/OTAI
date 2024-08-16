@@ -1,6 +1,7 @@
 #!/usr/bin/perl
 #
 # Copyright (c) 2014 Microsoft Open Technologies, Inc.
+# Copyright (c) 2021 Alibaba Group.
 #
 #    Licensed under the Apache License, Version 2.0 (the "License"); you may
 #    not use this file except in compliance with the License. You may obtain
@@ -277,24 +278,18 @@ sub SanityCheckContent
         LogError "there should be at least 5 test defined, got $testCount";
     }
 
-#    my $metaHeaderSize = 48832 * 0.99;
-#    my $metaSourceSize = 2216983 * 0.99;
-#    my $metaTestSize   = 104995 * 0.99;
-#
-#    if (length($HEADER_CONTENT) < $metaHeaderSize)
-#    {
-#        LogError "generated otaimetadata.h size is too small";
-#    }
-#
-#    if (length($SOURCE_CONTENT) < $metaSourceSize)
-#    {
-#        LogError "generated otaimetadata.c size is too small";
-#    }
-#
-#    if (length($TEST_CONTENT) < $metaTestSize)
-#    {
-#        LogError "generated otaimetadatatest.c size is too small";
-#    }
+   my $metaHeaderSize = 488 * 0.99;
+   my $metaSourceSize = 2216 * 0.99;
+
+   if (length($HEADER_CONTENT) < $metaHeaderSize)
+   {
+       LogError "generated otaimetadata.h size is too small";
+   }
+
+   if (length($SOURCE_CONTENT) < $metaSourceSize)
+   {
+       LogError "generated otaimetadata.c size is too small";
+   }
 }
 
 sub WriteMetaDataFiles
@@ -305,7 +300,6 @@ sub WriteMetaDataFiles
 
     WriteFile("otaimetadata.h", $HEADER_CONTENT);
     WriteFile("otaimetadata.c", $SOURCE_CONTENT);
-    WriteFile("otaimetadatatest.c", $TEST_CONTENT);
 }
 
 sub GetStructKeysInOrder

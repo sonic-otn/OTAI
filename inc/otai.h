@@ -226,25 +226,6 @@ otai_status_t otai_dbg_generate_dump(
         _In_ const char *dump_file_name);
 
 /**
- * @brief Get OTAI object type resource availability.
- *
- * @param[in] linecard_gid OTAI Linecard object id
- * @param[in] object_type OTAI object type
- * @param[in] attr_count Number of attributes
- * @param[in] attr_list List of attributes that to distinguish resource
- * @param[out] count Available objects left
- *
- * @return #OTAI_STATUS_NOT_SUPPORTED if the given object type does not support resource accounting.
- * Otherwise, return #OTAI_STATUS_SUCCESS.
- */
-otai_status_t otai_object_type_get_availability(
-        _In_ otai_object_id_t linecard_gid,
-        _In_ otai_object_type_t object_type,
-        _In_ uint32_t attr_count,
-        _In_ const otai_attribute_t *attr_list,
-        _Out_ uint64_t *count);
-
-/**
  * @}
  */
 #endif /** __OTAI_H_ */
